@@ -47,9 +47,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [t]);
 
+  // Birinchi yuklash: state faqat javob kelgach (promise ichida) yangilanadi
   useEffect(() => {
-    void refresh();
-  }, [refresh]);
+    let active = true;
+    cartRequest("/api/cart", t.errors.generic)
+      .then((data) => {
+        if (active) setCart(data);
+      })
+      .catch(() => {
+        // Savat yuklanmasa ham sahifa ishlashda davom etadi
+      })
+      .finally(() => {
+        if (active) setLoaded(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, [t]);
 
   const mutate = useCallback(
     async (productId: string, request: () => Promise<CartData>, feedback: "light" | null = null) => {

@@ -20,6 +20,5 @@ export function ProductImage({ src, alt, className, loading = "lazy" }: Props) {
       </div>
     );
   }
-  // eslint-disable-next-line @next/next/no-img-element
   return <img src={src} alt={alt} loading={loading} decoding="async" className={cn("object-cover", className)} />;
 }

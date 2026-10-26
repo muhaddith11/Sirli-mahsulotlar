@@ -1,8 +1,8 @@
 import "server-only";
-import type { PromoCode } from "@/generated/prisma/client";
 import { AppError } from "@/lib/errors";
 import { formatPrice } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
+import { promoDiscountFor } from "@/lib/promo-discount";
 
 type Db = Pick<typeof prisma, "promoCode">;
 
@@ -10,11 +10,7 @@ export function normalizePromoCode(code: string): string {
   return code.trim().toUpperCase().replace(/\s+/g, "");
 }
 
-/** Promokod chegirmasi (so'm), mahsulotlar summasidan oshmaydi */
-export function promoDiscountFor(promo: Pick<PromoCode, "type" | "value">, amount: number): number {
-  const raw = promo.type === "PERCENT" ? Math.floor((amount * promo.value) / 100) : promo.value;
-  return Math.max(0, Math.min(raw, amount));
-}
+export { promoDiscountFor } from "@/lib/promo-discount";
 
 /**
  * Promokodni topadi va shu summa uchun yaroqliligini tekshiradi.

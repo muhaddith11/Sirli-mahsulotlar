@@ -9,7 +9,7 @@ import { promoCodeSchema } from "@/lib/validation";
 
 /**
  * POST /api/promo — promokodni joriy savat uchun tekshiradi (oldindan ko'rish).
- * body: { code }  →  { code, discount }
+ * body: { code }  →  { code, discount, type, value, minOrder }
  * Yakuniy hisob baribir buyurtma yaratilganda serverda qayta qilinadi.
  */
 export async function POST(request: Request) {
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     if (cart.items.length === 0) return jsonErrorCode("cartEmpty", 400);
 
     const { promo, discount } = await findApplicablePromo(code, cart.total);
-    return NextResponse.json({ code: promo.code, discount });
+    return NextResponse.json({ code: promo.code, discount, type: promo.type, value: promo.value, minOrder: promo.minOrder });
   } catch (error) {
     return handleApiError(error);
   }

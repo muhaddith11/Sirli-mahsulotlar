@@ -6,7 +6,16 @@ Emal kastryulkalar va oshxona idishlarini sotish uchun internet-do'kon. Bitta Ne
 - Telegram Mini App (bot menyusidan ochiladi, `MainButton` orqali buyurtma tasdiqlanadi),
 - do'kon egasi uchun admin panel (`/admin`).
 
-Har bir yangi buyurtma bazaga saqlangach, do'kon egasining Telegram'iga batafsil xabar yuboriladi.
+Har bir yangi buyurtma bazaga saqlangach, do'kon egasining Telegram'iga batafsil xabar yuboriladi — holatni shu xabardagi tugmalar bilan o'zgartirish mumkin.
+
+Imkoniyatlar:
+
+- **O'zbek va rus tillari** — til almashtirgich, Telegram'da foydalanuvchi tilidan avtomatik; mahsulot va kategoriyalar uchun ruscha nom/tavsif.
+- **Yetkazib berish yoki do'kondan olib ketish**; 14 hudud bo'yicha narxni egasi admin paneldan kiritadi (bo'sh — "operator aytadi"), bepul yetkazish chegarasi.
+- **Promokodlar** (foiz yoki summa, eng kam buyurtma, ishlatish soni, muddat).
+- **Buyurtmalarim** — Telegram'da imzo orqali, saytda shu qurilmadagi buyurtmalar.
+- Katalog keshi, spamdan himoya (IP bo'yicha so'rov chegarasi), kunlik tozalash cron'i.
+- Dizayn tizimi: [DESIGN.md](DESIGN.md), mahsulot ma'lumotlari: [PRODUCT.md](PRODUCT.md).
 
 **Texnologiyalar:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Prisma 7 + PostgreSQL, Telegraf, `@twa-dev/sdk`, Zod.
 
@@ -44,11 +53,14 @@ Chiqqan `postgres://...` manzilini `DATABASE_URL` ga yozing va `DATABASE_POOL_MA
 | `DATABASE_POOL_MAX` | Ixtiyoriy. Ulanishlar havzasi hajmi (serverless yoki `prisma dev` uchun) |
 | `APP_URL` | Saytning ochiq manzili. Mini App va Telegram tugmalari uchun **https** bo'lishi shart |
 | `TELEGRAM_BOT_TOKEN` | @BotFather bergan token |
+| `TELEGRAM_BOT_USERNAME` | Bot username (@ belgisisiz) — saytdagi bot havolasi uchun |
 | `TELEGRAM_ADMIN_CHAT_ID` | Buyurtma xabarlari boradigan chat ID. Bir nechta bo'lsa vergul bilan. Guruh ham bo'lishi mumkin (`-100...`) |
 | `TELEGRAM_WEBHOOK_SECRET` | Telegram webhook so'rovlarini tekshirish uchun maxfiy satr |
 | `ADMIN_PASSWORD` | Admin panelga kirish paroli |
 | `ADMIN_SESSION_SECRET` | Admin sessiyasini imzolash uchun kamida 32 belgili tasodifiy satr |
 | `UPLOAD_DIR` | Admin yuklagan rasmlar papkasi (standart: `./uploads`) |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob — bo'lsa, rasmlar Blob'ga yuklanadi |
+| `CRON_SECRET` | Vercel Cron so'rovlarini tekshirish uchun |
 
 ---
 
@@ -59,6 +71,9 @@ Chiqqan `postgres://...` manzilini `DATABASE_URL` ga yozing va `DATABASE_POOL_MA
 3. `npm run bot:setup` — bot menyusiga **"Do'kon"** tugmasini qo'shadi va webhook'ni o'rnatadi.
 4. Botga `/id` yozing — u chat ID'ingizni qaytaradi. Uni `TELEGRAM_ADMIN_CHAT_ID` ga yozing va serverni qayta ishga tushiring.
 5. Bot do'kon egasiga xabar yubora olishi uchun egasi botga avval `/start` yozgan bo'lishi kerak.
+
+Bot buyruqlari: `/start` — do'kon va "Buyurtmalarim" tugmalari, `/yangi` — (egasi uchun) faol buyurtmalar, `/id` — chat ID.
+Egasiga kelgan har bir buyurtma xabarida holat tugmalari bor (Tayyorlanmoqda → Yetkazilmoqda → Yakunlandi, bekor qilish — tasdiq bilan); mijozga yangi holat haqida o'z tilida xabar boradi.
 
 Mini App ichida:
 - foydalanuvchi ismi Telegram profilidan avtomatik to'ldiriladi, telefonni bir bosishda ulashish mumkin;
@@ -132,6 +147,16 @@ Savat brauzerdagi `cart_id` cookie orqali aniqlanadi. Narx filtri va saralash mi
 Bitta tranzaksiyada: har bir mahsulot qoldig'i shartli kamaytiriladi (parallel buyurtmalarda manfiyga tushmaydi), nom va narx buyurtma paytidagi holatda `OrderItem` ga yoziladi, savat tozalanadi. Javob qaytgach (`after()`), Telegram xabarlari yuboriladi. Admin buyurtmani **Bekor qilindi** holatiga o'tkazsa, mahsulotlar omborga qaytariladi.
 
 ---
+
+## Tekshiruvlar
+
+```bash
+npm run typecheck   # TypeScript
+npm run lint        # ESLint (eslint-config-next)
+npm test            # Vitest unit testlari (tests/)
+```
+
+GitHub'ga har push va PR'da `.github/workflows/ci.yml` shu tekshiruvlarni va `next build`ni bajaradi.
 
 ## Ishga tushirish (production)
 

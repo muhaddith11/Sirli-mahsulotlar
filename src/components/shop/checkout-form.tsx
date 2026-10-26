@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ import { cn } from "@/lib/cn";
 import { deliveryFeeFor } from "@/lib/delivery-fee";
 import { formatPhoneInput, formatPrice, keepUnits } from "@/lib/format";
 import { rememberOrder } from "@/lib/order-history";
+import { promoDiscountFor, type PromoTerms } from "@/lib/promo-discount";
 import { useCart } from "@/providers/cart-provider";
 import { haptic, useTelegram } from "@/providers/telegram-provider";
 import { checkoutTotal, OrderSummary } from "./order-summary";
@@ -31,51 +32,47 @@ export type CheckoutStore = {
 
 const STORAGE_KEY = "sirli:checkout-contact";
 
+const EMPTY_VALUES: Values = { name: "", phone: "+998 ", address: "", comment: "", zoneId: "", deliveryMethod: "DELIVERY" };
+
+/** Avvalgi buyurtmadagi kontaktlar (forma faqat klientda, savat yuklangach chiziladi) */
+function readSavedValues(zones: CheckoutZone[]): Values {
+  if (typeof window === "undefined") return EMPTY_VALUES;
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null") as Partial<Values> | null;
+    if (!saved) return EMPTY_VALUES;
+    return {
+      ...EMPTY_VALUES,
+      ...saved,
+      comment: "",
+      zoneId: saved.zoneId && zones.some((z) => z.id === saved.zoneId) ? saved.zoneId : "",
+    };
+  } catch {
+    return EMPTY_VALUES; // localStorage mavjud bo'lmasligi mumkin (masalan, maxfiy rejim)
+  }
+}
+
 export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: CheckoutStore }) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const { t, locale } = useI18n();
   const { cart, loaded, refresh } = useCart();
   const { webApp, user, initData } = useTelegram();
-  const [values, setValues] = useState<Values>({
-    name: "",
-    phone: "+998 ",
-    address: "",
-    comment: "",
-    zoneId: "",
-    deliveryMethod: "DELIVERY",
-  });
+  const [values, setValues] = useState<Values>(() => readSavedValues(zones));
+  const [nameTouched, setNameTouched] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [promoInput, setPromoInput] = useState("");
-  const [promo, setPromo] = useState<{ code: string; discount: number } | null>(null);
+  const [promo, setPromo] = useState<(PromoTerms & { code: string }) | null>(null);
   const [promoPending, setPromoPending] = useState(false);
 
-  // Avvalgi buyurtmadagi kontaktlar va Telegram profilidan avtomatik to'ldirish
-  useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null") as Partial<Values> | null;
-      if (saved) {
-        setValues((v) => ({
-          ...v,
-          ...saved,
-          zoneId: saved.zoneId && zones.some((z) => z.id === saved.zoneId) ? saved.zoneId : "",
-        }));
-      }
-    } catch {
-      // localStorage mavjud bo'lmasligi mumkin (masalan, maxfiy rejim)
-    }
-  }, [zones]);
-
-  useEffect(() => {
-    if (!user) return;
-    const fullName = [user.first_name, user.last_name].filter(Boolean).join(" ");
-    setValues((v) => (v.name ? v : { ...v, name: fullName }));
-  }, [user]);
+  // Ism bo'sh bo'lsa — Telegram profilidagi ism (mijoz o'zi yozmaguncha)
+  const telegramName = user ? [user.first_name, user.last_name].filter(Boolean).join(" ") : "";
+  const nameValue = values.name || nameTouched ? values.name : telegramName;
 
   const set = (field: keyof Values) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const value = field === "phone" ? formatPhoneInput(e.target.value) : e.target.value;
+    if (field === "name") setNameTouched(true);
     setValues((v) => ({ ...v, [field]: value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
@@ -94,7 +91,7 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
         setErrors((prev) => ({ ...prev, promoCode: data?.error ?? t.errors.generic }));
         return;
       }
-      setPromo({ code: data.code, discount: data.discount });
+      setPromo({ code: data.code, type: data.type, value: data.value, minOrder: data.minOrder });
       setErrors((prev) => ({ ...prev, promoCode: undefined }));
     } catch {
       toast.error(t.checkout.networkError);
@@ -103,16 +100,11 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
     }
   };
 
-  // Savat o'zgarsa, promokod chegirmasi qayta hisoblanadi
-  const appliedCode = promo?.code;
-  useEffect(() => {
-    if (appliedCode) void checkPromo(appliedCode);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cart.total]);
-
   const pickup = values.deliveryMethod === "PICKUP";
   const zone = zones.find((z) => z.id === values.zoneId) ?? null;
-  const promoDiscount = promo?.discount ?? 0;
+  // Savat o'zgarsa chegirma shu formula bilan qayta hisoblanadi (serverdagi bilan bir xil)
+  const promoDiscount = promo ? promoDiscountFor(promo, cart.total) : 0;
+  const promoBelowMinimum = Boolean(promo?.minOrder != null && cart.total < promo.minOrder);
   const fee = pickup ? 0 : deliveryFeeFor(zone, cart.total - promoDiscount);
   const total = checkoutTotal(cart, promoDiscount, fee);
   const totalText = formatPrice(total, locale);
@@ -127,9 +119,10 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
+          name: nameValue,
           address: pickup ? "" : values.address,
           zoneId: pickup ? undefined : values.zoneId || undefined,
-          promoCode: promo?.code,
+          promoCode: promoBelowMinimum ? undefined : promo?.code,
           initData: initData || undefined,
         }),
       });
@@ -144,8 +137,8 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
       }
 
       try {
-        const { name, phone, address, zoneId, deliveryMethod } = values;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ name, phone, address, zoneId, deliveryMethod }));
+        const { phone, address, zoneId, deliveryMethod } = values;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ name: nameValue, phone, address, zoneId, deliveryMethod }));
       } catch {}
       rememberOrder(data.orderId);
       setDone(true);
@@ -232,7 +225,7 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
               autoComplete="name"
               required
               minLength={2}
-              value={values.name}
+              value={nameValue}
               onChange={set("name")}
               placeholder={t.checkout.namePlaceholder}
               aria-invalid={Boolean(errors.name)}
@@ -383,7 +376,7 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
               <div className="flex h-12 items-center justify-between rounded-[var(--radius-field)] border border-success/40 bg-success-soft px-3.5">
                 <span className="flex items-center gap-2 text-sm font-medium text-success">
                   <Check className="size-4" />
-                  {fill(t.checkout.promoApplied, { code: promo.code })} · −{formatPrice(promo.discount, locale)}
+                  {fill(t.checkout.promoApplied, { code: promo.code })} · −{formatPrice(promoDiscount, locale)}
                 </span>
                 <button
                   type="button"
@@ -428,6 +421,11 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
                 </button>
               </div>
             )}
+            {promo && promoBelowMinimum && (
+              <span className="mt-1.5 block text-[13px] font-medium text-brand">
+                {fill(t.errors.promoMinOrder, { amount: formatPrice(promo.minOrder ?? 0, locale) })}
+              </span>
+            )}
             {errors.promoCode && <span className="mt-1.5 block text-[13px] font-medium text-brand">{errors.promoCode}</span>}
           </div>
 
@@ -439,7 +437,11 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
       </form>
 
       <div className="space-y-4 lg:sticky lg:top-32">
-        <OrderSummary cart={cart} promo={promo} delivery={{ method: values.deliveryMethod, fee }}>
+        <OrderSummary
+          cart={cart}
+          promo={promo && promoDiscount > 0 ? { code: promo.code, discount: promoDiscount } : null}
+          delivery={{ method: values.deliveryMethod, fee }}
+        >
           {!inTelegram && <div className="hidden lg:block">{submitButton}</div>}
         </OrderSummary>
 

@@ -53,7 +53,6 @@ export default async function HomePage() {
               <ChevronRight className="size-4" />
             </span>
           </span>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={sets.image}
             alt=""
