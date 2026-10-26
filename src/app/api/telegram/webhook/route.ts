@@ -95,7 +95,7 @@ async function handleCommand(message: Message.TextMessage) {
     }
     await sendHtmlMessage(chatId, `📋 Faol buyurtmalar: <b>${orders.length}</b> ta (oxirgilari)`);
     for (const order of orders.reverse()) {
-      await sendHtmlMessage(chatId, newOrderMessage(order), { keyboard: orderAdminKeyboard(order.id, order.status) });
+      await sendHtmlMessage(chatId, newOrderMessage(order), { keyboard: orderAdminKeyboard(order.id, order.status, order.deliveryMethod) });
     }
   }
 }
@@ -127,7 +127,7 @@ async function handleCallback(query: CallbackQuery) {
   if (parsed.action === "back") {
     const order = await getOrderWithDetails(parsed.orderId);
     if (!order) return answer("Buyurtma topilmadi", true);
-    await telegram.editMessageReplyMarkup(message.chat.id, message.message_id, undefined, orderAdminKeyboard(order.id, order.status));
+    await telegram.editMessageReplyMarkup(message.chat.id, message.message_id, undefined, orderAdminKeyboard(order.id, order.status, order.deliveryMethod));
     return answer();
   }
 
@@ -148,7 +148,7 @@ async function handleCallback(query: CallbackQuery) {
     revalidatePath("/", "layout");
   }
 
-  await edit(newOrderMessage(order), orderAdminKeyboard(order.id, order.status)).catch((error: unknown) => {
+  await edit(newOrderMessage(order), orderAdminKeyboard(order.id, order.status, order.deliveryMethod)).catch((error: unknown) => {
     // "message is not modified" — xabar allaqachon shu holatda
     if (!String(error).includes("not modified")) throw error;
   });

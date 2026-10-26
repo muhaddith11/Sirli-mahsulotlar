@@ -298,6 +298,25 @@ const products: SeedProduct[] = [
   },
 ];
 
+// Yetkazib berish hududlari. Narxlar ataylab kiritilmagan (null — "operator aytadi"):
+// haqiqiy narxlarni do'kon egasi admin paneldagi "Yetkazib berish" bo'limida kiritadi.
+const zones: { name: string; nameRu: string }[] = [
+  { name: "Toshkent shahri", nameRu: "г. Ташкент" },
+  { name: "Toshkent viloyati", nameRu: "Ташкентская область" },
+  { name: "Andijon viloyati", nameRu: "Андижанская область" },
+  { name: "Buxoro viloyati", nameRu: "Бухарская область" },
+  { name: "Farg'ona viloyati", nameRu: "Ферганская область" },
+  { name: "Jizzax viloyati", nameRu: "Джизакская область" },
+  { name: "Xorazm viloyati", nameRu: "Хорезмская область" },
+  { name: "Namangan viloyati", nameRu: "Наманганская область" },
+  { name: "Navoiy viloyati", nameRu: "Навоийская область" },
+  { name: "Qashqadaryo viloyati", nameRu: "Кашкадарьинская область" },
+  { name: "Qoraqalpog'iston Respublikasi", nameRu: "Республика Каракалпакстан" },
+  { name: "Samarqand viloyati", nameRu: "Самаркандская область" },
+  { name: "Sirdaryo viloyati", nameRu: "Сырдарьинская область" },
+  { name: "Surxondaryo viloyati", nameRu: "Сурхандарьинская область" },
+];
+
 async function main() {
   const categoryIds = new Map<string, string>();
 
@@ -320,7 +339,13 @@ async function main() {
     });
   }
 
-  console.log(`✔ ${categories.length} ta kategoriya va ${products.length} ta mahsulot qo'shildi`);
+  // Hududlar faqat bo'sh bazaga qo'shiladi — egasi kiritgan narxlar ustidan yozilmaydi
+  if ((await prisma.deliveryZone.count()) === 0) {
+    await prisma.deliveryZone.createMany({ data: zones.map((zone, i) => ({ ...zone, sortOrder: i })) });
+  }
+  await prisma.storeSettings.upsert({ where: { id: "store" }, create: { id: "store" }, update: {} });
+
+  console.log(`✔ ${categories.length} ta kategoriya, ${products.length} ta mahsulot, ${zones.length} ta hudud`);
 }
 
 main()

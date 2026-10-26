@@ -55,14 +55,25 @@ export const phoneSchema = z
     return phone;
   });
 
-export const checkoutSchema = z.object({
-  name: z.string({ error: "nameRequired" }).trim().min(2, "nameRequired").max(100, "nameTooLong"),
-  phone: phoneSchema,
-  address: z.string({ error: "addressShort" }).trim().min(5, "addressShort").max(500, "addressTooLong"),
-  comment: optionalText(500),
-  /** Telegram.WebApp.initData — Mini App ichida bo'lsa yuboriladi */
-  initData: z.string().max(4096).optional(),
-});
+export const promoCodeSchema = z.string().trim().min(2, "promoNotFound").max(32, "promoNotFound");
+
+export const checkoutSchema = z
+  .object({
+    name: z.string({ error: "nameRequired" }).trim().min(2, "nameRequired").max(100, "nameTooLong"),
+    phone: phoneSchema,
+    deliveryMethod: z.enum(["DELIVERY", "PICKUP"]).default("DELIVERY"),
+    zoneId: optionalText(40),
+    address: z.string().trim().max(500, "addressTooLong").default(""),
+    comment: optionalText(500),
+    promoCode: z.preprocess((v) => (typeof v === "string" && v.trim() === "" ? undefined : v), promoCodeSchema.optional()),
+    /** Telegram.WebApp.initData — Mini App ichida bo'lsa yuboriladi */
+    initData: z.string().max(4096).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.deliveryMethod !== "DELIVERY") return;
+    if (!data.zoneId) ctx.addIssue({ code: "custom", path: ["zoneId"], message: "zoneRequired" });
+    if (data.address.length < 5) ctx.addIssue({ code: "custom", path: ["address"], message: "addressShort" });
+  });
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
 
 // ─── Admin ──────────────────────────────────────────────

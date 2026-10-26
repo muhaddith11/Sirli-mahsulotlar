@@ -25,6 +25,10 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
       number: true,
       status: true,
       totalAmount: true,
+      deliveryMethod: true,
+      deliveryFee: true,
+      promoCodeText: true,
+      promoDiscount: true,
       items: {
         select: {
           id: true,
@@ -72,6 +76,26 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
             </li>
           ))}
         </ul>
+        <dl className="mt-3 space-y-1.5 text-left text-sm text-ink-2">
+          {order.promoDiscount > 0 && (
+            <div className="flex justify-between">
+              <dt>
+                {t.summary.promo} {order.promoCodeText}
+              </dt>
+              <dd className="text-brand tabular">−{formatPrice(order.promoDiscount, locale)}</dd>
+            </div>
+          )}
+          <div className="flex justify-between">
+            <dt>{order.deliveryMethod === "PICKUP" ? t.checkout.pickup : t.summary.delivery}</dt>
+            <dd className="tabular">
+              {order.deliveryMethod === "PICKUP" || order.deliveryFee === 0
+                ? t.summary.deliveryFree
+                : order.deliveryFee == null
+                  ? t.summary.deliveryValue
+                  : formatPrice(order.deliveryFee, locale)}
+            </dd>
+          </div>
+        </dl>
         <p className="mt-4 flex justify-between text-base font-bold">
           <span>{t.success.total}</span>
           <span className="tabular">{formatPrice(order.totalAmount, locale)}</span>

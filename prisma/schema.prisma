@@ -150,25 +150,44 @@ enum OrderSource {
   TELEGRAM // Telegram Mini App orqali
 }
 
+enum DeliveryMethod {
+  DELIVERY // Yetkazib berish
+  PICKUP // Do'kondan olib ketish
+}
+
 model Order {
-  id              String      @id @default(cuid())
+  id               String         @id @default(cuid())
   /// Mijozga ko'rsatiladigan qisqa raqam (#1, #2, ...)
-  number          Int         @unique @default(autoincrement())
-  status          OrderStatus @default(NEW)
-  source          OrderSource @default(WEB)
+  number           Int            @unique @default(autoincrement())
+  status           OrderStatus    @default(NEW)
+  source           OrderSource    @default(WEB)
   /// Mijoz tili ("uz" | "ru") — Telegram xabarlari shu tilda yuboriladi
-  locale          String      @default("uz")
-  userId          String?
-  user            User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
-  customerName    String
-  phone           String
-  deliveryAddress String
-  comment         String?
-  /// To'liq summa (so'm)
-  totalAmount     Int
-  items           OrderItem[]
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  locale           String         @default("uz")
+  userId           String?
+  user             User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  customerName     String
+  phone            String
+  deliveryAddress  String
+  comment          String?
+  deliveryMethod   DeliveryMethod @default(DELIVERY)
+  deliveryZoneId   String?
+  deliveryZone     DeliveryZone?  @relation(fields: [deliveryZoneId], references: [id], onDelete: SetNull)
+  /// Hudud nomi buyurtma paytidagi holatda
+  deliveryZoneName String?
+  /// Yetkazib berish narxi (so'm). null — narxni operator aytadi
+  deliveryFee      Int?
+  /// Mahsulotlar summasi (mahsulot chegirmalari bilan)
+  itemsAmount      Int            @default(0)
+  promoCodeId      String?
+  promoCode        PromoCode?     @relation(fields: [promoCodeId], references: [id], onDelete: SetNull)
+  promoCodeText    String?
+  /// Promokod chegirmasi (so'm)
+  promoDiscount    Int            @default(0)
+  /// To'lanadigan summa: itemsAmount − promoDiscount + deliveryFee (so'm)
+  totalAmount      Int
+  items            OrderItem[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
 
   @@index([status, createdAt])
   @@index([userId])
@@ -202,4 +221,62 @@ model RateLimit {
   resetAt DateTime
 
   @@index([resetAt])
+}
+
+// ─────────────────────────────────────────────
+// Yetkazib berish, promokodlar va do'kon sozlamalari
+// ─────────────────────────────────────────────
+
+/// Yetkazib berish hududi (viloyat). Narxni do'kon egasi admin panelda kiritadi.
+model DeliveryZone {
+  id        String   @id @default(cuid())
+  name      String
+  nameRu    String?
+  /// Yetkazib berish narxi (so'm). null — "operator aytadi"
+  price     Int?
+  /// Shu summadan boshlab yetkazib berish bepul (ixtiyoriy)
+  freeFrom  Int?
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+}
+
+enum PromoType {
+  PERCENT // Foiz
+  FIXED // Qat'iy summa (so'm)
+}
+
+model PromoCode {
+  id        String    @id @default(cuid())
+  /// Katta harflarda saqlanadi, masalan "BAHOR10"
+  code      String    @unique
+  type      PromoType
+  /// Foiz (1–90) yoki so'm
+  value     Int
+  /// Eng kam buyurtma summasi (ixtiyoriy)
+  minOrder  Int?
+  /// Necha marta ishlatish mumkin (ixtiyoriy)
+  maxUses   Int?
+  usedCount Int       @default(0)
+  startsAt  DateTime?
+  endsAt    DateTime?
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  orders Order[]
+}
+
+/// Do'kon sozlamalari (bitta yozuv, id = "store")
+model StoreSettings {
+  id              String   @id @default("store")
+  phone           String?
+  pickupAddress   String?
+  pickupAddressRu String?
+  workingHours    String?
+  workingHoursRu  String?
+  updatedAt       DateTime @updatedAt
 }

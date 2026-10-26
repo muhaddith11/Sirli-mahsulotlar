@@ -8,6 +8,8 @@ import { notifyAdmins, sendHtmlMessage } from "@/lib/telegram/bot";
 import type { TelegramWebAppUser } from "@/lib/telegram/init-data";
 import { newOrderMessage, orderReceivedMessage, orderStatusMessage } from "@/lib/telegram/messages";
 import { orderAdminKeyboard } from "@/lib/telegram/order-keyboard";
+import { deliveryFeeFor } from "./delivery";
+import { findApplicablePromo } from "./promo";
 
 type CreateOrderInput = {
   cartId: string;
@@ -15,6 +17,9 @@ type CreateOrderInput = {
   phone: string;
   address: string;
   comment?: string;
+  deliveryMethod: "DELIVERY" | "PICKUP";
+  zoneId?: string;
+  promoCode?: string;
   locale: Locale;
   telegramUser?: TelegramWebAppUser | null;
 };
@@ -26,7 +31,8 @@ const orderWithDetails = {
 
 /**
  * Savatdagi mahsulotlardan buyurtma yaratadi. Hammasi bitta tranzaksiyada:
- * qoldiq tekshiriladi va kamaytiriladi, buyurtma saqlanadi, savat tozalanadi.
+ * qoldiq tekshiriladi va kamaytiriladi, promokod va yetkazish narxi hisoblanadi,
+ * buyurtma saqlanadi, savat tozalanadi.
  */
 export async function createOrder(input: CreateOrderInput) {
   return prisma.$transaction(async (tx) => {
@@ -57,7 +63,8 @@ export async function createOrder(input: CreateOrderInput) {
         username: tgUser.username ?? null,
         languageCode: tgUser.language_code ?? null,
         phone: input.phone,
-        address: input.address,
+        // Olib ketishda manzil bo'sh — avvalgi manzil saqlanib qoladi
+        address: input.address || undefined,
       };
       const user = await tx.user.upsert({
         where: { telegramId: BigInt(tgUser.id) },
@@ -84,6 +91,28 @@ export async function createOrder(input: CreateOrderInput) {
       };
     });
 
+    const itemsAmount = items.reduce((sum, item) => sum + item.totalPrice, 0);
+
+    // Promokod: shu tranzaksiyada tekshiriladi; ishlatishlar soni optimistik tarzda oshiriladi
+    let promo: Awaited<ReturnType<typeof findApplicablePromo>> | null = null;
+    if (input.promoCode) {
+      promo = await findApplicablePromo(input.promoCode, itemsAmount, tx);
+      const { count } = await tx.promoCode.updateMany({
+        where: { id: promo.promo.id, usedCount: promo.promo.usedCount },
+        data: { usedCount: { increment: 1 } },
+      });
+      if (count === 0) throw new AppError("promoUsedUp", 409);
+    }
+    const promoDiscount = promo?.discount ?? 0;
+
+    // Yetkazib berish: hudud narxi kiritilmagan bo'lsa — null (operator aytadi)
+    const delivery = input.deliveryMethod === "DELIVERY";
+    const zone = delivery && input.zoneId
+      ? await tx.deliveryZone.findFirst({ where: { id: input.zoneId, isActive: true } })
+      : null;
+    if (delivery && !zone) throw new AppError("zoneRequired", 400);
+    const deliveryFee = delivery ? deliveryFeeFor(zone, itemsAmount - promoDiscount) : 0;
+
     const order = await tx.order.create({
       data: {
         source: input.telegramUser ? "TELEGRAM" : "WEB",
@@ -91,9 +120,17 @@ export async function createOrder(input: CreateOrderInput) {
         userId,
         customerName: input.name,
         phone: input.phone,
-        deliveryAddress: input.address,
+        deliveryMethod: input.deliveryMethod,
+        deliveryZoneId: zone?.id,
+        deliveryZoneName: zone?.name ?? null,
+        deliveryAddress: delivery ? input.address : "",
+        deliveryFee,
         comment: input.comment || null,
-        totalAmount: items.reduce((sum, item) => sum + item.totalPrice, 0),
+        itemsAmount,
+        promoCodeId: promo?.promo.id,
+        promoCodeText: promo?.promo.code ?? null,
+        promoDiscount,
+        totalAmount: itemsAmount - promoDiscount + (deliveryFee ?? 0),
         items: { create: items },
       },
       include: orderWithDetails,
@@ -123,7 +160,7 @@ export function listActiveOrders(take = 5) {
 
 /** Do'kon egasiga va (Telegram orqali bo'lsa) mijozga xabar yuboradi */
 export async function sendNewOrderNotifications(order: OrderWithDetails) {
-  await notifyAdmins(newOrderMessage(order), { keyboard: orderAdminKeyboard(order.id, order.status) });
+  await notifyAdmins(newOrderMessage(order), { keyboard: orderAdminKeyboard(order.id, order.status, order.deliveryMethod) });
 
   if (order.user?.telegramId) {
     await sendHtmlMessage(order.user.telegramId.toString(), orderReceivedMessage(order)).catch((error) =>

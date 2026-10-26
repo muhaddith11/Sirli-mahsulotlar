@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, MapPin, MessageSquare, Phone, Send } from "lucide-react";
+import { ArrowLeft, MapPin, MessageSquare, Phone, Send, Store } from "lucide-react";
 import { OrderStatusSelect } from "@/components/admin/order-status-select";
 import { Card } from "@/components/admin/ui";
 import { ProductImage } from "@/components/shop/product-image";
@@ -71,10 +71,30 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
               </li>
             ))}
           </ul>
-          <div className="mt-2 flex items-baseline justify-between border-t border-dashed border-line pt-4">
-            <span className="font-bold">Jami</span>
-            <span className="text-2xl font-bold">{formatPrice(order.totalAmount)}</span>
-          </div>
+          <dl className="mt-2 space-y-1.5 border-t border-dashed border-line pt-4 text-sm">
+            <div className="flex justify-between">
+              <dt className="text-ink-2">Mahsulotlar</dt>
+              <dd className="tabular">{formatPrice(order.itemsAmount || order.totalAmount)}</dd>
+            </div>
+            {order.promoDiscount > 0 && (
+              <div className="flex justify-between">
+                <dt className="text-ink-2">Promokod {order.promoCodeText}</dt>
+                <dd className="text-brand tabular">−{formatPrice(order.promoDiscount)}</dd>
+              </div>
+            )}
+            {order.deliveryMethod === "DELIVERY" && (
+              <div className="flex justify-between">
+                <dt className="text-ink-2">Yetkazib berish</dt>
+                <dd className="tabular">
+                  {order.deliveryFee == null ? "operator aytadi" : order.deliveryFee === 0 ? "bepul" : formatPrice(order.deliveryFee)}
+                </dd>
+              </div>
+            )}
+            <div className="flex items-baseline justify-between pt-2">
+              <dt className="font-bold">To&apos;lov</dt>
+              <dd className="text-2xl font-bold tabular">{formatPrice(order.totalAmount)}</dd>
+            </div>
+          </dl>
         </Card>
 
         <Card className="space-y-4 p-4 sm:p-5">
@@ -98,10 +118,21 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
               </a>
             )}
           </div>
-          <div className="flex gap-3 text-sm">
-            <MapPin className="mt-0.5 size-4 shrink-0 text-brand" />
-            <p className="whitespace-pre-line">{order.deliveryAddress}</p>
-          </div>
+          {order.deliveryMethod === "PICKUP" ? (
+            <div className="flex gap-3 text-sm">
+              <Store className="mt-0.5 size-4 shrink-0 text-brand" />
+              <p className="font-medium">Do&apos;kondan olib ketadi</p>
+            </div>
+          ) : (
+            <div className="flex gap-3 text-sm">
+              <MapPin className="mt-0.5 size-4 shrink-0 text-brand" />
+              <p className="whitespace-pre-line">
+                {order.deliveryZoneName && <span className="block font-medium">{order.deliveryZoneName}</span>}
+                {order.deliveryAddress}
+              </p>
+            </div>
+          )}
+          {order.locale === "ru" && <p className="text-xs text-ink-3">Mijoz tili: ruscha</p>}
           {order.comment && (
             <div className="flex gap-3 rounded-[var(--radius-field)] bg-page p-3 text-sm">
               <MessageSquare className="mt-0.5 size-4 shrink-0 text-brand" />

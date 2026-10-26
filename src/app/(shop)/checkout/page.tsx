@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CheckoutForm } from "@/components/shop/checkout-form";
 import { getI18n } from "@/i18n/server";
+import { getStoreSettings, listDeliveryZones } from "@/lib/services/delivery";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getI18n();
@@ -8,11 +9,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CheckoutPage() {
-  const { t } = await getI18n();
+  const [{ t }, zones, store] = await Promise.all([getI18n(), listDeliveryZones(), getStoreSettings()]);
   return (
     <div className="pb-28 pt-4 md:pt-6 lg:pb-6">
       <h1 className="mb-4 text-2xl font-bold tracking-[-0.02em] md:text-3xl">{t.checkout.title}</h1>
-      <CheckoutForm />
+      <CheckoutForm zones={zones} store={store} />
     </div>
   );
 }

@@ -23,6 +23,10 @@ export default async function OrderPage({ params }: PageProps<"/orders/[id]">) {
         number: true,
         status: true,
         totalAmount: true,
+        deliveryMethod: true,
+        deliveryFee: true,
+        promoCodeText: true,
+        promoDiscount: true,
         createdAt: true,
         items: {
           select: {
@@ -81,7 +85,27 @@ export default async function OrderPage({ params }: PageProps<"/orders/[id]">) {
             );
           })}
         </ul>
-        <p className="flex justify-between border-t border-line py-4 text-base font-bold">
+        <dl className="border-t border-line pt-3 space-y-1.5 text-left text-sm text-ink-2">
+          {order.promoDiscount > 0 && (
+            <div className="flex justify-between">
+              <dt>
+                {t.summary.promo} {order.promoCodeText}
+              </dt>
+              <dd className="text-brand tabular">−{formatPrice(order.promoDiscount, locale)}</dd>
+            </div>
+          )}
+          <div className="flex justify-between">
+            <dt>{order.deliveryMethod === "PICKUP" ? t.checkout.pickup : t.summary.delivery}</dt>
+            <dd className="tabular">
+              {order.deliveryMethod === "PICKUP" || order.deliveryFee === 0
+                ? t.summary.deliveryFree
+                : order.deliveryFee == null
+                  ? t.summary.deliveryValue
+                  : formatPrice(order.deliveryFee, locale)}
+            </dd>
+          </div>
+        </dl>
+        <p className="flex justify-between py-4 text-base font-bold">
           <span>{t.orders.total}</span>
           <span className="tabular">{formatPrice(order.totalAmount, locale)}</span>
         </p>

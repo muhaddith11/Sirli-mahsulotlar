@@ -1,12 +1,22 @@
 import Link from "next/link";
-import { Send, Store, Truck } from "lucide-react";
+import { Clock, MapPin, Phone, Send, Store, Truck } from "lucide-react";
 import { localized, type Dictionary, type Locale } from "@/i18n";
+import type { StoreSettingsData } from "@/lib/services/delivery";
+import { formatPhone } from "@/lib/format";
 import type { HeaderCategory } from "./header";
 import { Logo } from "./logo";
 
-type Props = { t: Dictionary; locale: Locale; categories: HeaderCategory[]; botUrl: string | null };
+type Props = {
+  t: Dictionary;
+  locale: Locale;
+  categories: HeaderCategory[];
+  botUrl: string | null;
+  store: StoreSettingsData;
+};
 
-export function Footer({ t, locale, categories, botUrl }: Props) {
+export function Footer({ t, locale, categories, botUrl, store }: Props) {
+  const address = localized(locale, store.pickupAddress ?? "", store.pickupAddressRu);
+  const hours = localized(locale, store.workingHours ?? "", store.workingHoursRu);
   return (
     <footer className="mt-12 border-t border-line bg-surface">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr] lg:px-6">
@@ -49,6 +59,26 @@ export function Footer({ t, locale, categories, botUrl }: Props) {
               <Store className="size-4 shrink-0 text-ink-3" />
               {t.footer.pickup}
             </li>
+            {store.phone && (
+              <li className="flex items-center gap-2">
+                <Phone className="size-4 shrink-0 text-ink-3" />
+                <a href={`tel:${store.phone.replace(/[^\d+]/g, "")}`} className="tabular hover:text-brand">
+                  {formatPhone(store.phone)}
+                </a>
+              </li>
+            )}
+            {address && (
+              <li className="flex items-start gap-2">
+                <MapPin className="mt-0.5 size-4 shrink-0 text-ink-3" />
+                {address}
+              </li>
+            )}
+            {hours && (
+              <li className="flex items-center gap-2">
+                <Clock className="size-4 shrink-0 text-ink-3" />
+                {hours}
+              </li>
+            )}
           </ul>
         </div>
       </div>

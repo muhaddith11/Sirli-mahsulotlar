@@ -5,12 +5,13 @@ import { Header } from "@/components/shop/header";
 import { TelegramBackButton } from "@/components/shop/telegram-back-button";
 import { I18nProvider } from "@/i18n/provider";
 import { getI18n } from "@/i18n/server";
+import { getStoreSettings } from "@/lib/services/delivery";
 import { listCategories } from "@/lib/services/products";
 import { CartProvider } from "@/providers/cart-provider";
 import { TelegramProvider } from "@/providers/telegram-provider";
 
 export default async function ShopLayout({ children }: { children: React.ReactNode }) {
-  const [{ locale, t }, categories] = await Promise.all([getI18n(), listCategories()]);
+  const [{ locale, t }, categories, store] = await Promise.all([getI18n(), listCategories(), getStoreSettings()]);
   const navCategories = categories.map(({ id, name, nameRu, slug }) => ({ id, name, nameRu, slug }));
   const botUsername = process.env.TELEGRAM_BOT_USERNAME;
 
@@ -27,6 +28,7 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
               locale={locale}
               categories={navCategories}
               botUrl={botUsername ? `https://t.me/${botUsername}` : null}
+              store={store}
             />
           </div>
           <BottomNav />

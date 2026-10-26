@@ -47,10 +47,14 @@ function adminLinkRow(orderId: string): InlineKeyboardButton[] {
   return appUrl ? [{ text: "📋 Admin panelda ochish", url: `${appUrl}/admin/orders/${orderId}` }] : [];
 }
 
-/** Do'kon egasi xabaridagi tugmalar */
-export function orderAdminKeyboard(orderId: string, status: OrderStatus): InlineKeyboardMarkup {
+/** Do'kon egasi xabaridagi tugmalar. Olib ketiladigan buyurtmada "Yetkazilmoqda" bosqichi yo'q. */
+export function orderAdminKeyboard(
+  orderId: string,
+  status: OrderStatus,
+  deliveryMethod: "DELIVERY" | "PICKUP" = "DELIVERY",
+): InlineKeyboardMarkup {
   const rows: InlineKeyboardButton[][] = [];
-  const next = NEXT[status];
+  const next = NEXT[status].filter((s) => deliveryMethod === "DELIVERY" || s !== "DELIVERING");
   if (next.length > 0) rows.push(next.slice(0, 2).map((s) => statusButton(orderId, s)));
   if (next.length > 2) rows.push(next.slice(2).map((s) => statusButton(orderId, s)));
   if (status !== "COMPLETED" && status !== "CANCELLED") {

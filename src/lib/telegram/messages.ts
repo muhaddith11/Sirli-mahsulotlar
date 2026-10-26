@@ -16,6 +16,12 @@ export type OrderForMessage = {
   phone: string;
   deliveryAddress: string;
   comment: string | null;
+  deliveryMethod?: "DELIVERY" | "PICKUP";
+  deliveryZoneName?: string | null;
+  deliveryFee?: number | null;
+  itemsAmount?: number;
+  promoCodeText?: string | null;
+  promoDiscount?: number;
   totalAmount: number;
   createdAt: Date;
   locale?: string;
@@ -36,8 +42,13 @@ export function newOrderMessage(order: OrderForMessage): string {
     `👤 <b>Mijoz:</b> ${e(order.customerName)}`,
     // Telegram HTML'da tel: havolalari qo'llab-quvvatlanmaydi; raqamni klient o'zi bosiladigan qiladi
     `📞 <b>Telefon:</b> ${formatPhone(order.phone)}`,
-    `📍 <b>Manzil:</b> ${e(order.deliveryAddress)}`,
   ];
+  if (order.deliveryMethod === "PICKUP") {
+    lines.push("🏪 <b>Olib ketadi:</b> do'kondan");
+  } else {
+    if (order.deliveryZoneName) lines.push(`🗺 <b>Viloyat:</b> ${e(order.deliveryZoneName)}`);
+    lines.push(`📍 <b>Manzil:</b> ${e(order.deliveryAddress)}`);
+  }
 
   if (order.comment) lines.push(`💬 <b>Izoh:</b> ${e(order.comment)}`);
 
@@ -60,8 +71,12 @@ export function newOrderMessage(order: OrderForMessage): string {
   const totalQuantity = order.items.reduce((sum, item) => sum + item.quantity, 0);
   lines.push(
     "",
-    `🧮 Jami: ${totalQuantity} dona`,
-    `💰 <b>Umumiy summa: ${formatPrice(order.totalAmount)}</b>`,
+    `🧮 Mahsulotlar: ${totalQuantity} dona — ${formatPrice(order.itemsAmount || order.totalAmount)}`,
+    ...(order.promoDiscount ? [`🎟 Promokod ${e(order.promoCodeText ?? "")}: −${formatPrice(order.promoDiscount)}`] : []),
+    ...(order.deliveryMethod === "PICKUP"
+      ? []
+      : [`🚚 Yetkazish: ${order.deliveryFee == null ? "narxni operator aytadi" : order.deliveryFee === 0 ? "bepul" : formatPrice(order.deliveryFee)}`]),
+    `💰 <b>To'lov: ${formatPrice(order.totalAmount)}</b>${order.deliveryFee == null && order.deliveryMethod !== "PICKUP" ? " + yetkazish" : ""}`,
     "",
     `🕒 ${formatDate(order.createdAt)}`,
   );
