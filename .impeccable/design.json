@@ -1,0 +1,567 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-26T15:11:30.772Z",
+  "title": "Design System: Sirli mahsulotlar",
+  "extensions": {
+    "colorMeta": {
+      "brand": {
+        "role": "primary",
+        "displayName": "Sirli Red",
+        "canonical": "#c8172b",
+        "tonalRamp": [
+          "oklch(15% 0.2 23.7)",
+          "oklch(26% 0.2 23.7)",
+          "oklch(37% 0.2 23.7)",
+          "oklch(48% 0.2 23.7)",
+          "oklch(60% 0.2 23.7)",
+          "oklch(72% 0.2 23.7)",
+          "oklch(84% 0.2 23.7)",
+          "oklch(95% 0.07 23.7)"
+        ]
+      },
+      "brand-hover": {
+        "role": "primary",
+        "displayName": "Deep Red",
+        "canonical": "#b3121f",
+        "tonalRamp": [
+          "oklch(15% 0.19 25.4)",
+          "oklch(26% 0.19 25.4)",
+          "oklch(37% 0.19 25.4)",
+          "oklch(48% 0.19 25.4)",
+          "oklch(60% 0.19 25.4)",
+          "oklch(72% 0.19 25.4)",
+          "oklch(84% 0.19 25.4)",
+          "oklch(95% 0.066 25.4)"
+        ]
+      },
+      "brand-press": {
+        "role": "primary",
+        "displayName": "Oxblood Press",
+        "canonical": "#970f1a",
+        "tonalRamp": [
+          "oklch(15% 0.167 25.1)",
+          "oklch(26% 0.167 25.1)",
+          "oklch(37% 0.167 25.1)",
+          "oklch(48% 0.167 25.1)",
+          "oklch(60% 0.167 25.1)",
+          "oklch(72% 0.167 25.1)",
+          "oklch(84% 0.167 25.1)",
+          "oklch(95% 0.058 25.1)"
+        ]
+      },
+      "brand-soft": {
+        "role": "primary",
+        "displayName": "Red Blush",
+        "canonical": "#fcecec",
+        "tonalRamp": [
+          "oklch(15% 0.017 17.5)",
+          "oklch(26% 0.017 17.5)",
+          "oklch(37% 0.017 17.5)",
+          "oklch(48% 0.017 17.5)",
+          "oklch(60% 0.017 17.5)",
+          "oklch(72% 0.017 17.5)",
+          "oklch(84% 0.017 17.5)",
+          "oklch(95% 0.006 17.5)"
+        ]
+      },
+      "page": {
+        "role": "neutral",
+        "displayName": "Warm Paper",
+        "canonical": "#f7f4ef",
+        "tonalRamp": [
+          "oklch(15% 0.007 80.7)",
+          "oklch(26% 0.007 80.7)",
+          "oklch(37% 0.007 80.7)",
+          "oklch(48% 0.007 80.7)",
+          "oklch(60% 0.007 80.7)",
+          "oklch(72% 0.007 80.7)",
+          "oklch(84% 0.007 80.7)",
+          "oklch(95% 0.003 80.7)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0 89.9)",
+          "oklch(26% 0 89.9)",
+          "oklch(37% 0 89.9)",
+          "oklch(48% 0 89.9)",
+          "oklch(60% 0 89.9)",
+          "oklch(72% 0 89.9)",
+          "oklch(84% 0 89.9)",
+          "oklch(95% 0 89.9)"
+        ]
+      },
+      "cream": {
+        "role": "neutral",
+        "displayName": "Enamel Cream",
+        "canonical": "#f3e9d8",
+        "tonalRamp": [
+          "oklch(15% 0.025 81.1)",
+          "oklch(26% 0.025 81.1)",
+          "oklch(37% 0.025 81.1)",
+          "oklch(48% 0.025 81.1)",
+          "oklch(60% 0.025 81.1)",
+          "oklch(72% 0.025 81.1)",
+          "oklch(84% 0.025 81.1)",
+          "oklch(95% 0.009 81.1)"
+        ]
+      },
+      "cream-soft": {
+        "role": "neutral",
+        "displayName": "Soft Cream",
+        "canonical": "#faf5ec",
+        "tonalRamp": [
+          "oklch(15% 0.013 82.4)",
+          "oklch(26% 0.013 82.4)",
+          "oklch(37% 0.013 82.4)",
+          "oklch(48% 0.013 82.4)",
+          "oklch(60% 0.013 82.4)",
+          "oklch(72% 0.013 82.4)",
+          "oklch(84% 0.013 82.4)",
+          "oklch(95% 0.005 82.4)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#1f1b18",
+        "tonalRamp": [
+          "oklch(15% 0.008 59.2)",
+          "oklch(26% 0.008 59.2)",
+          "oklch(37% 0.008 59.2)",
+          "oklch(48% 0.008 59.2)",
+          "oklch(60% 0.008 59.2)",
+          "oklch(72% 0.008 59.2)",
+          "oklch(84% 0.008 59.2)",
+          "oklch(95% 0.003 59.2)"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink Muted",
+        "canonical": "#5e564f",
+        "tonalRamp": [
+          "oklch(15% 0.015 63.7)",
+          "oklch(26% 0.015 63.7)",
+          "oklch(37% 0.015 63.7)",
+          "oklch(48% 0.015 63.7)",
+          "oklch(60% 0.015 63.7)",
+          "oklch(72% 0.015 63.7)",
+          "oklch(84% 0.015 63.7)",
+          "oklch(95% 0.005 63.7)"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Ink Faint",
+        "canonical": "#746b64",
+        "tonalRamp": [
+          "oklch(15% 0.016 60.4)",
+          "oklch(26% 0.016 60.4)",
+          "oklch(37% 0.016 60.4)",
+          "oklch(48% 0.016 60.4)",
+          "oklch(60% 0.016 60.4)",
+          "oklch(72% 0.016 60.4)",
+          "oklch(84% 0.016 60.4)",
+          "oklch(95% 0.005 60.4)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#ebe5dd",
+        "tonalRamp": [
+          "oklch(15% 0.013 75.4)",
+          "oklch(26% 0.013 75.4)",
+          "oklch(37% 0.013 75.4)",
+          "oklch(48% 0.013 75.4)",
+          "oklch(60% 0.013 75.4)",
+          "oklch(72% 0.013 75.4)",
+          "oklch(84% 0.013 75.4)",
+          "oklch(95% 0.004 75.4)"
+        ]
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Hairline Strong",
+        "canonical": "#d8cfc4",
+        "tonalRamp": [
+          "oklch(15% 0.018 73.1)",
+          "oklch(26% 0.018 73.1)",
+          "oklch(37% 0.018 73.1)",
+          "oklch(48% 0.018 73.1)",
+          "oklch(60% 0.018 73.1)",
+          "oklch(72% 0.018 73.1)",
+          "oklch(84% 0.018 73.1)",
+          "oklch(95% 0.006 73.1)"
+        ]
+      },
+      "success": {
+        "role": "status",
+        "displayName": "Success Green",
+        "canonical": "#15803d",
+        "tonalRamp": [
+          "oklch(15% 0.137 150.1)",
+          "oklch(26% 0.137 150.1)",
+          "oklch(37% 0.137 150.1)",
+          "oklch(48% 0.137 150.1)",
+          "oklch(60% 0.137 150.1)",
+          "oklch(72% 0.137 150.1)",
+          "oklch(84% 0.137 150.1)",
+          "oklch(95% 0.048 150.1)"
+        ]
+      },
+      "success-soft": {
+        "role": "status",
+        "displayName": "Success Wash",
+        "canonical": "#e8f5ec",
+        "tonalRamp": [
+          "oklch(15% 0.018 155.8)",
+          "oklch(26% 0.018 155.8)",
+          "oklch(37% 0.018 155.8)",
+          "oklch(48% 0.018 155.8)",
+          "oklch(60% 0.018 155.8)",
+          "oklch(72% 0.018 155.8)",
+          "oklch(84% 0.018 155.8)",
+          "oklch(95% 0.006 155.8)"
+        ]
+      },
+      "warning": {
+        "role": "status",
+        "displayName": "Amber",
+        "canonical": "#b45309",
+        "tonalRamp": [
+          "oklch(15% 0.146 49)",
+          "oklch(26% 0.146 49)",
+          "oklch(37% 0.146 49)",
+          "oklch(48% 0.146 49)",
+          "oklch(60% 0.146 49)",
+          "oklch(72% 0.146 49)",
+          "oklch(84% 0.146 49)",
+          "oklch(95% 0.051 49)"
+        ]
+      },
+      "warning-soft": {
+        "role": "status",
+        "displayName": "Amber Wash",
+        "canonical": "#fef3e2",
+        "tonalRamp": [
+          "oklch(15% 0.025 78.9)",
+          "oklch(26% 0.025 78.9)",
+          "oklch(37% 0.025 78.9)",
+          "oklch(48% 0.025 78.9)",
+          "oklch(60% 0.025 78.9)",
+          "oklch(72% 0.025 78.9)",
+          "oklch(84% 0.025 78.9)",
+          "oklch(95% 0.009 78.9)"
+        ]
+      },
+      "info": {
+        "role": "status",
+        "displayName": "Info Blue",
+        "canonical": "#1a56c4",
+        "tonalRamp": [
+          "oklch(15% 0.183 261.3)",
+          "oklch(26% 0.183 261.3)",
+          "oklch(37% 0.183 261.3)",
+          "oklch(48% 0.183 261.3)",
+          "oklch(60% 0.183 261.3)",
+          "oklch(72% 0.183 261.3)",
+          "oklch(84% 0.183 261.3)",
+          "oklch(95% 0.064 261.3)"
+        ]
+      },
+      "info-soft": {
+        "role": "status",
+        "displayName": "Info Wash",
+        "canonical": "#e8f0fe",
+        "tonalRamp": [
+          "oklch(15% 0.021 261.8)",
+          "oklch(26% 0.021 261.8)",
+          "oklch(37% 0.021 261.8)",
+          "oklch(48% 0.021 261.8)",
+          "oklch(60% 0.021 261.8)",
+          "oklch(72% 0.021 261.8)",
+          "oklch(84% 0.021 261.8)",
+          "oklch(95% 0.007 261.8)"
+        ]
+      },
+      "transit": {
+        "role": "status",
+        "displayName": "Transit Violet",
+        "canonical": "#6b35c2",
+        "tonalRamp": [
+          "oklch(15% 0.2 295)",
+          "oklch(26% 0.2 295)",
+          "oklch(37% 0.2 295)",
+          "oklch(48% 0.2 295)",
+          "oklch(60% 0.2 295)",
+          "oklch(72% 0.2 295)",
+          "oklch(84% 0.2 295)",
+          "oklch(95% 0.07 295)"
+        ]
+      },
+      "transit-soft": {
+        "role": "status",
+        "displayName": "Transit Wash",
+        "canonical": "#f1e9fd",
+        "tonalRamp": [
+          "oklch(15% 0.028 303.9)",
+          "oklch(26% 0.028 303.9)",
+          "oklch(37% 0.028 303.9)",
+          "oklch(48% 0.028 303.9)",
+          "oklch(60% 0.028 303.9)",
+          "oklch(72% 0.028 303.9)",
+          "oklch(84% 0.028 303.9)",
+          "oklch(95% 0.01 303.9)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "Lowercase 'sirli' beside the pot mark; the only 800 weight in the storefront."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page titles on phones."
+      },
+      "headline-desktop": {
+        "displayName": "Headline (md+)",
+        "purpose": "Page titles from md."
+      },
+      "section-title": {
+        "displayName": "Section title",
+        "purpose": "Home row headings with a 'Barchasi ›' link; 24px from md."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Panel and sheet headings."
+      },
+      "price": {
+        "displayName": "Price",
+        "purpose": "Card price, tabular; red only when discounted."
+      },
+      "price-large": {
+        "displayName": "Price large",
+        "purpose": "Product page price."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Primary button labels; 14px on card buttons."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default UI text."
+      },
+      "card-name": {
+        "displayName": "Card name",
+        "purpose": "Muted two-line product name under the price."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Counts, metadata, tags, status pills."
+      },
+      "tab-label": {
+        "displayName": "Tab label",
+        "purpose": "Bottom-nav captions."
+      }
+    },
+    "shadows": [
+      {
+        "name": "bar",
+        "value": "0 -6px 20px -12px rgb(31 27 24 / 0.28)",
+        "purpose": "Upward shadow on sticky bottom action bars (cart, checkout, product purchase)."
+      },
+      {
+        "name": "pop",
+        "value": "0 12px 32px -12px rgb(31 27 24 / 0.32)",
+        "purpose": "Toasts and floating popovers."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "The single easing for all state transitions."
+      },
+      {
+        "name": "control-swap",
+        "value": "200ms ease-out; opacity + transform scale 0.95 to 1",
+        "purpose": "Savatga button to quantity stepper swap; button press scales to 0.98."
+      },
+      {
+        "name": "badge-bump",
+        "value": "320ms ease-out; scale 1 to 1.28 to 1",
+        "purpose": "Cart count badge when the count increases."
+      },
+      {
+        "name": "sheet-in",
+        "value": "220ms ease-out; translateY(24px) + opacity",
+        "purpose": "Bottom filter sheet entrance."
+      },
+      {
+        "name": "media-zoom",
+        "value": "500ms ease-out; scale 1.03 (category tiles 1.04)",
+        "purpose": "Image hover on product cards and category tiles."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "1ms durations",
+        "purpose": "All animations and transitions collapse under prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Brand red solid action (header Catalog, checkout submit, admin primary).",
+      "html": "<button class=\"ds-btn-primary\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"7\" height=\"7\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"14\" y=\"14\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"3\" y=\"14\" rx=\"1\"/></svg>Katalog</button>",
+      "css": ".ds-btn-primary{font-family:var(--font-sans,'Golos Text',system-ui,sans-serif);display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 16px;border:0;border-radius:var(--radius-field,10px);background:var(--color-brand,#c8172b);color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:background-color 200ms cubic-bezier(0.22,1,0.36,1),transform 200ms cubic-bezier(0.22,1,0.36,1)}.ds-btn-primary:hover{background:var(--color-brand-hover,#b3121f)}.ds-btn-primary:active{background:var(--color-brand-press,#970f1a);transform:scale(0.98)}.ds-btn-primary:focus-visible{outline:2px solid var(--color-brand,#c8172b);outline-offset:2px}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action with a hairline-strong stroke.",
+      "html": "<button class=\"ds-btn-outline\">Telegram orqali ulashish</button>",
+      "css": ".ds-btn-outline{font-family:var(--font-sans,'Golos Text',system-ui,sans-serif);display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 12px;border:1px solid var(--color-line-strong,#d8cfc4);border-radius:var(--radius-field,10px);background:var(--color-surface,#fff);color:var(--color-ink,#1f1b18);font-size:14px;font-weight:500;cursor:pointer;transition:border-color 150ms}.ds-btn-outline:hover{border-color:var(--color-ink-3,#746b64)}.ds-btn-outline:focus-visible{outline:2px solid var(--color-brand,#c8172b);outline-offset:2px}"
+    },
+    {
+      "name": "Cart Control (Savatga to stepper)",
+      "kind": "custom",
+      "refersTo": "quantity-stepper",
+      "description": "Signature: the card add button and the − n + stepper share one 36px box; the stepper fades and scales in on first add.",
+      "html": "<div class=\"ds-cc\"><button class=\"ds-cc-add\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"8\" cy=\"21\" r=\"1\"/><circle cx=\"19\" cy=\"21\" r=\"1\"/><path d=\"M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12\"/></svg>Savatga</button></div><div class=\"ds-cc\" style=\"margin-top:8px\"><div class=\"ds-cc-step\"><button aria-label=\"Kamaytirish\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/></svg></button><span aria-live=\"polite\">2</span><button aria-label=\"Ko'paytirish\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"M12 5v14\"/></svg></button></div></div>",
+      "css": ".ds-cc{font-family:var(--font-sans,'Golos Text',system-ui,sans-serif);position:relative;width:180px;height:36px}.ds-cc-add{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:var(--radius-field,10px);background:var(--color-brand,#c8172b);color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:background-color 200ms cubic-bezier(0.22,1,0.36,1),transform 200ms cubic-bezier(0.22,1,0.36,1),opacity 200ms cubic-bezier(0.22,1,0.36,1)}.ds-cc-add:hover{background:var(--color-brand-hover,#b3121f)}.ds-cc-add:active{transform:scale(0.98);background:var(--color-brand-press,#970f1a)}.ds-cc-add:focus-visible{outline:2px solid var(--color-brand,#c8172b);outline-offset:2px}.ds-cc-step button:focus-visible{outline:2px solid var(--color-brand,#c8172b);outline-offset:2px}.ds-cc-step{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;border-radius:var(--radius-field,10px);background:var(--color-brand-soft,#fcecec);color:var(--color-brand,#c8172b)}.ds-cc-step button{display:grid;place-items:center;width:36px;height:100%;border:0;background:transparent;color:inherit;cursor:pointer}.ds-cc-step button:first-child{border-radius:10px 0 0 10px}.ds-cc-step button:last-child{border-radius:0 10px 10px 0}.ds-cc-step button:hover{background:rgb(200 23 43 / 0.1)}.ds-cc-step span{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--color-ink,#1f1b18)}"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Header search; the canonical text input treatment.",
+      "html": "<form class=\"ds-search\" role=\"search\"><input type=\"search\" placeholder=\"Kastryulka, choynak, to'plam...\" aria-label=\"Qidirish\"><button type=\"submit\" aria-label=\"Qidirish\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg></button></form>",
+      "css": ".ds-search{font-family:var(--font-sans,'Golos Text',system-ui,sans-serif);position:relative;display:flex;width:320px}.ds-search input{width:100%;height:44px;padding:0 48px 0 14px;border:1px solid var(--color-line-strong,#d8cfc4);border-radius:var(--radius-field,10px);background:var(--color-surface,#fff);color:var(--color-ink,#1f1b18);font:inherit;font-size:15px;outline:none;caret-color:var(--color-brand,#c8172b);transition:border-color 150ms,box-shadow 150ms}.ds-search input::placeholder{color:var(--color-ink-3,#746b64)}.ds-search input:focus{border-color:var(--color-brand,#c8172b);box-shadow:0 0 0 3px rgb(200 23 43 / 0.15)}.ds-search button{position:absolute;right:4px;top:4px;display:grid;place-items:center;width:40px;height:36px;border:0;border-radius:8px;background:transparent;color:var(--color-ink-2,#5e564f);cursor:pointer}.ds-search button:hover{background:var(--color-page,#f7f4ef);color:var(--color-ink,#1f1b18)}.ds-search button:focus-visible{outline:2px solid var(--color-brand,#c8172b);outline-offset:2px}"
+    },
+    {
+      "name": "Product Card",
+      "kind": "card",
+      "refersTo": "card-product-media",
+      "description": "Boxless card: 4:5 cream media at 12px, discount tag, price first, muted two-line name, add control pinned to the bottom.",
+      "html": "<article class=\"ds-card\"><a class=\"ds-card-media\" href=\"#\" aria-hidden=\"true\" tabindex=\"-1\"><span class=\"ds-card-img\"></span><span class=\"ds-card-tag\">−13%</span></a><div class=\"ds-card-price\"><b>599 000 so'm</b><s>690 000 so'm</s></div><h3 class=\"ds-card-name\"><a href=\"#\">Kastryulka to'plami \"Ko'knori\" (6 dona)</a></h3><button class=\"ds-card-add\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"8\" cy=\"21\" r=\"1\"/><circle cx=\"19\" cy=\"21\" r=\"1\"/><path d=\"M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12\"/></svg>Savatga</button></article>",
+      "css": ".ds-card{font-family:var(--font-sans,'Golos Text',system-ui,sans-serif);width:180px;display:flex;flex-direction:column;color:var(--color-ink,#1f1b18)}.ds-card-media{position:relative;display:block;aspect-ratio:4/5;border-radius:var(--radius-card,12px);background:var(--color-cream,#f3e9d8);overflow:hidden}.ds-card-img{position:absolute;inset:0;transition:transform 500ms cubic-bezier(0.22,1,0.36,1)}.ds-card:hover .ds-card-img{transform:scale(1.03)}.ds-card-tag{position:absolute;left:8px;top:8px;padding:2px 6px;border-radius:6px;background:var(--color-brand,#c8172b);color:#fff;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}.ds-card-price{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 6px;padding-top:10px}.ds-card-price b{font-size:17px;font-weight:700;line-height:1.25;color:var(--color-brand,#c8172b);font-variant-numeric:tabular-nums}.ds-card-price s{font-size:12px;color:var(--color-ink-3,#746b64);font-variant-numeric:tabular-nums}.ds-card-name{margin:4px 0 0;font-size:13px;font-weight:400;line-height:1.375}.ds-card-name a{color:var(--color-ink-2,#5e564f);text-decoration:none}.ds-card-name a:hover{color:var(--color-ink,#1f1b18)}.ds-card-add{margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px;height:36px;border:0;border-radius:var(--radius-field,10px);background:var(--color-brand,#c8172b);color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:background-color 200ms cubic-bezier(0.22,1,0.36,1)}.ds-card-add:hover{background:var(--color-brand-hover,#b3121f)}.ds-card-add:focus-visible{outline:2px solid var(--color-brand,#c8172b);outline-offset:2px}"
+    },
+    {
+      "name": "Category Chips",
+      "kind": "chip",
+      "refersTo": "chip-category",
+      "description": "Desktop header chip row; the Discounts chip leads in red.",
+      "html": "<ul class=\"ds-chips\"><li><a href=\"#\" class=\"ds-chip ds-chip-deal\">Chegirmalar</a></li><li><a href=\"#\" class=\"ds-chip\">Kastryulkalar</a></li><li><a href=\"#\" class=\"ds-chip\">Choynaklar</a></li></ul>",
+      "css": ".ds-chips{font-family:var(--font-sans,'Golos Text',system-ui,sans-serif);display:flex;gap:4px;margin:0;padding:0;list-style:none;font-size:14px}.ds-chip{display:block;padding:6px 12px;border-radius:9999px;color:var(--color-ink-2,#5e564f);text-decoration:none;white-space:nowrap}.ds-chip:hover{background:var(--color-page,#f7f4ef);color:var(--color-ink,#1f1b18)}.ds-chip-deal{color:var(--color-brand,#c8172b);font-weight:600}.ds-chip-deal:hover{background:var(--color-brand-soft,#fcecec);color:var(--color-brand,#c8172b)}.ds-chip:focus-visible{outline:2px solid var(--color-brand,#c8172b);outline-offset:2px}"
+    },
+    {
+      "name": "Bottom Navigation",
+      "kind": "nav",
+      "refersTo": "bottom-nav-item",
+      "description": "Owner-pinned five-tab phone nav; active tab red with 2 stroke, cart badge on the cart icon.",
+      "html": "<nav class=\"ds-bnav\" aria-label=\"Pastki menyu\"><a href=\"#\" class=\"is-active\" aria-current=\"page\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/></svg>Bosh sahifa</a><a href=\"#\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"7\" height=\"7\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"14\" y=\"14\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"3\" y=\"14\" rx=\"1\"/></svg>Katalog</a><a href=\"#\"><span class=\"ds-bnav-ic\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"8\" cy=\"21\" r=\"1\"/><circle cx=\"19\" cy=\"21\" r=\"1\"/><path d=\"M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12\"/></svg><span class=\"ds-badge\">2</span></span>Savat</a><a href=\"#\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\"/><path d=\"M12 22V12\"/><path d=\"m3.3 7 7.703 4.734a2 2 0 0 0 2.004 0L20.7 7\"/></svg>Buyurtmalar</a></nav>",
+      "css": ".ds-bnav{font-family:var(--font-sans,'Golos Text',system-ui,sans-serif);display:grid;grid-template-columns:repeat(4,1fr);width:360px;height:56px;border-top:1px solid var(--color-line,#ebe5dd);background:var(--color-surface,#fff)}.ds-bnav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10.5px;font-weight:500;color:var(--color-ink-3,#746b64);text-decoration:none;white-space:nowrap;transition:color 150ms}.ds-bnav a:hover,.ds-bnav a:active{color:var(--color-ink,#1f1b18)}.ds-bnav a.is-active{color:var(--color-brand,#c8172b)}.ds-bnav a:focus-visible{outline:2px solid var(--color-brand,#c8172b);outline-offset:-2px}.ds-bnav-ic{position:relative;display:inline-flex}.ds-badge{position:absolute;right:-10px;top:-6px;display:grid;place-items:center;height:18px;min-width:18px;padding:0 4px;border-radius:9999px;background:var(--color-brand,#c8172b);color:#fff;font-size:11px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;box-shadow:0 0 0 2px var(--color-surface,#fff)}"
+    },
+    {
+      "name": "Order Status Pills",
+      "kind": "chip",
+      "refersTo": "status-new",
+      "description": "Order state labels from the status tones; never actions.",
+      "html": "<div class=\"ds-status\"><span class=\"ds-s-new\">Yangi</span><span class=\"ds-s-prep\">Tayyorlanmoqda</span><span class=\"ds-s-ship\">Yetkazilmoqda</span><span class=\"ds-s-done\">Yakunlandi</span><span class=\"ds-s-off\">Bekor qilindi</span></div>",
+      "css": ".ds-status{font-family:var(--font-sans,'Golos Text',system-ui,sans-serif);display:flex;flex-wrap:wrap;gap:6px}.ds-status span{padding:2px 8px;border-radius:6px;font-size:12px;font-weight:600}.ds-s-new{background:var(--color-info-soft,#e8f0fe);color:var(--color-info,#1a56c4)}.ds-s-prep{background:var(--color-warning-soft,#fef3e2);color:var(--color-warning,#b45309)}.ds-s-ship{background:var(--color-transit-soft,#f1e9fd);color:var(--color-transit,#6b35c2)}.ds-s-done{background:var(--color-success-soft,#e8f5ec);color:var(--color-success,#15803d)}.ds-s-off{background:var(--color-page,#f7f4ef);color:var(--color-ink-3,#746b64)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Everyday Marketplace",
+    "overview": "Sirli looks like the shopping app the buyer already uses every day, built to the craft level of Uzum Market. Search sits at the top, categories come first, then a dense product grid with clear prices, and every card lets you add to the cart in one tap. The owner chose this familiar layout after seeing three directions. It is meant to stand out through precision and speed, not decoration. There is no themed costume and no boutique hero banner. White product surfaces sit on a light, warm grey-cream page. Brand red is the only color that asks for action, and near-black brown ink carries everything else.\n\nThe layout is phone-first and dense. One UI serves both the website and the Telegram Mini App. On phones, a sticky search bar and a five-tab bottom navigation frame the page. On desktop, the header gains a red Catalog button, wide search, Orders and Cart links, and a row of category chips below. The product grid grows from 2 columns to 5. Motion is short and uses ease-out, and it only animates transform, opacity and color. The signature moment is the card's \"Savatga\" button, which turns into a − n + stepper in the same spot.\n\nThe product art in the build is placeholder demo SVG illustration on tinted backgrounds. Treat it as a stand-in for real photography, not as a style to extend.",
+    "keyCharacteristics": [
+      "One action color (brand red) on warm neutrals (cream, off-white page, white surfaces)",
+      "Golos Text throughout, weights 400–700 (800 only for the wordmark), tabular figures on every number",
+      "Two radii carry the system: 12px for cards and media, 10px for fields and buttons. Chips are fully round.",
+      "Flat at rest. Shadows appear only on fixed bars and floating popovers.",
+      "Lucide line icons at 1.75 stroke (2 when active or inside buttons)",
+      "Bilingual Uzbek/Russian, so every label must survive a longer Russian string"
+    ],
+    "rules": [
+      {
+        "name": "The One Red Rule",
+        "body": "Red is the only action and brand color. If something is red, it is either tappable or a price or discount. No second accent color is allowed for buttons, links or highlights.",
+        "section": "colors"
+      },
+      {
+        "name": "The Red Means Deal Rule",
+        "body": "A price turns red only when it is discounted, and then the old price appears beside it in ink-3 with a strikethrough. A regular price stays ink.",
+        "section": "colors"
+      },
+      {
+        "name": "The Cream Backdrop Rule",
+        "body": "Product and category imagery always sits on cream inside a 12px clip. It never sits directly on white or on the page color.",
+        "section": "colors"
+      },
+      {
+        "name": "The Price First Rule",
+        "body": "On a product card, the price comes before the name and is heavier and larger than it. The name is muted at 13px.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Every price, count, quantity, order number and date uses tabular figures.",
+        "section": "typography"
+      },
+      {
+        "name": "The Thumb Zone Rule",
+        "body": "On phones, the primary purchase action lives either on the card or in the sticky bar just above the bottom nav. It is never only at the top of the page.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat Card Rule",
+        "body": "Product cards and panels never carry a shadow. Separation comes from surface vs page color, and in admin from a 1px line ring.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** keep brand red as the single action and brand color. Hover is brand-hover and press is brand-press.",
+      "**Do** put product imagery on cream inside a 12px clip, at 4:5 for products and 1:1 for categories.",
+      "**Do** lead product cards with the price (700, 17px, tabular). Use red plus a struck ink-3 old price only when discounted.",
+      "**Do** use the 10px field radius for every button and input, and 12px for every card or panel.",
+      "**Do** keep motion short and ease-out (`cubic-bezier(0.22, 1, 0.36, 1)`), animating only transform, opacity and color, and respect reduced motion.",
+      "**Do** use Lucide line icons at 1.75 stroke, or 2 for active states and inside buttons.",
+      "**Do** test every label in Russian as well as Uzbek."
+    ],
+    "donts": [
+      "**Don't** introduce a second accent color for actions, links or highlights. Status tones are for order status only.",
+      "**Don't** put shadows on cards, tiles or panels. Use Bar and Pop only for floating or fixed layers.",
+      "**Don't** replace the familiar marketplace structure (search, categories, dense grid, add on card) with a boutique banner-led layout or a themed costume.",
+      "**Don't** write unconfirmed promises in UI copy (delivery times, warranties, ratings, reviews, installments).",
+      "**Don't** remove or reorder the five-tab bottom navigation on phones."
+    ]
+  }
+}

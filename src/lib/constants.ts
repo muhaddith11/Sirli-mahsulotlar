@@ -32,11 +32,11 @@ export const ORDER_STATUS_EMOJI: Record<OrderStatus, string> = {
 
 /** Admin paneldagi status belgilari uchun Tailwind klasslari */
 export const ORDER_STATUS_STYLES: Record<OrderStatus, string> = {
-  NEW: "bg-sky-100 text-sky-800 ring-sky-200",
-  PREPARING: "bg-amber-100 text-amber-800 ring-amber-200",
-  DELIVERING: "bg-violet-100 text-violet-800 ring-violet-200",
-  COMPLETED: "bg-emerald-100 text-emerald-800 ring-emerald-200",
-  CANCELLED: "bg-stone-200 text-stone-600 ring-stone-300",
+  NEW: "bg-info-soft text-info ring-info/20",
+  PREPARING: "bg-warning-soft text-warning ring-warning/20",
+  DELIVERING: "bg-transit-soft text-transit ring-transit/20",
+  COMPLETED: "bg-success-soft text-success ring-success/20",
+  CANCELLED: "bg-page text-ink-3 ring-line-strong",
 };
 
 export const ORDER_SOURCE_LABELS: Record<OrderSource, string> = {

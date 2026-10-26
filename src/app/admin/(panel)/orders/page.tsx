@@ -63,7 +63,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
               href={href({ status: s })}
               className={cn(
                 "inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-semibold ring-1 transition",
-                status === s ? "bg-ink text-white ring-ink" : "bg-white text-ink-2 ring-line hover:text-ink",
+                status === s ? "bg-ink text-white ring-ink" : "bg-surface text-ink-2 ring-line hover:text-ink",
               )}
             >
               {s ? ORDER_STATUS_LABELS[s] : "Hammasi"}
@@ -78,7 +78,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
             name="q"
             defaultValue={q}
             placeholder="Ism, telefon yoki #raqam"
-            className="h-10 w-full rounded-[var(--radius-field)] border border-line-strong bg-white pl-9 pr-3 text-sm outline-none focus:border-brand"
+            className="h-10 w-full rounded-[var(--radius-field)] border border-line-strong bg-surface pl-9 pr-3 text-sm outline-none focus:border-brand"
           />
         </form>
       </div>
@@ -98,9 +98,9 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
             {orders.map((order) => (
               <li
                 key={order.id}
-                className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2 rounded-[var(--radius-card)] bg-white p-4 ring-1 ring-line md:grid-cols-[80px_1.4fr_1fr_150px_170px]"
+                className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2 rounded-[var(--radius-card)] bg-surface p-4 ring-1 ring-line md:grid-cols-[80px_1.4fr_1fr_150px_170px]"
               >
-                <Link href={`/admin/orders/${order.id}`} className="font-extrabold tabular-nums hover:text-brand">
+                <Link href={`/admin/orders/${order.id}`} className="font-bold tabular-nums hover:text-brand">
                   #{order.number}
                   <span className="block text-[11px] font-medium text-ink-3 md:hidden">{formatDate(order.createdAt)}</span>
                 </Link>
@@ -116,7 +116,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
                   {order._count.items} xil mahsulot · {ORDER_SOURCE_LABELS[order.source]}
                   <span className="hidden text-xs text-ink-3 md:block">{formatDate(order.createdAt)}</span>
                 </div>
-                <div className="row-start-4 font-extrabold md:row-start-auto">{formatPrice(order.totalAmount)}</div>
+                <div className="row-start-4 font-bold md:row-start-auto">{formatPrice(order.totalAmount)}</div>
                 <div className="col-start-2 row-start-1 md:col-start-auto md:row-start-auto">
                   <OrderStatusSelect key={order.status} orderId={order.id} status={order.status} />
                 </div>

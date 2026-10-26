@@ -50,7 +50,7 @@ export function ProductForm({ product, categories }: Props) {
       {product?.id && <input type="hidden" name="id" value={product.id} />}
 
       <div className="space-y-6">
-        <section className="space-y-4 rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-line">
+        <section className="space-y-4 rounded-[var(--radius-card)] bg-surface p-5 ring-1 ring-line">
           <h2 className="font-bold">Asosiy ma&apos;lumot</h2>
           <Field label="Nomi" error={errors.name}>
             <input
@@ -96,7 +96,7 @@ export function ProductForm({ product, categories }: Props) {
           </Field>
         </section>
 
-        <section className="rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-line">
+        <section className="rounded-[var(--radius-card)] bg-surface p-5 ring-1 ring-line">
           <h2 className="mb-1 font-bold">Rasmlar</h2>
           <p className="mb-4 text-xs text-ink-3">Birinchi rasm katalogda ko&apos;rinadi. JPG/PNG/WEBP, 5 MB gacha.</p>
           <ImageManager initial={product?.images ?? []} error={errors.images} />
@@ -104,7 +104,7 @@ export function ProductForm({ product, categories }: Props) {
       </div>
 
       <div className="space-y-6 lg:sticky lg:top-8">
-        <section className="space-y-4 rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-line">
+        <section className="space-y-4 rounded-[var(--radius-card)] bg-surface p-5 ring-1 ring-line">
           <h2 className="font-bold">Narx va ombor</h2>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Narxi (so'm)" error={errors.price}>
@@ -159,7 +159,7 @@ export function ProductForm({ product, categories }: Props) {
           </Field>
         </section>
 
-        <section className="space-y-3 rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-line">
+        <section className="space-y-3 rounded-[var(--radius-card)] bg-surface p-5 ring-1 ring-line">
           <Field label="Kategoriya" error={errors.categoryId}>
             <select name="categoryId" required defaultValue={product?.categoryId ?? ""} className={adminInput}>
               <option value="" disabled>
@@ -183,7 +183,7 @@ export function ProductForm({ product, categories }: Props) {
         <div className="flex gap-2">
           <Link
             href="/admin/products"
-            className="flex h-12 flex-1 items-center justify-center rounded-[var(--radius-field)] bg-white text-sm font-bold ring-1 ring-line hover:bg-page"
+            className="flex h-12 flex-1 items-center justify-center rounded-[var(--radius-field)] bg-surface text-sm font-bold ring-1 ring-line hover:bg-page"
           >
             Bekor qilish
           </Link>

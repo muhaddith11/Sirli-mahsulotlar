@@ -24,7 +24,7 @@ export function PageHeader({
 }
 
 export function Card({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <div className={cn("rounded-[var(--radius-card)] bg-white ring-1 ring-line", className)}>{children}</div>;
+  return <div className={cn("rounded-[var(--radius-card)] bg-surface ring-1 ring-line", className)}>{children}</div>;
 }
 
 export function StatusBadge({ status }: { status: OrderStatus }) {
@@ -40,8 +40,8 @@ export function StockBadge({ stock }: { stock: number }) {
     stock <= 0
       ? "bg-brand-soft text-brand"
       : stock <= LOW_STOCK_THRESHOLD
-        ? "bg-amber-100 text-amber-800"
-        : "bg-emerald-100 text-emerald-800";
+        ? "bg-warning-soft text-warning"
+        : "bg-success-soft text-success";
   return (
     <span className={cn("inline-flex rounded-full px-2.5 py-1 text-xs font-bold tabular-nums", style)}>
       {stock <= 0 ? "Tugagan" : `${stock} dona`}
@@ -61,7 +61,7 @@ export function PrimaryLink({ href, children }: { href: string; children: React.
 }
 
 export function EmptyState({ children }: { children: React.ReactNode }) {
-  return <p className="rounded-[var(--radius-card)] bg-white p-10 text-center text-sm text-ink-2 ring-1 ring-line">{children}</p>;
+  return <p className="rounded-[var(--radius-card)] bg-surface p-10 text-center text-sm text-ink-2 ring-1 ring-line">{children}</p>;
 }
 
 /** Admin ro'yxatlari uchun sahifalash */
@@ -75,8 +75,8 @@ export function Pagination({ page, totalPages, hrefFor }: { page: number; totalP
           href={hrefFor(p)}
           aria-current={p === page ? "page" : undefined}
           className={cn(
-            "grid size-9 place-items-center rounded-lg text-sm font-bold",
-            p === page ? "bg-ink text-white" : "bg-white ring-1 ring-line hover:ring-line-strong",
+            "grid size-9 place-items-center rounded-[var(--radius-field)] text-sm font-bold",
+            p === page ? "bg-ink text-white" : "bg-surface ring-1 ring-line hover:ring-line-strong",
           )}
         >
           {p}

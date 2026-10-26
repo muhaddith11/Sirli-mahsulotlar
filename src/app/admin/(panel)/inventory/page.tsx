@@ -43,9 +43,9 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
   const outCount = all.filter((p) => p.stock <= 0).length;
 
   const summary = [
-    { label: "Ombordagi buyumlar", value: `${formatNumber(totalUnits)} dona`, icon: Boxes, tone: "bg-sky-50 text-sky-700" },
+    { label: "Ombordagi buyumlar", value: `${formatNumber(totalUnits)} dona`, icon: Boxes, tone: "bg-info-soft text-info" },
     { label: "Ombor qiymati", value: formatPrice(stockValue), icon: Wallet, tone: "bg-success-soft text-success" },
-    { label: `Kam qolgan (≤ ${LOW_STOCK_THRESHOLD})`, value: String(lowCount), icon: CircleAlert, tone: "bg-amber-50 text-amber-700" },
+    { label: `Kam qolgan (≤ ${LOW_STOCK_THRESHOLD})`, value: String(lowCount), icon: CircleAlert, tone: "bg-warning-soft text-warning" },
     { label: "Tugagan", value: String(outCount), icon: PackageX, tone: "bg-brand-soft text-brand" },
   ];
 
@@ -55,13 +55,13 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
 
       <div className="mb-6 grid grid-cols-2 gap-3 xl:grid-cols-4">
         {summary.map(({ label, value, icon: Icon, tone }) => (
-          <div key={label} className="flex items-center gap-3 rounded-[var(--radius-card)] bg-white p-4 ring-1 ring-line">
+          <div key={label} className="flex items-center gap-3 rounded-[var(--radius-card)] bg-surface p-4 ring-1 ring-line">
             <span className={cn("grid size-10 shrink-0 place-items-center rounded-[var(--radius-field)]", tone)}>
               <Icon className="size-5" />
             </span>
             <div className="min-w-0">
               <p className="truncate text-xs font-semibold text-ink-2">{label}</p>
-              <p className="truncate text-lg font-extrabold">{value}</p>
+              <p className="truncate text-lg font-bold">{value}</p>
             </div>
           </div>
         ))}
@@ -74,7 +74,7 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
             href={f.key === "all" ? "/admin/inventory" : `/admin/inventory?filter=${f.key}`}
             className={cn(
               "rounded-full px-3.5 py-2 text-sm font-semibold ring-1",
-              filter === f.key ? "bg-ink text-white ring-ink" : "bg-white text-ink-2 ring-line hover:text-ink",
+              filter === f.key ? "bg-ink text-white ring-ink" : "bg-surface text-ink-2 ring-line hover:text-ink",
             )}
           >
             {f.label}
@@ -86,7 +86,7 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
             name="q"
             defaultValue={q}
             placeholder="Nomi yoki artikul"
-            className="h-10 w-full rounded-[var(--radius-field)] border border-line-strong bg-white px-4 text-sm outline-none focus:border-brand"
+            className="h-10 w-full rounded-[var(--radius-field)] border border-line-strong bg-surface px-4 text-sm outline-none focus:border-brand"
           />
         </form>
       </div>
@@ -94,7 +94,7 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
       {products.length === 0 ? (
         <EmptyState>Bu filtr bo&apos;yicha mahsulot yo&apos;q</EmptyState>
       ) : (
-        <div className="overflow-x-auto rounded-[var(--radius-card)] bg-white ring-1 ring-line">
+        <div className="overflow-x-auto rounded-[var(--radius-card)] bg-surface ring-1 ring-line">
           <table className="w-full min-w-[720px] text-sm">
             <thead>
               <tr className="border-b border-line text-left text-xs font-bold uppercase tracking-wider text-ink-3">
@@ -109,11 +109,11 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
               {products.map((p) => (
                 <tr
                   key={p.id}
-                  className={cn(p.stock <= 0 ? "bg-brand-soft/50" : p.stock <= LOW_STOCK_THRESHOLD && "bg-amber-50/40")}
+                  className={cn(p.stock <= 0 ? "bg-brand-soft/50" : p.stock <= LOW_STOCK_THRESHOLD && "bg-warning-soft/50")}
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <ProductImage src={p.images[0]} alt="" className="size-11 shrink-0 rounded-lg" />
+                      <ProductImage src={p.images[0]} alt="" className="size-11 shrink-0 rounded-[var(--radius-field)]" />
                       <div className="min-w-0">
                         <Link href={`/admin/products/${p.id}`} className="block max-w-72 truncate font-semibold hover:text-brand">
                           {p.name}

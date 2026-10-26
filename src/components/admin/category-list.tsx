@@ -14,7 +14,7 @@ export function CategoryList({ categories }: { categories: Item[] }) {
   return (
     <div className="space-y-3">
       {editing === "new" ? (
-        <div className="rounded-[var(--radius-card)] bg-white p-5 ring-2 ring-brand/30">
+        <div className="rounded-[var(--radius-card)] bg-surface p-5 ring-2 ring-brand/30">
           <h2 className="mb-4 font-bold">Yangi kategoriya</h2>
           <CategoryForm onDone={() => setEditing(null)} />
         </div>
@@ -30,11 +30,11 @@ export function CategoryList({ categories }: { categories: Item[] }) {
 
       {categories.map((category) =>
         editing === category.id ? (
-          <div key={category.id} className="rounded-[var(--radius-card)] bg-white p-5 ring-2 ring-brand/30">
+          <div key={category.id} className="rounded-[var(--radius-card)] bg-surface p-5 ring-2 ring-brand/30">
             <CategoryForm category={category} onDone={() => setEditing(null)} />
           </div>
         ) : (
-          <div key={category.id} className="flex items-center gap-4 rounded-[var(--radius-card)] bg-white p-3 ring-1 ring-line">
+          <div key={category.id} className="flex items-center gap-4 rounded-[var(--radius-card)] bg-surface p-3 ring-1 ring-line">
             <ProductImage src={category.image} alt="" className="size-14 shrink-0 rounded-[var(--radius-field)]" />
             <div className="min-w-0 flex-1">
               <p className="font-semibold">{category.name}</p>
@@ -48,7 +48,7 @@ export function CategoryList({ categories }: { categories: Item[] }) {
             <button
               type="button"
               onClick={() => setEditing(category.id)}
-              className="grid size-9 place-items-center rounded-lg text-ink-2 ring-1 ring-line hover:bg-page hover:text-ink"
+              className="grid size-9 place-items-center rounded-[var(--radius-field)] text-ink-2 ring-1 ring-line hover:bg-page hover:text-ink"
               aria-label={`${category.name} — tahrirlash`}
             >
               <Pencil className="size-4" />

@@ -44,7 +44,7 @@ export function AdminNav({ badges, orientation }: { badges: Badges; orientation:
               <span
                 className={cn(
                   "ml-auto rounded-full px-2 py-0.5 text-[11px] font-bold",
-                  active ? "bg-white/20 text-white" : badgeKey === "newOrders" ? "bg-sky-100 text-sky-800" : "bg-amber-100 text-amber-800",
+                  active ? "bg-surface/20 text-white" : badgeKey === "newOrders" ? "bg-info-soft text-info" : "bg-warning-soft text-warning",
                 )}
               >
                 {badge}

@@ -8,7 +8,7 @@ import { Eye, EyeOff, Pencil, Trash2 } from "lucide-react";
 import { deleteProductAction, toggleProductActiveAction } from "@/actions/admin/products";
 
 const iconButton =
-  "grid size-9 place-items-center rounded-lg text-ink-2 ring-1 ring-line transition hover:bg-page hover:text-ink disabled:opacity-40";
+  "grid size-9 place-items-center rounded-[var(--radius-field)] text-ink-2 ring-1 ring-line transition hover:bg-page hover:text-ink disabled:opacity-40";
 
 export function ProductRowActions({ id, name, isActive }: { id: string; name: string; isActive: boolean }) {
   const router = useRouter();

@@ -65,13 +65,13 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
             name="q"
             defaultValue={q}
             placeholder="Nomi yoki artikul"
-            className="h-10 w-full rounded-[var(--radius-field)] border border-line-strong bg-white pl-9 pr-3 text-sm outline-none focus:border-brand"
+            className="h-10 w-full rounded-[var(--radius-field)] border border-line-strong bg-surface pl-9 pr-3 text-sm outline-none focus:border-brand"
           />
         </div>
         <select
           name="category"
           defaultValue={categoryId}
-          className="h-10 rounded-[var(--radius-field)] border border-line-strong bg-white px-3 text-sm font-semibold outline-none focus:border-brand"
+          className="h-10 rounded-[var(--radius-field)] border border-line-strong bg-surface px-3 text-sm font-semibold outline-none focus:border-brand"
         >
           <option value="">Barcha kategoriyalar</option>
           {categories.map((c) => (
@@ -97,7 +97,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
           {products.map((product) => (
             <li
               key={product.id}
-              className="flex flex-wrap items-center gap-x-4 gap-y-3 rounded-[var(--radius-card)] bg-white p-3 ring-1 ring-line sm:flex-nowrap"
+              className="flex flex-wrap items-center gap-x-4 gap-y-3 rounded-[var(--radius-card)] bg-surface p-3 ring-1 ring-line sm:flex-nowrap"
             >
               <ProductImage src={product.images[0]} alt="" className="size-16 shrink-0 rounded-[var(--radius-field)]" />
               <div className="min-w-0 flex-1">
@@ -110,7 +110,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
                 <p className="text-xs text-ink-3">
                   {product.category.name}
                   {product.sku && ` · ${product.sku}`}
-                  {!product.isActive && <span className="ml-1.5 rounded bg-stone-200 px-1.5 py-0.5 font-bold text-stone-600">Yashirin</span>}
+                  {!product.isActive && <span className="ml-1.5 rounded bg-page px-1.5 py-0.5 font-semibold text-ink-3">Yashirin</span>}
                 </p>
               </div>
               <div className="w-32 text-right">

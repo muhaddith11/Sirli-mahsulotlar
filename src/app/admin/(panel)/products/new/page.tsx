@@ -17,7 +17,7 @@ export default async function NewProductPage() {
       </Link>
       <PageHeader title="Yangi mahsulot" />
       {categories.length === 0 ? (
-        <p className="rounded-[var(--radius-card)] bg-white p-6 text-sm ring-1 ring-line">
+        <p className="rounded-[var(--radius-card)] bg-surface p-6 text-sm ring-1 ring-line">
           Avval{" "}
           <Link href="/admin/categories" className="font-bold text-brand">
             kategoriya yarating

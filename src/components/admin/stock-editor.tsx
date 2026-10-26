@@ -37,7 +37,7 @@ export function StockEditor({ productId, stock }: { productId: string; stock: nu
     apply(() => setStockAction(productId, next));
   };
 
-  const quick = "h-9 rounded-lg px-2.5 text-xs font-bold ring-1 ring-line transition hover:bg-page disabled:opacity-40";
+  const quick = "h-9 rounded-[var(--radius-field)] px-2.5 text-xs font-bold ring-1 ring-line transition hover:bg-page disabled:opacity-40";
 
   return (
     <div className="flex items-center gap-1.5">
@@ -58,7 +58,7 @@ export function StockEditor({ productId, stock }: { productId: string; stock: nu
           inputMode="numeric"
           aria-label="Qoldiq"
           className={cn(
-            "h-9 w-20 rounded-lg border bg-white px-2 text-center text-sm font-bold tabular-nums outline-none",
+            "h-9 w-20 rounded-[var(--radius-field)] border bg-surface px-2 text-center text-sm font-bold tabular-nums outline-none",
             dirty ? "border-brand" : "border-line",
           )}
         />

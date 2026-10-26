@@ -36,7 +36,7 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
 
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="tracking-[-0.02em] text-3xl font-semibold tracking-tight">Buyurtma #{order.number}</h1>
+          <h1 className="text-3xl font-bold tracking-[-0.02em]">Buyurtma #{order.number}</h1>
           <p className="mt-1 text-sm text-ink-2">
             {formatDate(order.createdAt)} · {ORDER_SOURCE_LABELS[order.source]} orqali
           </p>
@@ -73,7 +73,7 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
           </ul>
           <div className="mt-2 flex items-baseline justify-between border-t border-dashed border-line pt-4">
             <span className="font-bold">Jami</span>
-            <span className="text-2xl font-extrabold">{formatPrice(order.totalAmount)}</span>
+            <span className="text-2xl font-bold">{formatPrice(order.totalAmount)}</span>
           </div>
         </Card>
 
@@ -92,7 +92,7 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
                 href={telegramLink}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-sky-50 px-4 py-2 text-sm font-bold text-sky-700"
+                className="inline-flex items-center gap-2 rounded-full bg-info-soft px-4 py-2 text-sm font-bold text-info"
               >
                 <Send className="size-4" /> {order.user?.username ? `@${order.user.username}` : "Telegram"}
               </a>

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/cn";
 
 export const adminInput =
-  "h-11 w-full rounded-[var(--radius-field)] border border-line bg-white px-3.5 text-sm outline-none transition placeholder:text-ink-3 focus:border-brand focus:ring-4 focus:ring-brand/15";
+  "h-11 w-full rounded-[var(--radius-field)] border border-line bg-surface px-3.5 text-sm outline-none transition placeholder:text-ink-3 focus:border-brand focus:ring-4 focus:ring-brand/15";
 
 export function Field({
   label,

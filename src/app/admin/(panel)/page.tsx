@@ -31,9 +31,9 @@ export default async function AdminDashboardPage() {
   ]);
 
   const stats = [
-    { label: "Yangi buyurtmalar", value: String(newOrders), hint: "Ko'rib chiqilishi kerak", icon: ClipboardList, tone: "bg-sky-50 text-sky-700", href: "/admin/orders?status=NEW" },
+    { label: "Yangi buyurtmalar", value: String(newOrders), hint: "Ko'rib chiqilishi kerak", icon: ClipboardList, tone: "bg-info-soft text-info", href: "/admin/orders?status=NEW" },
     { label: "Bugun", value: formatPrice(todayStats._sum.totalAmount ?? 0), hint: `${todayStats._count} ta buyurtma`, icon: ShoppingCart, tone: "bg-success-soft text-success", href: "/admin/orders" },
-    { label: "Shu oy", value: formatPrice(monthStats._sum.totalAmount ?? 0), hint: `${monthStats._count} ta buyurtma`, icon: Banknote, tone: "bg-warning-soft text-amber-800", href: "/admin/orders" },
+    { label: "Shu oy", value: formatPrice(monthStats._sum.totalAmount ?? 0), hint: `${monthStats._count} ta buyurtma`, icon: Banknote, tone: "bg-warning-soft text-warning", href: "/admin/orders" },
     { label: "Kam qolgan", value: String(lowStockCount), hint: `≤ ${LOW_STOCK_THRESHOLD} dona qolgan mahsulotlar`, icon: PackageX, tone: "bg-brand-soft text-brand", href: "/admin/inventory?filter=low" },
   ];
 
@@ -43,14 +43,14 @@ export default async function AdminDashboardPage() {
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map(({ label, value, hint, icon: Icon, tone, href }) => (
-          <Link key={label} href={href} className="rounded-[var(--radius-card)] bg-white p-4 ring-1 ring-line transition hover:ring-line-strong">
+          <Link key={label} href={href} className="rounded-[var(--radius-card)] bg-surface p-4 ring-1 ring-line transition hover:ring-line-strong">
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-ink-2">{label}</p>
               <span className={`grid size-9 place-items-center rounded-[var(--radius-field)] ${tone}`}>
                 <Icon className="size-[18px]" />
               </span>
             </div>
-            <p className="mt-3 text-2xl font-extrabold tracking-tight">{value}</p>
+            <p className="mt-3 text-2xl font-bold tracking-tight">{value}</p>
             <p className="mt-0.5 text-xs text-ink-3">{hint}</p>
           </Link>
         ))}
@@ -98,7 +98,7 @@ export default async function AdminDashboardPage() {
             <ul className="space-y-2.5">
               {lowStock.map((product) => (
                 <li key={product.id} className="flex items-center gap-3">
-                  <ProductImage src={product.images[0]} alt="" className="size-10 rounded-lg" />
+                  <ProductImage src={product.images[0]} alt="" className="size-10 rounded-[var(--radius-field)]" />
                   <span className="min-w-0 flex-1 truncate text-sm font-semibold">{product.name}</span>
                   <StockBadge stock={product.stock} />
                 </li>

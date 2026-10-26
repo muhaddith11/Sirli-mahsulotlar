@@ -18,7 +18,7 @@ export function LoginForm() {
           required
           autoFocus
           autoComplete="current-password"
-          className="h-12 w-full rounded-[var(--radius-card)] border border-line bg-page px-4 outline-none focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/15"
+          className="h-12 w-full rounded-[var(--radius-card)] border border-line bg-page px-4 outline-none focus:border-brand focus:bg-surface focus:ring-4 focus:ring-brand/15"
         />
       </label>
       {state.error && <p className="text-sm font-semibold text-brand">{state.error}</p>}

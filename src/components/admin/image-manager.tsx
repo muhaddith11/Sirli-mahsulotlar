@@ -67,7 +67,7 @@ export function ImageManager({ initial, error }: { initial: string[]; error?: st
                 <button
                   type="button"
                   onClick={() => makeMain(i)}
-                  className="grid size-7 place-items-center rounded-md bg-white/90 text-ink shadow"
+                  className="grid size-7 place-items-center rounded-md bg-surface/90 text-ink shadow"
                   title="Asosiy qilish"
                   aria-label="Asosiy rasm qilish"
                 >
@@ -77,7 +77,7 @@ export function ImageManager({ initial, error }: { initial: string[]; error?: st
               <button
                 type="button"
                 onClick={() => setImages((prev) => prev.filter((_, j) => j !== i))}
-                className="grid size-7 place-items-center rounded-md bg-white/90 text-brand shadow"
+                className="grid size-7 place-items-center rounded-md bg-surface/90 text-brand shadow"
                 title="O'chirish"
                 aria-label="Rasmni o'chirish"
               >
@@ -123,7 +123,7 @@ export function ImageManager({ initial, error }: { initial: string[]; error?: st
               }
             }}
             placeholder="yoki rasm URL manzilini kiriting"
-            className="h-10 w-full rounded-[var(--radius-field)] border border-line bg-white pl-9 pr-3 text-sm outline-none focus:border-brand"
+            className="h-10 w-full rounded-[var(--radius-field)] border border-line bg-surface pl-9 pr-3 text-sm outline-none focus:border-brand"
           />
         </div>
         <button type="button" onClick={addUrl} className="h-10 rounded-[var(--radius-field)] bg-page px-4 text-sm font-bold hover:bg-line">

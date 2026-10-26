@@ -27,7 +27,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <Link href="/admin" className="flex items-center gap-2 text-brand">
       <PotMark className="size-8" />
       <span className="leading-none">
-        <span className="block text-[22px] font-extrabold tracking-[-0.03em]">sirli</span>
+        <span className="block text-[22px] font-bold tracking-[-0.03em]">sirli</span>
         <span className="mt-0.5 block text-[11px] font-semibold text-ink-3">Admin panel</span>
       </span>
     </Link>
@@ -46,7 +46,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-dvh bg-page lg:grid lg:grid-cols-[250px_1fr]">
-      <aside className="sticky top-0 hidden h-dvh flex-col gap-6 border-r border-line bg-white p-4 lg:flex">
+      <aside className="sticky top-0 hidden h-dvh flex-col gap-6 border-r border-line bg-surface p-4 lg:flex">
         {brand}
         <AdminNav badges={badges} orientation="vertical" />
         <div className="mt-auto space-y-1 border-t border-line pt-4">
@@ -62,7 +62,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       </aside>
 
       <div className="min-w-0">
-        <header className="sticky top-0 z-30 space-y-3 border-b border-line bg-white/95 px-4 pb-3 pt-3 backdrop-blur lg:hidden">
+        <header className="sticky top-0 z-30 space-y-3 border-b border-line bg-surface/95 px-4 pb-3 pt-3 backdrop-blur lg:hidden">
           <div className="flex items-center justify-between">
             {brand}
             {logout}
