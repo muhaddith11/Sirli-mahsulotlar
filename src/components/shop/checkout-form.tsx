@@ -313,31 +313,33 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
             </div>
           ) : (
             <>
-              <Field label={t.checkout.region} error={errors.zoneId}>
-                <select
-                  name="zoneId"
-                  required
-                  value={values.zoneId}
-                  onChange={set("zoneId")}
-                  aria-invalid={Boolean(errors.zoneId)}
-                  className={cn(inputClass(errors.zoneId), !values.zoneId && "text-ink-3")}
-                >
-                  <option value="" disabled>
-                    {t.checkout.regionPlaceholder}
-                  </option>
-                  {zones.map((z) => (
-                    <option key={z.id} value={z.id} className="text-ink">
-                      {localized(locale, z.name, z.nameRu)}
-                      {z.price != null ? ` — ${z.price === 0 ? t.summary.deliveryFree : formatPrice(z.price, locale)}` : ""}
+              {zones.length > 0 && (
+                <Field label={t.checkout.region} error={errors.zoneId}>
+                  <select
+                    name="zoneId"
+                    required
+                    value={values.zoneId}
+                    onChange={set("zoneId")}
+                    aria-invalid={Boolean(errors.zoneId)}
+                    className={cn(inputClass(errors.zoneId), !values.zoneId && "text-ink-3")}
+                  >
+                    <option value="" disabled>
+                      {t.checkout.regionPlaceholder}
                     </option>
-                  ))}
-                </select>
-                {zone?.freeFrom != null && zone.price != null && zone.price > 0 && (
-                  <span className="mt-1.5 block text-[13px] text-success">
-                    {fill(t.checkout.freeFrom, { amount: formatPrice(zone.freeFrom, locale) })}
-                  </span>
-                )}
-              </Field>
+                    {zones.map((z) => (
+                      <option key={z.id} value={z.id} className="text-ink">
+                        {localized(locale, z.name, z.nameRu)}
+                        {z.price != null ? ` — ${z.price === 0 ? t.summary.deliveryFree : formatPrice(z.price, locale)}` : ""}
+                      </option>
+                    ))}
+                  </select>
+                  {zone?.freeFrom != null && zone.price != null && zone.price > 0 && (
+                    <span className="mt-1.5 block text-[13px] text-success">
+                      {fill(t.checkout.freeFrom, { amount: formatPrice(zone.freeFrom, locale) })}
+                    </span>
+                  )}
+                </Field>
+              )}
 
               <Field label={t.checkout.address} error={errors.address}>
                 <textarea

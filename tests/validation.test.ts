@@ -4,12 +4,10 @@ import { checkoutSchema, productQuerySchema } from "@/lib/validation";
 const base = { name: "Dilnoza", phone: "90 123 45 67" };
 
 describe("checkout validatsiyasi", () => {
-  it("yetkazishda viloyat va manzil shart", () => {
+  it("yetkazishda manzil shart (viloyatni servis tekshiradi)", () => {
     const result = checkoutSchema.safeParse({ ...base, deliveryMethod: "DELIVERY" });
     expect(result.success).toBe(false);
-    const messages = result.error?.issues.map((i) => i.message);
-    expect(messages).toContain("zoneRequired");
-    expect(messages).toContain("addressShort");
+    expect(result.error?.issues.map((i) => i.message)).toContain("addressShort");
   });
 
   it("olib ketishda manzil kerak emas, telefon normallashadi", () => {

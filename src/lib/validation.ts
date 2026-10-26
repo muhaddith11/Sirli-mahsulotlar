@@ -71,7 +71,7 @@ export const checkoutSchema = z
   })
   .superRefine((data, ctx) => {
     if (data.deliveryMethod !== "DELIVERY") return;
-    if (!data.zoneId) ctx.addIssue({ code: "custom", path: ["zoneId"], message: "zoneRequired" });
+    // Viloyat majburiyligi servisda tekshiriladi: hududlar kiritilmagan bo'lsa, talab qilinmaydi
     if (data.address.length < 5) ctx.addIssue({ code: "custom", path: ["address"], message: "addressShort" });
   });
 export type CheckoutInput = z.infer<typeof checkoutSchema>;

@@ -110,7 +110,10 @@ export async function createOrder(input: CreateOrderInput) {
     const zone = delivery && input.zoneId
       ? await tx.deliveryZone.findFirst({ where: { id: input.zoneId, isActive: true } })
       : null;
-    if (delivery && !zone) throw new AppError("zoneRequired", 400);
+    // Viloyat faqat hududlar kiritilgan bo'lsa majburiy
+    if (delivery && !zone && (input.zoneId || (await tx.deliveryZone.count({ where: { isActive: true } })) > 0)) {
+      throw new AppError("zoneRequired", 400);
+    }
     const deliveryFee = delivery ? deliveryFeeFor(zone, itemsAmount - promoDiscount) : 0;
 
     const order = await tx.order.create({
