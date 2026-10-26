@@ -1,8 +1,8 @@
 /**
  * Telegram botni Mini App uchun sozlaydi:
  *   • menyu tugmasi ("Do'kon") → APP_URL
- *   • buyruqlar ro'yxati
- *   • webhook → APP_URL/api/telegram/webhook
+ *   • buyruqlar ro'yxati (o'zbekcha va ruscha)
+ *   • webhook → APP_URL/api/telegram/webhook (xabarlar va tugma bosishlari)
  *
  * Ishga tushirish:  npm run bot:setup
  */
@@ -25,11 +25,20 @@ await telegram.setChatMenuButton({
 });
 await telegram.setMyCommands([
   { command: "start", description: "Do'konni ochish" },
+  { command: "yangi", description: "Faol buyurtmalar (do'kon egasi uchun)" },
   { command: "id", description: "Chat ID'ni ko'rsatish" },
 ]);
+await telegram.setMyCommands(
+  [
+    { command: "start", description: "Открыть магазин" },
+    { command: "yangi", description: "Активные заказы (для владельца)" },
+    { command: "id", description: "Показать chat ID" },
+  ],
+  { language_code: "ru" },
+);
 await telegram.setWebhook(`${appUrl}/api/telegram/webhook`, {
   secret_token: secret,
-  allowed_updates: ["message"],
+  allowed_updates: ["message", "callback_query"],
   drop_pending_updates: true,
 });
 

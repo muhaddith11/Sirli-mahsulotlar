@@ -82,3 +82,14 @@ export function slugify(text: string): string {
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
 }
+
+/**
+ * Raqam va o'lchov birligini ajralmas probel bilan bog'laydi, shunda "16 L", "6 dona", "400 мл"
+ * qator oxirida bo'linib ketmaydi.
+ */
+export function keepUnits(text: string): string {
+  return text.replace(
+    /(\d)\s+(L|l|ml|sm|mm|dona|ta|л|мл|см|шт\.?|предмет(?:ов|а)?)(?=[\s).,»"']|$)/g,
+    "$1\u00a0$2",
+  );
+}

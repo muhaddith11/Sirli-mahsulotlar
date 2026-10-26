@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BadgePercent, House, LayoutGrid, ShoppingCart } from "lucide-react";
+import { BadgePercent, House, LayoutGrid, Package, ShoppingCart } from "lucide-react";
 import { useI18n } from "@/i18n/provider";
 import { cn } from "@/lib/cn";
 import { useCart } from "@/providers/cart-provider";
@@ -26,6 +26,7 @@ export function BottomNav() {
       active: pathname === "/cart" || pathname.startsWith("/checkout"),
       badge: cart.totalQuantity,
     },
+    { href: "/orders", label: t.nav.orders, icon: Package, active: pathname.startsWith("/orders") },
   ];
 
   return (
@@ -33,14 +34,14 @@ export function BottomNav() {
       aria-label={t.nav.bottomMenu}
       className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface md:hidden"
     >
-      <ul className="mx-auto grid h-14 max-w-md grid-cols-4">
+      <ul className="mx-auto grid h-14 max-w-md grid-cols-5">
         {items.map(({ href, label, icon: Icon, active, badge }) => (
           <li key={href}>
             <Link
               href={href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors",
+                "flex h-full flex-col items-center justify-center gap-0.5 whitespace-nowrap text-[10.5px] font-medium transition-colors",
                 active ? "text-brand" : "text-ink-3 active:text-ink",
               )}
             >

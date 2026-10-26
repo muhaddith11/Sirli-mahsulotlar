@@ -33,9 +33,9 @@ export function AdminNav({ badges, orientation }: { badges: Badges; orientation:
             key={href}
             href={href}
             className={cn(
-              "flex shrink-0 items-center gap-3 rounded-xl text-sm font-semibold transition",
+              "flex shrink-0 items-center gap-3 rounded-[var(--radius-field)] text-sm font-semibold transition",
               orientation === "vertical" ? "px-3 py-2.5" : "px-3.5 py-2",
-              active ? "bg-ink text-cream" : "text-ink-soft hover:bg-cream-deep hover:text-ink",
+              active ? "bg-ink text-white" : "text-ink-2 hover:bg-page hover:text-ink",
             )}
           >
             <Icon className="size-[18px]" />
@@ -44,7 +44,7 @@ export function AdminNav({ badges, orientation }: { badges: Badges; orientation:
               <span
                 className={cn(
                   "ml-auto rounded-full px-2 py-0.5 text-[11px] font-bold",
-                  active ? "bg-cream/20 text-cream" : badgeKey === "newOrders" ? "bg-sky-100 text-sky-800" : "bg-amber-100 text-amber-800",
+                  active ? "bg-white/20 text-white" : badgeKey === "newOrders" ? "bg-sky-100 text-sky-800" : "bg-amber-100 text-amber-800",
                 )}
               >
                 {badge}

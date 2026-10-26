@@ -30,14 +30,14 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
 
   return (
     <>
-      <Link href="/admin/orders" className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-ink-soft hover:text-ink">
+      <Link href="/admin/orders" className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-ink-2 hover:text-ink">
         <ArrowLeft className="size-4" /> Buyurtmalar
       </Link>
 
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight">Buyurtma #{order.number}</h1>
-          <p className="mt-1 text-sm text-ink-soft">
+          <h1 className="tracking-[-0.02em] text-3xl font-semibold tracking-tight">Buyurtma #{order.number}</h1>
+          <p className="mt-1 text-sm text-ink-2">
             {formatDate(order.createdAt)} · {ORDER_SOURCE_LABELS[order.source]} orqali
           </p>
         </div>
@@ -52,18 +52,18 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
           <ul className="divide-y divide-line">
             {order.items.map((item) => (
               <li key={item.id} className="flex items-center gap-3 py-3">
-                <ProductImage src={item.image} alt="" className="size-14 rounded-xl" />
+                <ProductImage src={item.image} alt="" className="size-14 rounded-[var(--radius-field)]" />
                 <div className="min-w-0 flex-1">
                   {item.product ? (
-                    <Link href={`/products/${item.product.slug}`} target="_blank" className="font-semibold hover:text-berry-600">
+                    <Link href={`/products/${item.product.slug}`} target="_blank" className="font-semibold hover:text-brand">
                       {item.productName}
                     </Link>
                   ) : (
                     <p className="font-semibold">
-                      {item.productName} <span className="text-xs font-normal text-ink-faint">(o&apos;chirilgan)</span>
+                      {item.productName} <span className="text-xs font-normal text-ink-3">(o&apos;chirilgan)</span>
                     </p>
                   )}
-                  <p className="text-sm text-ink-soft">
+                  <p className="text-sm text-ink-2">
                     {item.quantity} × {formatPrice(item.unitPrice)}
                   </p>
                 </div>
@@ -83,7 +83,7 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
           <div className="flex flex-wrap gap-2">
             <a
               href={`tel:${order.phone}`}
-              className="inline-flex items-center gap-2 rounded-full bg-leaf-50 px-4 py-2 text-sm font-bold text-leaf-700"
+              className="inline-flex items-center gap-2 rounded-full bg-success-soft px-4 py-2 text-sm font-bold text-success"
             >
               <Phone className="size-4" /> {formatPhone(order.phone)}
             </a>
@@ -99,12 +99,12 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
             )}
           </div>
           <div className="flex gap-3 text-sm">
-            <MapPin className="mt-0.5 size-4 shrink-0 text-berry-600" />
+            <MapPin className="mt-0.5 size-4 shrink-0 text-brand" />
             <p className="whitespace-pre-line">{order.deliveryAddress}</p>
           </div>
           {order.comment && (
-            <div className="flex gap-3 rounded-xl bg-cream p-3 text-sm">
-              <MessageSquare className="mt-0.5 size-4 shrink-0 text-berry-600" />
+            <div className="flex gap-3 rounded-[var(--radius-field)] bg-page p-3 text-sm">
+              <MessageSquare className="mt-0.5 size-4 shrink-0 text-brand" />
               <p className="whitespace-pre-line">{order.comment}</p>
             </div>
           )}

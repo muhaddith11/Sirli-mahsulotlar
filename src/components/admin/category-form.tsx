@@ -13,6 +13,7 @@ import { adminInput, Field } from "./form-fields";
 export type CategoryValues = {
   id: string;
   name: string;
+  nameRu: string | null;
   slug: string;
   dishType: DishType;
   volume: string | null;
@@ -65,6 +66,9 @@ export function CategoryForm({ category, onDone }: { category?: CategoryValues; 
       <Field label="Nomi" error={errors.name}>
         <input name="name" required defaultValue={category?.name} placeholder="Kastryulkalar" className={adminInput} />
       </Field>
+      <Field label="Nomi (ruscha)" error={errors.nameRu}>
+        <input name="nameRu" defaultValue={category?.nameRu ?? ""} placeholder="Кастрюли" className={adminInput} />
+      </Field>
       <Field label="Idish turi" error={errors.dishType}>
         <select name="dishType" defaultValue={category?.dishType ?? "POT"} className={adminInput}>
           {DISH_TYPES.map((t) => (
@@ -97,13 +101,13 @@ export function CategoryForm({ category, onDone }: { category?: CategoryValues; 
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex h-10 items-center gap-2 rounded-full bg-berry-600 px-5 text-sm font-bold text-white hover:bg-berry-700 disabled:opacity-60"
+          className="inline-flex h-10 items-center gap-2 rounded-[var(--radius-field)] bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover disabled:opacity-60"
         >
           {pending && <LoaderCircle className="size-4 animate-spin" />}
           Saqlash
         </button>
         {onDone && (
-          <button type="button" onClick={onDone} className="h-10 rounded-full px-4 text-sm font-semibold text-ink-soft hover:bg-cream-deep">
+          <button type="button" onClick={onDone} className="h-10 rounded-[var(--radius-field)] px-4 text-sm font-semibold text-ink-2 hover:bg-page">
             Bekor qilish
           </button>
         )}
@@ -112,12 +116,12 @@ export function CategoryForm({ category, onDone }: { category?: CategoryValues; 
             type="button"
             onClick={remove}
             disabled={deleting}
-            className="ml-auto h-10 rounded-full px-4 text-sm font-semibold text-berry-600 hover:bg-berry-50 disabled:opacity-50"
+            className="ml-auto h-10 rounded-[var(--radius-field)] px-4 text-sm font-semibold text-brand hover:bg-brand-soft disabled:opacity-50"
           >
             O&apos;chirish
           </button>
         )}
-        {state.error && <p className="w-full text-sm font-semibold text-berry-600">{state.error}</p>}
+        {state.error && <p className="w-full text-sm font-semibold text-brand">{state.error}</p>}
       </div>
     </form>
   );

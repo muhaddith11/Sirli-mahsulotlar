@@ -12,14 +12,14 @@ export default async function NewProductPage() {
 
   return (
     <>
-      <Link href="/admin/products" className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-ink-soft hover:text-ink">
+      <Link href="/admin/products" className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-ink-2 hover:text-ink">
         <ArrowLeft className="size-4" /> Mahsulotlar
       </Link>
       <PageHeader title="Yangi mahsulot" />
       {categories.length === 0 ? (
-        <p className="rounded-2xl bg-white p-6 text-sm ring-1 ring-line">
+        <p className="rounded-[var(--radius-card)] bg-white p-6 text-sm ring-1 ring-line">
           Avval{" "}
-          <Link href="/admin/categories" className="font-bold text-berry-600">
+          <Link href="/admin/categories" className="font-bold text-brand">
             kategoriya yarating
           </Link>
           .

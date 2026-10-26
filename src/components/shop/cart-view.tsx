@@ -7,7 +7,7 @@ import { fill, localized } from "@/i18n/config";
 import { useI18n } from "@/i18n/provider";
 import { useMainButton } from "@/hooks/use-main-button";
 import { cn } from "@/lib/cn";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, keepUnits } from "@/lib/format";
 import { useCart } from "@/providers/cart-provider";
 import { OrderSummary } from "./order-summary";
 import { ProductImage } from "./product-image";
@@ -70,7 +70,7 @@ export function CartView() {
       <ul className="divide-y divide-line rounded-[var(--radius-card)] bg-surface px-4">
         {cart.items.map((item) => {
           const pending = isPending(item.productId);
-          const name = localized(locale, item.name, item.nameRu);
+          const name = keepUnits(localized(locale, item.name, item.nameRu));
           const discounted = item.discountPrice != null && item.discountPrice < item.price;
           return (
             <li key={item.productId} className={cn("flex gap-3 py-4 transition-opacity sm:gap-4", pending && "opacity-60")}>
@@ -79,7 +79,7 @@ export function CartView() {
               </Link>
               <div className="flex min-w-0 flex-1 flex-col">
                 <div className="flex items-start justify-between gap-2">
-                  <Link href={`/products/${item.slug}`} className="line-clamp-2 text-sm leading-snug hover:text-brand sm:text-[15px]">
+                  <Link href={`/products/${item.slug}`} className="line-clamp-2 text-pretty text-sm leading-snug hover:text-brand sm:text-[15px]">
                     {name}
                   </Link>
                   <button

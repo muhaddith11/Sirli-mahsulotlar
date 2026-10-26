@@ -10,12 +10,13 @@ import { listCategories, listProducts } from "@/lib/services/products";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [{ locale, t }, categories, discounted, popular] = await Promise.all([
+  const [{ locale, t }, categories, discounted] = await Promise.all([
     getI18n(),
     listCategories(),
     listProducts({ discounted: true, limit: 10, sort: "popular" }),
-    listProducts({ limit: 15, sort: "popular" }),
   ]);
+  // Chegirmadagilar tepada bor — ommabop ro'yxatda takrorlanmasin
+  const popular = await listProducts({ limit: 15, sort: "popular" }, { excludeIds: discounted.items.map((p) => p.id) });
   const sets = categories.find((category) => category.dishType === "SET");
 
   return (
@@ -30,6 +31,14 @@ export default async function HomePage() {
       )}
 
       <ServiceStrip t={t} />
+
+
+      {discounted.items.length > 0 && (
+        <section>
+          <SectionHeading title={t.home.discounts} href="/products?discounted=1" linkLabel={t.home.seeAll} />
+          <ProductRail products={discounted.items} locale={locale} />
+        </section>
+      )}
 
       {sets?.image && (
         <Link
@@ -52,13 +61,6 @@ export default async function HomePage() {
             loading="lazy"
           />
         </Link>
-      )}
-
-      {discounted.items.length > 0 && (
-        <section>
-          <SectionHeading title={t.home.discounts} href="/products?discounted=1" linkLabel={t.home.seeAll} />
-          <ProductRail products={discounted.items} locale={locale} />
-        </section>
       )}
 
       <section>

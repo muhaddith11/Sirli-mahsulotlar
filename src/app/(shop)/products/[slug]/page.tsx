@@ -9,7 +9,7 @@ import { SectionHeading } from "@/components/shop/section-heading";
 import { fill, localized, type Dictionary, type Locale } from "@/i18n";
 import { getI18n } from "@/i18n/server";
 import { LOW_STOCK_THRESHOLD } from "@/lib/constants";
-import { discountPercent, effectivePrice, formatPrice } from "@/lib/format";
+import { discountPercent, effectivePrice, formatPrice, keepUnits } from "@/lib/format";
 import { getProductBySlug, getRelatedProducts } from "@/lib/services/products";
 
 type Props = PageProps<"/products/[slug]">;
@@ -28,8 +28,8 @@ export default async function ProductPage({ params }: Props) {
   const [{ locale, t }, product] = await Promise.all([getI18n(), getProductBySlug((await params).slug)]);
   if (!product) notFound();
 
-  const related = await getRelatedProducts(product.category.id, product.id, 10);
-  const name = localized(locale, product.name, product.nameRu);
+  const related = await getRelatedProducts(product.category.id, product.id, 5);
+  const name = keepUnits(localized(locale, product.name, product.nameRu));
   const description = localized(locale, product.description, product.descriptionRu);
   const categoryName = localized(locale, product.category.name, product.category.nameRu);
   const price = effectivePrice(product);
@@ -71,7 +71,7 @@ export default async function ProductPage({ params }: Props) {
         />
 
         <div className="min-w-0">
-          <h1 className="text-xl font-semibold leading-snug tracking-[-0.01em] md:text-2xl">{name}</h1>
+          <h1 className="text-balance text-xl font-semibold leading-snug tracking-[-0.01em] md:text-2xl">{name}</h1>
 
           <div className="mt-3 lg:hidden">
             <PriceBlock price={price} oldPrice={oldPrice} locale={locale} t={t} />

@@ -32,9 +32,9 @@ export default async function AdminDashboardPage() {
 
   const stats = [
     { label: "Yangi buyurtmalar", value: String(newOrders), hint: "Ko'rib chiqilishi kerak", icon: ClipboardList, tone: "bg-sky-50 text-sky-700", href: "/admin/orders?status=NEW" },
-    { label: "Bugun", value: formatPrice(todayStats._sum.totalAmount ?? 0), hint: `${todayStats._count} ta buyurtma`, icon: ShoppingCart, tone: "bg-leaf-50 text-leaf-700", href: "/admin/orders" },
-    { label: "Shu oy", value: formatPrice(monthStats._sum.totalAmount ?? 0), hint: `${monthStats._count} ta buyurtma`, icon: Banknote, tone: "bg-honey-100 text-amber-800", href: "/admin/orders" },
-    { label: "Kam qolgan", value: String(lowStockCount), hint: `≤ ${LOW_STOCK_THRESHOLD} dona qolgan mahsulotlar`, icon: PackageX, tone: "bg-berry-50 text-berry-700", href: "/admin/inventory?filter=low" },
+    { label: "Bugun", value: formatPrice(todayStats._sum.totalAmount ?? 0), hint: `${todayStats._count} ta buyurtma`, icon: ShoppingCart, tone: "bg-success-soft text-success", href: "/admin/orders" },
+    { label: "Shu oy", value: formatPrice(monthStats._sum.totalAmount ?? 0), hint: `${monthStats._count} ta buyurtma`, icon: Banknote, tone: "bg-warning-soft text-amber-800", href: "/admin/orders" },
+    { label: "Kam qolgan", value: String(lowStockCount), hint: `≤ ${LOW_STOCK_THRESHOLD} dona qolgan mahsulotlar`, icon: PackageX, tone: "bg-brand-soft text-brand", href: "/admin/inventory?filter=low" },
   ];
 
   return (
@@ -43,15 +43,15 @@ export default async function AdminDashboardPage() {
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map(({ label, value, hint, icon: Icon, tone, href }) => (
-          <Link key={label} href={href} className="rounded-2xl bg-white p-4 ring-1 ring-line transition hover:ring-ink-faint">
+          <Link key={label} href={href} className="rounded-[var(--radius-card)] bg-white p-4 ring-1 ring-line transition hover:ring-line-strong">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-ink-soft">{label}</p>
-              <span className={`grid size-9 place-items-center rounded-xl ${tone}`}>
+              <p className="text-sm font-semibold text-ink-2">{label}</p>
+              <span className={`grid size-9 place-items-center rounded-[var(--radius-field)] ${tone}`}>
                 <Icon className="size-[18px]" />
               </span>
             </div>
             <p className="mt-3 text-2xl font-extrabold tracking-tight">{value}</p>
-            <p className="mt-0.5 text-xs text-ink-faint">{hint}</p>
+            <p className="mt-0.5 text-xs text-ink-3">{hint}</p>
           </Link>
         ))}
       </div>
@@ -60,21 +60,21 @@ export default async function AdminDashboardPage() {
         <Card className="p-4 sm:p-5">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-bold">So&apos;nggi buyurtmalar</h2>
-            <Link href="/admin/orders" className="inline-flex items-center gap-1 text-sm font-bold text-berry-600">
+            <Link href="/admin/orders" className="inline-flex items-center gap-1 text-sm font-bold text-brand">
               Barchasi <ArrowRight className="size-4" />
             </Link>
           </div>
           {recentOrders.length === 0 ? (
-            <p className="py-8 text-center text-sm text-ink-soft">Hali buyurtmalar yo&apos;q</p>
+            <p className="py-8 text-center text-sm text-ink-2">Hali buyurtmalar yo&apos;q</p>
           ) : (
             <ul className="divide-y divide-line">
               {recentOrders.map((order) => (
                 <li key={order.id}>
-                  <Link href={`/admin/orders/${order.id}`} className="flex items-center gap-3 py-3 hover:bg-cream/50">
+                  <Link href={`/admin/orders/${order.id}`} className="flex items-center gap-3 py-3 hover:bg-page">
                     <span className="w-14 shrink-0 font-bold tabular-nums">#{order.number}</span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-semibold">{order.customerName}</span>
-                      <span className="block text-xs text-ink-faint">{formatDate(order.createdAt)}</span>
+                      <span className="block text-xs text-ink-3">{formatDate(order.createdAt)}</span>
                     </span>
                     <span className="hidden text-sm font-bold sm:block">{formatPrice(order.totalAmount)}</span>
                     <StatusBadge status={order.status} />
@@ -88,12 +88,12 @@ export default async function AdminDashboardPage() {
         <Card className="p-4 sm:p-5">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-bold">Omborda kam qolgan</h2>
-            <Link href="/admin/inventory?filter=low" className="inline-flex items-center gap-1 text-sm font-bold text-berry-600">
+            <Link href="/admin/inventory?filter=low" className="inline-flex items-center gap-1 text-sm font-bold text-brand">
               Ombor <ArrowRight className="size-4" />
             </Link>
           </div>
           {lowStock.length === 0 ? (
-            <p className="py-8 text-center text-sm text-ink-soft">Hammasi yetarli 👍</p>
+            <p className="py-8 text-center text-sm text-ink-2">Hammasi yetarli 👍</p>
           ) : (
             <ul className="space-y-2.5">
               {lowStock.map((product) => (

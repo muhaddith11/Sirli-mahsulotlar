@@ -18,14 +18,14 @@ export function LoginForm() {
           required
           autoFocus
           autoComplete="current-password"
-          className="h-12 w-full rounded-2xl border border-line bg-cream/40 px-4 outline-none focus:border-berry-500 focus:bg-white focus:ring-4 focus:ring-berry-100"
+          className="h-12 w-full rounded-[var(--radius-card)] border border-line bg-page px-4 outline-none focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/15"
         />
       </label>
-      {state.error && <p className="text-sm font-semibold text-berry-600">{state.error}</p>}
+      {state.error && <p className="text-sm font-semibold text-brand">{state.error}</p>}
       <button
         type="submit"
         disabled={pending}
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ink font-bold text-cream hover:bg-berry-700 disabled:opacity-60"
+        className="flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-field)] bg-ink font-semibold text-white hover:bg-brand-hover disabled:opacity-60"
       >
         {pending && <LoaderCircle className="size-5 animate-spin" />}
         Kirish

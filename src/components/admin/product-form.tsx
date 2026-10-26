@@ -11,10 +11,12 @@ import { ImageManager } from "./image-manager";
 export type ProductFormValues = {
   id?: string;
   name: string;
+  nameRu: string | null;
   slug: string;
   sku: string | null;
   categoryId: string;
   description: string;
+  descriptionRu: string | null;
   price: number | null;
   discountPrice: number | null;
   stock: number;
@@ -48,7 +50,7 @@ export function ProductForm({ product, categories }: Props) {
       {product?.id && <input type="hidden" name="id" value={product.id} />}
 
       <div className="space-y-6">
-        <section className="space-y-4 rounded-2xl bg-white p-5 ring-1 ring-line">
+        <section className="space-y-4 rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-line">
           <h2 className="font-bold">Asosiy ma&apos;lumot</h2>
           <Field label="Nomi" error={errors.name}>
             <input
@@ -67,6 +69,14 @@ export function ProductForm({ product, categories }: Props) {
               <input name="sku" defaultValue={product?.sku ?? ""} placeholder="KS-QLP-16" className={adminInput} />
             </Field>
           </div>
+          <Field label="Nomi (ruscha)" hint="Bo'sh qolsa, rus tilida ham o'zbekcha nomi ko'rinadi" error={errors.nameRu}>
+            <input
+              name="nameRu"
+              defaultValue={product?.nameRu ?? ""}
+              placeholder="Эмалированная кастрюля «Клубника» 16 л"
+              className={adminInput}
+            />
+          </Field>
           <Field label="Tavsif" error={errors.description}>
             <textarea
               name="description"
@@ -76,17 +86,25 @@ export function ProductForm({ product, categories }: Props) {
               className={`${adminInput} h-auto py-3 leading-relaxed`}
             />
           </Field>
+          <Field label="Tavsif (ruscha)" hint="Ixtiyoriy" error={errors.descriptionRu}>
+            <textarea
+              name="descriptionRu"
+              rows={5}
+              defaultValue={product?.descriptionRu ?? ""}
+              className={`${adminInput} h-auto py-3 leading-relaxed`}
+            />
+          </Field>
         </section>
 
-        <section className="rounded-2xl bg-white p-5 ring-1 ring-line">
+        <section className="rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-line">
           <h2 className="mb-1 font-bold">Rasmlar</h2>
-          <p className="mb-4 text-xs text-ink-faint">Birinchi rasm katalogda ko&apos;rinadi. JPG/PNG/WEBP, 5 MB gacha.</p>
+          <p className="mb-4 text-xs text-ink-3">Birinchi rasm katalogda ko&apos;rinadi. JPG/PNG/WEBP, 5 MB gacha.</p>
           <ImageManager initial={product?.images ?? []} error={errors.images} />
         </section>
       </div>
 
       <div className="space-y-6 lg:sticky lg:top-8">
-        <section className="space-y-4 rounded-2xl bg-white p-5 ring-1 ring-line">
+        <section className="space-y-4 rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-line">
           <h2 className="font-bold">Narx va ombor</h2>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Narxi (so'm)" error={errors.price}>
@@ -141,7 +159,7 @@ export function ProductForm({ product, categories }: Props) {
           </Field>
         </section>
 
-        <section className="space-y-3 rounded-2xl bg-white p-5 ring-1 ring-line">
+        <section className="space-y-3 rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-line">
           <Field label="Kategoriya" error={errors.categoryId}>
             <select name="categoryId" required defaultValue={product?.categoryId ?? ""} className={adminInput}>
               <option value="" disabled>
@@ -159,20 +177,20 @@ export function ProductForm({ product, categories }: Props) {
         </section>
 
         {state.error && (
-          <p className="rounded-xl bg-berry-50 p-3 text-sm font-semibold text-berry-700">{state.error}</p>
+          <p className="rounded-[var(--radius-field)] bg-brand-soft p-3 text-sm font-semibold text-brand">{state.error}</p>
         )}
 
         <div className="flex gap-2">
           <Link
             href="/admin/products"
-            className="flex h-12 flex-1 items-center justify-center rounded-full bg-white text-sm font-bold ring-1 ring-line hover:bg-cream-deep"
+            className="flex h-12 flex-1 items-center justify-center rounded-[var(--radius-field)] bg-white text-sm font-bold ring-1 ring-line hover:bg-page"
           >
             Bekor qilish
           </Link>
           <button
             type="submit"
             disabled={pending}
-            className="flex h-12 flex-[2] items-center justify-center gap-2 rounded-full bg-berry-600 text-sm font-bold text-white hover:bg-berry-700 disabled:opacity-60"
+            className="flex h-12 flex-[2] items-center justify-center gap-2 rounded-[var(--radius-field)] bg-brand text-sm font-semibold text-white hover:bg-brand-hover disabled:opacity-60"
           >
             {pending && <LoaderCircle className="size-4 animate-spin" />}
             {product?.id ? "Saqlash" : "Mahsulotni qo'shish"}

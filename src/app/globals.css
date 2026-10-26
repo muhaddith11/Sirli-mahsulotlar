@@ -31,6 +31,10 @@
   --color-success-soft: #e8f5ec;
   --color-warning: #b45309;
   --color-warning-soft: #fef3e2;
+  --color-info: #1a56c4;
+  --color-info-soft: #e8f0fe;
+  --color-transit: #6b35c2;
+  --color-transit-soft: #f1e9fd;
 
   --radius-card: 12px;
   --radius-field: 10px;

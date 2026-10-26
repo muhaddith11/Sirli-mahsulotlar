@@ -55,10 +55,10 @@ export function ImageManager({ initial, error }: { initial: string[]; error?: st
 
       <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
         {images.map((src, i) => (
-          <div key={`${src}-${i}`} className="group relative aspect-square overflow-hidden rounded-xl ring-1 ring-line">
+          <div key={`${src}-${i}`} className="group relative aspect-square overflow-hidden rounded-[var(--radius-field)] ring-1 ring-line">
             <ProductImage src={src} alt="" className="size-full" />
             {i === 0 && (
-              <span className="absolute left-1.5 top-1.5 rounded-md bg-ink/80 px-1.5 py-0.5 text-[10px] font-bold text-cream">
+              <span className="absolute left-1.5 top-1.5 rounded-md bg-ink/80 px-1.5 py-0.5 text-[10px] font-bold text-white">
                 Asosiy
               </span>
             )}
@@ -77,7 +77,7 @@ export function ImageManager({ initial, error }: { initial: string[]; error?: st
               <button
                 type="button"
                 onClick={() => setImages((prev) => prev.filter((_, j) => j !== i))}
-                className="grid size-7 place-items-center rounded-md bg-white/90 text-berry-700 shadow"
+                className="grid size-7 place-items-center rounded-md bg-white/90 text-brand shadow"
                 title="O'chirish"
                 aria-label="Rasmni o'chirish"
               >
@@ -92,7 +92,7 @@ export function ImageManager({ initial, error }: { initial: string[]; error?: st
           onClick={() => fileRef.current?.click()}
           disabled={uploading}
           className={cn(
-            "flex aspect-square flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-line text-xs font-semibold text-ink-soft transition hover:border-berry-200 hover:text-berry-600",
+            "flex aspect-square flex-col items-center justify-center gap-1.5 rounded-[var(--radius-field)] border-2 border-dashed border-line text-xs font-semibold text-ink-2 transition hover:border-brand/40 hover:text-brand",
             uploading && "opacity-60",
           )}
         >
@@ -112,7 +112,7 @@ export function ImageManager({ initial, error }: { initial: string[]; error?: st
 
       <div className="mt-3 flex gap-2">
         <div className="relative flex-1">
-          <Link2 className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-faint" />
+          <Link2 className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3" />
           <input
             value={url}
             onChange={(e) => setUrl(e.target.value)}
@@ -123,14 +123,14 @@ export function ImageManager({ initial, error }: { initial: string[]; error?: st
               }
             }}
             placeholder="yoki rasm URL manzilini kiriting"
-            className="h-10 w-full rounded-xl border border-line bg-white pl-9 pr-3 text-sm outline-none focus:border-berry-500"
+            className="h-10 w-full rounded-[var(--radius-field)] border border-line bg-white pl-9 pr-3 text-sm outline-none focus:border-brand"
           />
         </div>
-        <button type="button" onClick={addUrl} className="h-10 rounded-xl bg-cream-deep px-4 text-sm font-bold hover:bg-line">
+        <button type="button" onClick={addUrl} className="h-10 rounded-[var(--radius-field)] bg-page px-4 text-sm font-bold hover:bg-line">
           Qo&apos;shish
         </button>
       </div>
-      {error && <p className="mt-1.5 text-xs font-semibold text-berry-600">{error}</p>}
+      {error && <p className="mt-1.5 text-xs font-semibold text-brand">{error}</p>}
     </div>
   );
 }

@@ -37,7 +37,7 @@ export function StockEditor({ productId, stock }: { productId: string; stock: nu
     apply(() => setStockAction(productId, next));
   };
 
-  const quick = "h-9 rounded-lg px-2.5 text-xs font-bold ring-1 ring-line transition hover:bg-cream-deep disabled:opacity-40";
+  const quick = "h-9 rounded-lg px-2.5 text-xs font-bold ring-1 ring-line transition hover:bg-page disabled:opacity-40";
 
   return (
     <div className="flex items-center gap-1.5">
@@ -59,12 +59,12 @@ export function StockEditor({ productId, stock }: { productId: string; stock: nu
           aria-label="Qoldiq"
           className={cn(
             "h-9 w-20 rounded-lg border bg-white px-2 text-center text-sm font-bold tabular-nums outline-none",
-            dirty ? "border-berry-500" : "border-line",
+            dirty ? "border-brand" : "border-line",
           )}
         />
-        {pending && <LoaderCircle className="absolute -right-5 top-2.5 size-4 animate-spin text-ink-faint" />}
+        {pending && <LoaderCircle className="absolute -right-5 top-2.5 size-4 animate-spin text-ink-3" />}
         {!pending && dirty && (
-          <button type="submit" className="absolute -right-6 top-2 text-leaf-600" aria-label="Saqlash">
+          <button type="submit" className="absolute -right-6 top-2 text-success" aria-label="Saqlash">
             <Check className="size-5" />
           </button>
         )}

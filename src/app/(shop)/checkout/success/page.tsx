@@ -5,7 +5,7 @@ import { CircleCheck } from "lucide-react";
 import { ProductImage } from "@/components/shop/product-image";
 import { TelegramCloseButton } from "@/components/shop/telegram-close-button";
 import { getI18n } from "@/i18n/server";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, keepUnits } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -65,7 +65,7 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
                 <ProductImage src={item.image} alt="" className="aspect-[4/5] w-11" />
               </span>
               <span className="line-clamp-2 flex-1">
-                {(locale === "ru" && item.product?.nameRu) || item.productName}{" "}
+                {keepUnits((locale === "ru" && item.product?.nameRu) || item.productName)}{" "}
                 <span className="text-ink-3 tabular">× {item.quantity}</span>
               </span>
               <span className="shrink-0 font-medium tabular">{formatPrice(item.totalPrice, locale)}</span>

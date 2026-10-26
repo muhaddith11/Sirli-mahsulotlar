@@ -24,13 +24,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const badges = { newOrders, lowStock };
 
   const brand = (
-    <Link href="/admin" className="flex items-center gap-2.5">
-      <span className="grid size-9 place-items-center rounded-xl bg-berry-600 text-cream">
-        <PotMark className="size-5" />
-      </span>
-      <span className="leading-tight">
-        <span className="block font-display text-base font-semibold italic">Sirli</span>
-        <span className="block text-[10px] font-bold uppercase tracking-[0.2em] text-ink-faint">Admin panel</span>
+    <Link href="/admin" className="flex items-center gap-2 text-brand">
+      <PotMark className="size-8" />
+      <span className="leading-none">
+        <span className="block text-[22px] font-extrabold tracking-[-0.03em]">sirli</span>
+        <span className="mt-0.5 block text-[11px] font-semibold text-ink-3">Admin panel</span>
       </span>
     </Link>
   );
@@ -39,7 +37,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <form action={logoutAction}>
       <button
         type="submit"
-        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink-soft hover:bg-berry-50 hover:text-berry-700"
+        className="flex w-full items-center gap-3 rounded-[var(--radius-field)] px-3 py-2.5 text-sm font-semibold text-ink-2 hover:bg-brand-soft hover:text-brand-hover"
       >
         <LogOut className="size-[18px]" /> <span className="max-lg:sr-only">Chiqish</span>
       </button>
@@ -47,7 +45,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   );
 
   return (
-    <div className="min-h-dvh bg-[#f7f2ea] lg:grid lg:grid-cols-[250px_1fr]">
+    <div className="min-h-dvh bg-page lg:grid lg:grid-cols-[250px_1fr]">
       <aside className="sticky top-0 hidden h-dvh flex-col gap-6 border-r border-line bg-white p-4 lg:flex">
         {brand}
         <AdminNav badges={badges} orientation="vertical" />
@@ -55,7 +53,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Link
             href="/"
             target="_blank"
-            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink-soft hover:bg-cream-deep hover:text-ink"
+            className="flex items-center gap-3 rounded-[var(--radius-field)] px-3 py-2.5 text-sm font-semibold text-ink-2 hover:bg-page hover:text-ink"
           >
             <ExternalLink className="size-[18px]" /> Do&apos;konni ochish
           </Link>

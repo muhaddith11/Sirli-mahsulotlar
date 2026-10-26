@@ -66,8 +66,12 @@ function buildWhere(query: Partial<ProductQuery>): Prisma.ProductWhereInput {
 }
 
 /** Mahsulotlarni qidirish, filtrlash va sahifalash */
-export async function listProducts(query: Partial<ProductQuery>): Promise<ProductList> {
+export async function listProducts(
+  query: Partial<ProductQuery>,
+  options: { excludeIds?: string[] } = {},
+): Promise<ProductList> {
   const where = buildWhere(query);
+  if (options.excludeIds?.length) where.id = { notIn: options.excludeIds };
   const page = query.page ?? 1;
   const pageSize = query.limit ?? 12;
   const sort = query.sort ?? "popular";
@@ -114,13 +118,23 @@ export const getProductBySlug = cache(async (slug: string) =>
   }),
 );
 
-export async function getRelatedProducts(categoryId: string, excludeId: string, take = 4) {
-  return prisma.product.findMany({
+/** O'xshash mahsulotlar: avval shu kategoriyadan, yetmasa — boshqa kategoriyalardan to'ldiriladi */
+export async function getRelatedProducts(categoryId: string, excludeId: string, take = 5) {
+  const sameCategory = await prisma.product.findMany({
     where: { categoryId, isActive: true, id: { not: excludeId } },
     orderBy: [{ stock: "desc" }, { createdAt: "desc" }],
     take,
     select: productCardSelect,
   });
+  if (sameCategory.length >= take) return sameCategory;
+
+  const others = await prisma.product.findMany({
+    where: { isActive: true, categoryId: { not: categoryId }, stock: { gt: 0 } },
+    orderBy: [{ isFeatured: "desc" }, { orderItems: { _count: "desc" } }, { createdAt: "desc" }],
+    take: take - sameCategory.length,
+    select: productCardSelect,
+  });
+  return [...sameCategory, ...others];
 }
 
 /** Kategoriyalar va har biridagi faol mahsulotlar soni */

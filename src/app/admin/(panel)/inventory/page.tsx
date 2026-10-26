@@ -44,9 +44,9 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
 
   const summary = [
     { label: "Ombordagi buyumlar", value: `${formatNumber(totalUnits)} dona`, icon: Boxes, tone: "bg-sky-50 text-sky-700" },
-    { label: "Ombor qiymati", value: formatPrice(stockValue), icon: Wallet, tone: "bg-leaf-50 text-leaf-700" },
+    { label: "Ombor qiymati", value: formatPrice(stockValue), icon: Wallet, tone: "bg-success-soft text-success" },
     { label: `Kam qolgan (≤ ${LOW_STOCK_THRESHOLD})`, value: String(lowCount), icon: CircleAlert, tone: "bg-amber-50 text-amber-700" },
-    { label: "Tugagan", value: String(outCount), icon: PackageX, tone: "bg-berry-50 text-berry-700" },
+    { label: "Tugagan", value: String(outCount), icon: PackageX, tone: "bg-brand-soft text-brand" },
   ];
 
   return (
@@ -55,12 +55,12 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
 
       <div className="mb-6 grid grid-cols-2 gap-3 xl:grid-cols-4">
         {summary.map(({ label, value, icon: Icon, tone }) => (
-          <div key={label} className="flex items-center gap-3 rounded-2xl bg-white p-4 ring-1 ring-line">
-            <span className={cn("grid size-10 shrink-0 place-items-center rounded-xl", tone)}>
+          <div key={label} className="flex items-center gap-3 rounded-[var(--radius-card)] bg-white p-4 ring-1 ring-line">
+            <span className={cn("grid size-10 shrink-0 place-items-center rounded-[var(--radius-field)]", tone)}>
               <Icon className="size-5" />
             </span>
             <div className="min-w-0">
-              <p className="truncate text-xs font-semibold text-ink-soft">{label}</p>
+              <p className="truncate text-xs font-semibold text-ink-2">{label}</p>
               <p className="truncate text-lg font-extrabold">{value}</p>
             </div>
           </div>
@@ -74,7 +74,7 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
             href={f.key === "all" ? "/admin/inventory" : `/admin/inventory?filter=${f.key}`}
             className={cn(
               "rounded-full px-3.5 py-2 text-sm font-semibold ring-1",
-              filter === f.key ? "bg-ink text-cream ring-ink" : "bg-white text-ink-soft ring-line hover:text-ink",
+              filter === f.key ? "bg-ink text-white ring-ink" : "bg-white text-ink-2 ring-line hover:text-ink",
             )}
           >
             {f.label}
@@ -86,7 +86,7 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
             name="q"
             defaultValue={q}
             placeholder="Nomi yoki artikul"
-            className="h-10 w-full rounded-full border border-line bg-white px-4 text-sm outline-none focus:border-berry-500"
+            className="h-10 w-full rounded-[var(--radius-field)] border border-line-strong bg-white px-4 text-sm outline-none focus:border-brand"
           />
         </form>
       </div>
@@ -94,10 +94,10 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
       {products.length === 0 ? (
         <EmptyState>Bu filtr bo&apos;yicha mahsulot yo&apos;q</EmptyState>
       ) : (
-        <div className="overflow-x-auto rounded-2xl bg-white ring-1 ring-line">
+        <div className="overflow-x-auto rounded-[var(--radius-card)] bg-white ring-1 ring-line">
           <table className="w-full min-w-[720px] text-sm">
             <thead>
-              <tr className="border-b border-line text-left text-xs font-bold uppercase tracking-wider text-ink-faint">
+              <tr className="border-b border-line text-left text-xs font-bold uppercase tracking-wider text-ink-3">
                 <th className="px-4 py-3">Mahsulot</th>
                 <th className="px-4 py-3">Artikul</th>
                 <th className="px-4 py-3 text-right">Narx</th>
@@ -109,23 +109,23 @@ export default async function InventoryPage({ searchParams }: PageProps<"/admin/
               {products.map((p) => (
                 <tr
                   key={p.id}
-                  className={cn(p.stock <= 0 ? "bg-berry-50/40" : p.stock <= LOW_STOCK_THRESHOLD && "bg-amber-50/40")}
+                  className={cn(p.stock <= 0 ? "bg-brand-soft/50" : p.stock <= LOW_STOCK_THRESHOLD && "bg-amber-50/40")}
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <ProductImage src={p.images[0]} alt="" className="size-11 shrink-0 rounded-lg" />
                       <div className="min-w-0">
-                        <Link href={`/admin/products/${p.id}`} className="block max-w-72 truncate font-semibold hover:text-berry-600">
+                        <Link href={`/admin/products/${p.id}`} className="block max-w-72 truncate font-semibold hover:text-brand">
                           {p.name}
                         </Link>
-                        <p className="text-xs text-ink-faint">
+                        <p className="text-xs text-ink-3">
                           {p.category.name}
                           {!p.isActive && " · yashirin"}
                         </p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-ink-soft">{p.sku ?? "—"}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-ink-2">{p.sku ?? "—"}</td>
                   <td className="whitespace-nowrap px-4 py-3 text-right font-semibold">{formatPrice(effectivePrice(p))}</td>
                   <td className="px-4 py-3">
                     <StockBadge stock={p.stock} />

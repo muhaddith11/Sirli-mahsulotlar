@@ -1,7 +1,7 @@
 import { cn } from "@/lib/cn";
 
 export const adminInput =
-  "h-11 w-full rounded-xl border border-line bg-white px-3.5 text-sm outline-none transition placeholder:text-ink-faint focus:border-berry-500 focus:ring-4 focus:ring-berry-100";
+  "h-11 w-full rounded-[var(--radius-field)] border border-line bg-white px-3.5 text-sm outline-none transition placeholder:text-ink-3 focus:border-brand focus:ring-4 focus:ring-brand/15";
 
 export function Field({
   label,
@@ -21,9 +21,9 @@ export function Field({
       <span className="mb-1.5 block text-sm font-semibold">{label}</span>
       {children}
       {error ? (
-        <span className="mt-1 block text-xs font-semibold text-berry-600">{error}</span>
+        <span className="mt-1 block text-xs font-semibold text-brand">{error}</span>
       ) : hint ? (
-        <span className="mt-1 block text-xs text-ink-faint">{hint}</span>
+        <span className="mt-1 block text-xs text-ink-3">{hint}</span>
       ) : null}
     </label>
   );
@@ -31,16 +31,16 @@ export function Field({
 
 export function Toggle({ name, label, hint, defaultChecked }: { name: string; label: string; hint?: string; defaultChecked?: boolean }) {
   return (
-    <label className="flex cursor-pointer items-start gap-3 rounded-xl p-2 hover:bg-cream/60">
+    <label className="flex cursor-pointer items-start gap-3 rounded-[var(--radius-field)] p-2 hover:bg-page">
       <input
         type="checkbox"
         name={name}
         defaultChecked={defaultChecked}
-        className="mt-0.5 size-5 shrink-0 cursor-pointer accent-berry-600"
+        className="mt-0.5 size-5 shrink-0 cursor-pointer accent-[var(--color-brand)]"
       />
       <span>
         <span className="block text-sm font-semibold">{label}</span>
-        {hint && <span className="block text-xs text-ink-faint">{hint}</span>}
+        {hint && <span className="block text-xs text-ink-3">{hint}</span>}
       </span>
     </label>
   );

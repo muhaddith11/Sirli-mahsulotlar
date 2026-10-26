@@ -46,6 +46,8 @@ export async function saveProductAction(_prev: ActionResult, formData: FormData)
   const values = {
     ...data,
     sku: data.sku ?? null,
+    nameRu: data.nameRu ?? null,
+    descriptionRu: data.descriptionRu ?? null,
     discountPrice: data.discountPrice ?? null,
     volume: data.volume ?? null,
     pieces: data.pieces ?? null,

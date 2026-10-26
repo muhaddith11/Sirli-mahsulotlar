@@ -1,7 +1,7 @@
 import "server-only";
 import type { OrderSource, OrderStatus } from "@/generated/prisma/enums";
 import { fill, getDictionary, isLocale } from "@/i18n";
-import { ORDER_SOURCE_LABELS, ORDER_STATUS_EMOJI } from "@/lib/constants";
+import { ORDER_SOURCE_LABELS, ORDER_STATUS_EMOJI, ORDER_STATUS_LABELS } from "@/lib/constants";
 import { formatDate, formatPhone, formatPrice } from "@/lib/format";
 
 export function escapeHtml(text: string): string {
@@ -18,15 +18,20 @@ export type OrderForMessage = {
   comment: string | null;
   totalAmount: number;
   createdAt: Date;
+  locale?: string;
   items: { productName: string; unitPrice: number; quantity: number; totalPrice: number }[];
   user?: { username: string | null; telegramId: bigint | null } | null;
 };
 
-/** Do'kon egasiga yuboriladigan "Yangi buyurtma" xabari (HTML) */
+/**
+ * Do'kon egasiga yuboriladigan buyurtma xabari (HTML).
+ * Holat o'zgarganda xabar shu funksiya bilan qayta chiziladi.
+ */
 export function newOrderMessage(order: OrderForMessage): string {
   const e = escapeHtml;
   const lines: string[] = [
-    `🛒 <b>Yangi buyurtma #${order.number}</b>`,
+    `🛒 <b>Buyurtma #${order.number}</b>`,
+    `${ORDER_STATUS_EMOJI[order.status]} <b>Holat:</b> ${ORDER_STATUS_LABELS[order.status]}`,
     "",
     `👤 <b>Mijoz:</b> ${e(order.customerName)}`,
     // Telegram HTML'da tel: havolalari qo'llab-quvvatlanmaydi; raqamni klient o'zi bosiladigan qiladi
@@ -42,6 +47,7 @@ export function newOrderMessage(order: OrderForMessage): string {
       ? ` (<a href="tg://user?id=${order.user.telegramId}">profil</a>)`
       : "";
   lines.push(`📱 <b>Manba:</b> ${ORDER_SOURCE_LABELS[order.source]}${telegramUser}`);
+  if (order.locale === "ru") lines.push("🌐 <b>Mijoz tili:</b> ruscha");
 
   lines.push("", "📦 <b>Mahsulotlar:</b>");
   order.items.forEach((item, i) => {

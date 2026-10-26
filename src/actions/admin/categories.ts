@@ -26,6 +26,7 @@ export async function saveCategoryAction(_prev: ActionResult, formData: FormData
   const data = {
     ...rest,
     slug: slugify(slug || rest.name) || `kategoriya-${Date.now()}`,
+    nameRu: rest.nameRu ?? null,
     volume: rest.volume ?? null,
     collectionName: rest.collectionName ?? null,
     description: rest.description ?? null,

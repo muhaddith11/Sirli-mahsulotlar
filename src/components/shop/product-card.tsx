@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { localized, type Locale } from "@/i18n";
 import { cn } from "@/lib/cn";
-import { discountPercent, effectivePrice, formatPrice } from "@/lib/format";
+import { discountPercent, effectivePrice, formatPrice, keepUnits } from "@/lib/format";
 import type { ProductCardData } from "@/lib/services/products";
 import { CartControl } from "./cart-control";
 import { ProductImage } from "./product-image";
@@ -9,7 +9,7 @@ import { ProductImage } from "./product-image";
 type Props = { product: ProductCardData; locale: Locale; priority?: boolean; className?: string };
 
 export function ProductCard({ product, locale, priority, className }: Props) {
-  const name = localized(locale, product.name, product.nameRu);
+  const name = keepUnits(localized(locale, product.name, product.nameRu));
   const price = effectivePrice(product);
   const off = discountPercent(product);
   const soldOut = product.stock <= 0;
@@ -43,7 +43,7 @@ export function ProductCard({ product, locale, priority, className }: Props) {
             <span className="text-xs text-ink-3 line-through tabular">{formatPrice(product.price, locale)}</span>
           )}
         </div>
-        <h3 className="mt-1 line-clamp-2 text-[13px] leading-snug text-ink-2">
+        <h3 className="mt-1 line-clamp-2 text-pretty text-[13px] leading-snug text-ink-2">
           <Link href={href} className="hover:text-ink">
             {name}
           </Link>
@@ -78,7 +78,7 @@ export function ProductRail({ products, locale }: { products: ProductCardData[];
   return (
     <div
       className={cn(
-        "scrollbar-none -mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1",
+        "scrollbar-none -mx-4 flex snap-x scroll-px-4 gap-3 overflow-x-auto px-4 pb-1",
         "sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-x-4 sm:overflow-visible sm:px-0 lg:grid-cols-4 xl:grid-cols-5",
         // Kattaroq ekranda faqat bitta to'liq qator: ortiqchasi yashiriladi (tab tartibidan ham chiqadi)
         "sm:[&>*:nth-child(n+4)]:hidden lg:[&>*:nth-child(n+4)]:flex lg:[&>*:nth-child(n+5)]:hidden xl:[&>*:nth-child(n+5)]:flex xl:[&>*:nth-child(n+6)]:hidden",

@@ -19,6 +19,12 @@ export function getAdminChatIds(): string[] {
     .filter(Boolean);
 }
 
+/** Xabar yuborgan yoki tugmani bosgan odam do'kon egasimi (TELEGRAM_ADMIN_CHAT_ID ro'yxatida) */
+export function isAdminChat(...ids: Array<number | string | undefined>): boolean {
+  const admins = getAdminChatIds();
+  return ids.some((id) => id !== undefined && admins.includes(String(id)));
+}
+
 /** Telegram inline tugmalari faqat ochiq HTTPS manzillarni qabul qiladi */
 export function getPublicAppUrl(): string | null {
   const url = process.env.APP_URL?.replace(/\/$/, "");

@@ -9,7 +9,8 @@ import { localized } from "@/i18n/config";
 import { useI18n } from "@/i18n/provider";
 import { useMainButton } from "@/hooks/use-main-button";
 import { cn } from "@/lib/cn";
-import { formatPhoneInput, formatPrice } from "@/lib/format";
+import { formatPhoneInput, formatPrice, keepUnits } from "@/lib/format";
+import { rememberOrder } from "@/lib/order-history";
 import { useCart } from "@/providers/cart-provider";
 import { haptic, useTelegram } from "@/providers/telegram-provider";
 import { OrderSummary } from "./order-summary";
@@ -77,6 +78,7 @@ export function CheckoutForm() {
         const { name, phone, address } = values;
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ name, phone, address }));
       } catch {}
+      rememberOrder(data.orderId);
       setDone(true);
       haptic(webApp, "success");
       router.replace(`/checkout/success?id=${data.orderId}`);
@@ -237,7 +239,7 @@ export function CheckoutForm() {
                 <span className="shrink-0 overflow-hidden rounded-lg bg-cream">
                   <ProductImage src={item.image} alt="" className="aspect-[4/5] w-11" />
                 </span>
-                <span className="line-clamp-2 flex-1 text-ink-2">{localized(locale, item.name, item.nameRu)}</span>
+                <span className="line-clamp-2 flex-1 text-ink-2">{keepUnits(localized(locale, item.name, item.nameRu))}</span>
                 <span className="shrink-0 text-ink-3 tabular">× {item.quantity}</span>
               </li>
             ))}

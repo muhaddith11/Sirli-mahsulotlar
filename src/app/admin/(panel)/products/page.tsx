@@ -60,18 +60,18 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
 
       <form className="mb-4 flex flex-wrap gap-2">
         <div className="relative min-w-56 flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-faint" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3" />
           <input
             name="q"
             defaultValue={q}
             placeholder="Nomi yoki artikul"
-            className="h-10 w-full rounded-full border border-line bg-white pl-9 pr-3 text-sm outline-none focus:border-berry-500"
+            className="h-10 w-full rounded-[var(--radius-field)] border border-line-strong bg-white pl-9 pr-3 text-sm outline-none focus:border-brand"
           />
         </div>
         <select
           name="category"
           defaultValue={categoryId}
-          className="h-10 rounded-full border border-line bg-white px-3 text-sm font-semibold outline-none focus:border-berry-500"
+          className="h-10 rounded-[var(--radius-field)] border border-line-strong bg-white px-3 text-sm font-semibold outline-none focus:border-brand"
         >
           <option value="">Barcha kategoriyalar</option>
           {categories.map((c) => (
@@ -80,7 +80,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
             </option>
           ))}
         </select>
-        <button type="submit" className="h-10 rounded-full bg-ink px-5 text-sm font-bold text-cream">
+        <button type="submit" className="h-10 rounded-[var(--radius-field)] bg-ink px-5 text-sm font-semibold text-white hover:bg-ink/85">
           Filtrlash
         </button>
       </form>
@@ -88,7 +88,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
       {products.length === 0 ? (
         <EmptyState>
           Mahsulotlar topilmadi.{" "}
-          <Link href="/admin/products/new" className="font-bold text-berry-600">
+          <Link href="/admin/products/new" className="font-bold text-brand">
             Birinchisini qo&apos;shing
           </Link>
         </EmptyState>
@@ -97,17 +97,17 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
           {products.map((product) => (
             <li
               key={product.id}
-              className="flex flex-wrap items-center gap-x-4 gap-y-3 rounded-2xl bg-white p-3 ring-1 ring-line sm:flex-nowrap"
+              className="flex flex-wrap items-center gap-x-4 gap-y-3 rounded-[var(--radius-card)] bg-white p-3 ring-1 ring-line sm:flex-nowrap"
             >
-              <ProductImage src={product.images[0]} alt="" className="size-16 shrink-0 rounded-xl" />
+              <ProductImage src={product.images[0]} alt="" className="size-16 shrink-0 rounded-[var(--radius-field)]" />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <Link href={`/admin/products/${product.id}`} className="truncate font-semibold hover:text-berry-600">
+                  <Link href={`/admin/products/${product.id}`} className="truncate font-semibold hover:text-brand">
                     {product.name}
                   </Link>
-                  {product.isFeatured && <Star className="size-4 shrink-0 fill-honey-500 text-honey-500" aria-label="Tavsiya etilgan" />}
+                  {product.isFeatured && <Star className="size-4 shrink-0 fill-warning text-warning" aria-label="Tavsiya etilgan" />}
                 </div>
-                <p className="text-xs text-ink-faint">
+                <p className="text-xs text-ink-3">
                   {product.category.name}
                   {product.sku && ` · ${product.sku}`}
                   {!product.isActive && <span className="ml-1.5 rounded bg-stone-200 px-1.5 py-0.5 font-bold text-stone-600">Yashirin</span>}
@@ -116,8 +116,8 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
               <div className="w-32 text-right">
                 {product.discountPrice != null ? (
                   <>
-                    <p className="text-xs text-ink-faint line-through">{formatPrice(product.price)}</p>
-                    <p className="font-bold text-berry-600">{formatPrice(product.discountPrice)}</p>
+                    <p className="text-xs text-ink-3 line-through">{formatPrice(product.price)}</p>
+                    <p className="font-bold text-brand">{formatPrice(product.discountPrice)}</p>
                   </>
                 ) : (
                   <p className="font-bold">{formatPrice(product.price)}</p>

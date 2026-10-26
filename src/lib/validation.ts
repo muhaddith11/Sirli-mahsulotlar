@@ -71,10 +71,12 @@ export const productFormSchema = z
   .object({
     id: optionalText(40),
     name: z.string().trim().min(2, "Nomini kiriting").max(150),
+    nameRu: optionalText(150),
     slug: optionalText(80),
     sku: optionalText(40),
     categoryId: z.string().min(1, "Kategoriyani tanlang"),
     description: z.string().trim().max(5000).default(""),
+    descriptionRu: optionalText(5000),
     price: z.coerce.number({ error: "Narxni kiriting" }).int("Butun son kiriting").min(1, "Narx 0 dan katta bo'lsin"),
     discountPrice: optionalInt(1),
     stock: z.coerce.number().int("Butun son kiriting").min(0, "Qoldiq manfiy bo'lishi mumkin emas"),
@@ -93,6 +95,7 @@ export type ProductFormInput = z.infer<typeof productFormSchema>;
 export const categoryFormSchema = z.object({
   id: optionalText(40),
   name: z.string().trim().min(2, "Nomini kiriting").max(80),
+  nameRu: optionalText(80),
   slug: optionalText(80),
   dishType: z.enum(DISH_TYPES),
   volume: optionalText(40),

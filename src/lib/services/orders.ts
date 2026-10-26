@@ -4,9 +4,10 @@ import type { Locale } from "@/i18n";
 import { prisma } from "@/lib/prisma";
 import { AppError } from "@/lib/errors";
 import { effectivePrice } from "@/lib/format";
-import { getPublicAppUrl, notifyAdmins, sendHtmlMessage } from "@/lib/telegram/bot";
+import { notifyAdmins, sendHtmlMessage } from "@/lib/telegram/bot";
 import type { TelegramWebAppUser } from "@/lib/telegram/init-data";
 import { newOrderMessage, orderReceivedMessage, orderStatusMessage } from "@/lib/telegram/messages";
+import { orderAdminKeyboard } from "@/lib/telegram/order-keyboard";
 
 type CreateOrderInput = {
   cartId: string;
@@ -105,14 +106,24 @@ export async function createOrder(input: CreateOrderInput) {
 
 type OrderWithDetails = Awaited<ReturnType<typeof createOrder>>;
 
+/** Telegram xabarini qayta chizish uchun buyurtma (tarkibi va mijoz bilan) */
+export function getOrderWithDetails(orderId: string) {
+  return prisma.order.findUnique({ where: { id: orderId }, include: orderWithDetails });
+}
+
+/** Faol (yakunlanmagan) buyurtmalar — /yangi buyrug'i uchun */
+export function listActiveOrders(take = 5) {
+  return prisma.order.findMany({
+    where: { status: { in: ["NEW", "PREPARING", "DELIVERING"] } },
+    orderBy: { createdAt: "desc" },
+    take,
+    include: orderWithDetails,
+  });
+}
+
 /** Do'kon egasiga va (Telegram orqali bo'lsa) mijozga xabar yuboradi */
 export async function sendNewOrderNotifications(order: OrderWithDetails) {
-  const appUrl = getPublicAppUrl();
-  await notifyAdmins(newOrderMessage(order), {
-    keyboard: appUrl
-      ? { inline_keyboard: [[{ text: "📋 Admin panelda ochish", url: `${appUrl}/admin/orders/${order.id}` }]] }
-      : undefined,
-  });
+  await notifyAdmins(newOrderMessage(order), { keyboard: orderAdminKeyboard(order.id, order.status) });
 
   if (order.user?.telegramId) {
     await sendHtmlMessage(order.user.telegramId.toString(), orderReceivedMessage(order)).catch((error) =>

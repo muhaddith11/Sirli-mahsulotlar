@@ -18,7 +18,7 @@ export default async function EditProductPage({ params }: PageProps<"/admin/prod
 
   return (
     <>
-      <Link href="/admin/products" className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-ink-soft hover:text-ink">
+      <Link href="/admin/products" className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-ink-2 hover:text-ink">
         <ArrowLeft className="size-4" /> Mahsulotlar
       </Link>
       <PageHeader
@@ -28,7 +28,7 @@ export default async function EditProductPage({ params }: PageProps<"/admin/prod
           <Link
             href={`/products/${product.slug}`}
             target="_blank"
-            className="inline-flex items-center gap-1.5 text-sm font-bold text-berry-600"
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-brand"
           >
             Do&apos;konda ko&apos;rish <ExternalLink className="size-4" />
           </Link>
@@ -39,10 +39,12 @@ export default async function EditProductPage({ params }: PageProps<"/admin/prod
         product={{
           id: product.id,
           name: product.name,
+          nameRu: product.nameRu,
           slug: product.slug,
           sku: product.sku,
           categoryId: product.categoryId,
           description: product.description,
+          descriptionRu: product.descriptionRu,
           price: product.price,
           discountPrice: product.discountPrice,
           stock: product.stock,
