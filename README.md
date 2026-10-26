@@ -141,7 +141,8 @@ npm run db:deploy  # migratsiyalarni qo'llash
 npm start
 ```
 
-- Admin yuklagan rasmlar `UPLOAD_DIR` papkasiga diskka yoziladi. VPS/Docker'da shu papkani doimiy volume qiling. Vercel kabi serverless platformalarda disk vaqtinchalik — rasmlar uchun S3, Cloudinary yoki Vercel Blob ishlating (yoki admin formasida rasm URL'ini kiriting).
+- Admin yuklagan rasmlar: `BLOB_READ_WRITE_TOKEN` bo'lsa — Vercel Blob'ga, aks holda `UPLOAD_DIR` papkasiga diskka yoziladi. VPS/Docker'da shu papkani doimiy volume qiling.
+- **Vercel:** `vercel-build` skripti har deployda `prisma migrate deploy` ni bajaradi. Neon integratsiyasi `DATABASE_URL` (pooler) va `DATABASE_URL_UNPOOLED` (migratsiyalar uchun) ni o'zi qo'shadi; Blob store ulanganda `BLOB_READ_WRITE_TOKEN` paydo bo'ladi.
 - Productionda savat cookie'si `SameSite=None; Secure` — Telegram Web Mini App'ni iframe ichida ochadi.
 
 ## Demo matnlar

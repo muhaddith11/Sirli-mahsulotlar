@@ -8,6 +8,8 @@ export default defineConfig({
     seed: "tsx prisma/seed.ts",
   },
   datasource: {
-    url: env("DATABASE_URL"),
+    // Migratsiyalar pooler orqali emas, to'g'ridan-to'g'ri ulanishda bajariladi
+    // (Neon/Vercel buni DATABASE_URL_UNPOOLED sifatida beradi)
+    url: process.env.DATABASE_URL_UNPOOLED || env("DATABASE_URL"),
   },
 });
