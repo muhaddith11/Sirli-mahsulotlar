@@ -1,0 +1,144 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Boxes, CircleAlert, PackageX, Wallet } from "lucide-react";
+import { StockEditor } from "@/components/admin/stock-editor";
+import { EmptyState, PageHeader, StockBadge } from "@/components/admin/ui";
+import { ProductImage } from "@/components/shop/product-image";
+import type { Prisma } from "@/generated/prisma/client";
+import { cn } from "@/lib/cn";
+import { LOW_STOCK_THRESHOLD } from "@/lib/constants";
+import { effectivePrice, formatNumber, formatPrice } from "@/lib/format";
+import { prisma } from "@/lib/prisma";
+
+export const metadata: Metadata = { title: "Ombor" };
+
+const FILTERS = [
+  { key: "all", label: "Hammasi" },
+  { key: "low", label: `Kam qolgan (≤ ${LOW_STOCK_THRESHOLD})` },
+  { key: "out", label: "Tugagan" },
+] as const;
+
+export default async function InventoryPage({ searchParams }: PageProps<"/admin/inventory">) {
+  const sp = await searchParams;
+  const filter = FILTERS.find((f) => f.key === sp.filter)?.key ?? "all";
+  const q = typeof sp.q === "string" ? sp.q.trim() : "";
+
+  const where: Prisma.ProductWhereInput = {};
+  if (filter === "low") where.stock = { lte: LOW_STOCK_THRESHOLD };
+  if (filter === "out") where.stock = { lte: 0 };
+  if (q) where.OR = [{ name: { contains: q, mode: "insensitive" } }, { sku: { contains: q, mode: "insensitive" } }];
+
+  const [products, all] = await Promise.all([
+    prisma.product.findMany({
+      where,
+      orderBy: [{ stock: "asc" }, { name: "asc" }],
+      include: { category: { select: { name: true } } },
+    }),
+    prisma.product.findMany({ select: { stock: true, price: true, discountPrice: true } }),
+  ]);
+
+  const totalUnits = all.reduce((sum, p) => sum + p.stock, 0);
+  const stockValue = all.reduce((sum, p) => sum + p.stock * effectivePrice(p), 0);
+  const lowCount = all.filter((p) => p.stock <= LOW_STOCK_THRESHOLD).length;
+  const outCount = all.filter((p) => p.stock <= 0).length;
+
+  const summary = [
+    { label: "Ombordagi buyumlar", value: `${formatNumber(totalUnits)} dona`, icon: Boxes, tone: "bg-sky-50 text-sky-700" },
+    { label: "Ombor qiymati", value: formatPrice(stockValue), icon: Wallet, tone: "bg-leaf-50 text-leaf-700" },
+    { label: `Kam qolgan (≤ ${LOW_STOCK_THRESHOLD})`, value: String(lowCount), icon: CircleAlert, tone: "bg-amber-50 text-amber-700" },
+    { label: "Tugagan", value: String(outCount), icon: PackageX, tone: "bg-berry-50 text-berry-700" },
+  ];
+
+  return (
+    <>
+      <PageHeader title="Ombor" description="Qoldiqni shu yerning o'zida o'zgartiring — o'zgarish darhol saqlanadi" />
+
+      <div className="mb-6 grid grid-cols-2 gap-3 xl:grid-cols-4">
+        {summary.map(({ label, value, icon: Icon, tone }) => (
+          <div key={label} className="flex items-center gap-3 rounded-2xl bg-white p-4 ring-1 ring-line">
+            <span className={cn("grid size-10 shrink-0 place-items-center rounded-xl", tone)}>
+              <Icon className="size-5" />
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-xs font-semibold text-ink-soft">{label}</p>
+              <p className="truncate text-lg font-extrabold">{value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        {FILTERS.map((f) => (
+          <Link
+            key={f.key}
+            href={f.key === "all" ? "/admin/inventory" : `/admin/inventory?filter=${f.key}`}
+            className={cn(
+              "rounded-full px-3.5 py-2 text-sm font-semibold ring-1",
+              filter === f.key ? "bg-ink text-cream ring-ink" : "bg-white text-ink-soft ring-line hover:text-ink",
+            )}
+          >
+            {f.label}
+          </Link>
+        ))}
+        <form className="ml-auto w-full sm:w-60">
+          {filter !== "all" && <input type="hidden" name="filter" value={filter} />}
+          <input
+            name="q"
+            defaultValue={q}
+            placeholder="Nomi yoki artikul"
+            className="h-10 w-full rounded-full border border-line bg-white px-4 text-sm outline-none focus:border-berry-500"
+          />
+        </form>
+      </div>
+
+      {products.length === 0 ? (
+        <EmptyState>Bu filtr bo&apos;yicha mahsulot yo&apos;q</EmptyState>
+      ) : (
+        <div className="overflow-x-auto rounded-2xl bg-white ring-1 ring-line">
+          <table className="w-full min-w-[720px] text-sm">
+            <thead>
+              <tr className="border-b border-line text-left text-xs font-bold uppercase tracking-wider text-ink-faint">
+                <th className="px-4 py-3">Mahsulot</th>
+                <th className="px-4 py-3">Artikul</th>
+                <th className="px-4 py-3 text-right">Narx</th>
+                <th className="px-4 py-3">Holat</th>
+                <th className="px-4 py-3">Qoldiqni o&apos;zgartirish</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-line">
+              {products.map((p) => (
+                <tr
+                  key={p.id}
+                  className={cn(p.stock <= 0 ? "bg-berry-50/40" : p.stock <= LOW_STOCK_THRESHOLD && "bg-amber-50/40")}
+                >
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <ProductImage src={p.images[0]} alt="" className="size-11 shrink-0 rounded-lg" />
+                      <div className="min-w-0">
+                        <Link href={`/admin/products/${p.id}`} className="block max-w-72 truncate font-semibold hover:text-berry-600">
+                          {p.name}
+                        </Link>
+                        <p className="text-xs text-ink-faint">
+                          {p.category.name}
+                          {!p.isActive && " · yashirin"}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 font-mono text-xs text-ink-soft">{p.sku ?? "—"}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right font-semibold">{formatPrice(effectivePrice(p))}</td>
+                  <td className="px-4 py-3">
+                    <StockBadge stock={p.stock} />
+                  </td>
+                  <td className="px-4 py-3">
+                    <StockEditor key={p.stock} productId={p.id} stock={p.stock} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
+  );
+}

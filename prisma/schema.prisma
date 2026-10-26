@@ -1,0 +1,185 @@
+// Sirli Mahsulotlar — emal kastryulkalar va oshxona idishlari do'koni.
+// Barcha narxlar butun son ko'rinishida, so'mda saqlanadi.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────
+// Foydalanuvchilar
+// ─────────────────────────────────────────────
+
+/// Telegram Mini App orqali kirgan mijoz. Saytdan (Telegramsiz)
+/// berilgan buyurtmalar foydalanuvchisiz saqlanadi.
+model User {
+  id           String   @id @default(cuid())
+  telegramId   BigInt?  @unique
+  firstName    String?
+  lastName     String?
+  username     String?
+  languageCode String?
+  phone        String?
+  address      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  cart   Cart?
+  orders Order[]
+}
+
+// ─────────────────────────────────────────────
+// Katalog
+// ─────────────────────────────────────────────
+
+/// Idish turi
+enum DishType {
+  POT // Kastryulka
+  SET // To'plam (nabor)
+  KETTLE // Choynak
+  BOWL // Tog'ora, kosa
+  MUG // Krujka
+  LADLE // Kovsh
+  PAN // Tova
+  OTHER // Boshqa
+}
+
+/// Kategoriya idish turi bo'yicha guruh ("Kastryulkalar") yoki
+/// nomli to'plam ("Qulupnay to'plami") bo'lishi mumkin.
+model Category {
+  id             String   @id @default(cuid())
+  name           String
+  slug           String   @unique
+  dishType       DishType @default(OTHER)
+  /// Hajmi, masalan "2–16 L"
+  volume         String?
+  /// To'plam nomi, masalan "Qulupnay"
+  collectionName String?
+  description    String?
+  image          String?
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  products Product[]
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  sku           String?  @unique
+  description   String   @default("")
+  /// Asosiy narx (so'm)
+  price         Int
+  /// Chegirma narxi (so'm). Chegirma bo'lmasa — null
+  discountPrice Int?
+  /// Rasm URL'lari, birinchisi — asosiy rasm
+  images        String[]
+  /// Ombordagi qoldiq (dona)
+  stock         Int      @default(0)
+  /// Hajmi, masalan "16 L" yoki "400 ml"
+  volume        String?
+  /// To'plamdagi buyumlar soni
+  pieces        Int?
+  isActive      Boolean  @default(true)
+  isFeatured    Boolean  @default(false)
+  categoryId    String
+  category      Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  @@index([categoryId])
+  @@index([isActive, isFeatured])
+}
+
+// ─────────────────────────────────────────────
+// Savat
+// ─────────────────────────────────────────────
+
+/// Savat brauzer cookie'si (cart_id) orqali aniqlanadi; Telegram
+/// foydalanuvchisi buyurtma berganda unga bog'lanadi.
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String?    @unique
+  user      User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, productId])
+}
+
+// ─────────────────────────────────────────────
+// Buyurtmalar
+// ─────────────────────────────────────────────
+
+enum OrderStatus {
+  NEW // Yangi
+  PREPARING // Tayyorlanmoqda
+  DELIVERING // Yetkazilmoqda
+  COMPLETED // Yakunlandi
+  CANCELLED // Bekor qilindi
+}
+
+enum OrderSource {
+  WEB // Sayt orqali
+  TELEGRAM // Telegram Mini App orqali
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  /// Mijozga ko'rsatiladigan qisqa raqam (#1, #2, ...)
+  number          Int         @unique @default(autoincrement())
+  status          OrderStatus @default(NEW)
+  source          OrderSource @default(WEB)
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  customerName    String
+  phone           String
+  deliveryAddress String
+  comment         String?
+  /// To'liq summa (so'm)
+  totalAmount     Int
+  items           OrderItem[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([status, createdAt])
+  @@index([userId])
+}
+
+/// Buyurtma tarkibi. Nom va narx buyurtma paytidagi holatda saqlanadi,
+/// shuning uchun mahsulot keyin o'zgarsa yoki o'chirilsa ham tarix buzilmaydi.
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productName String
+  image       String?
+  unitPrice   Int
+  quantity    Int
+  totalPrice  Int
+
+  @@index([orderId])
+}

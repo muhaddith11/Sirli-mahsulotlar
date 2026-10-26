@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+}
+
+@theme {
+  --color-cream: #fbf6ee;
+  --color-cream-deep: #f4ecdf;
+  --color-ink: #2a1e17;
+  --color-ink-soft: #6b5b50;
+  --color-ink-faint: #a39488;
+  --color-line: #ece2d4;
+
+  --color-berry-50: #fdf3f1;
+  --color-berry-100: #fbe4df;
+  --color-berry-200: #f5c3ba;
+  --color-berry-500: #c9443a;
+  --color-berry-600: #b8322a;
+  --color-berry-700: #92231d;
+  --color-berry-800: #6f1a16;
+
+  --color-leaf-50: #eef6ec;
+  --color-leaf-600: #3e7d3a;
+  --color-leaf-700: #2f6430;
+
+  --color-honey-100: #fdf0d5;
+  --color-honey-500: #e9a93b;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--color-berry-200);
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px; /* iOS'da avtomatik zoom bo'lmasligi uchun */
+  }
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}

@@ -1,0 +1,105 @@
+import { z } from "zod";
+import { DISH_TYPES, ORDER_STATUSES, PRODUCT_SORTS } from "./constants";
+import { normalizePhone } from "./format";
+
+/** Bo'sh satrni undefined'ga aylantiradi (formalar va query parametrlar uchun) */
+const emptyToUndefined = (value: unknown) =>
+  value === "" || value === null || value === undefined ? undefined : value;
+
+const optionalInt = (min = 0) =>
+  z.preprocess(emptyToUndefined, z.coerce.number().int().min(min).optional());
+
+const optionalText = (max: number) =>
+  z.preprocess(
+    (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
+    z.string().trim().max(max).optional(),
+  );
+
+// ─── Katalog ────────────────────────────────────────────
+
+export const productQuerySchema = z.object({
+  q: optionalText(100),
+  category: optionalText(80),
+  minPrice: optionalInt(),
+  maxPrice: optionalInt(),
+  sort: z.preprocess(emptyToUndefined, z.enum(PRODUCT_SORTS).default("popular")),
+  page: z.preprocess(emptyToUndefined, z.coerce.number().int().min(1).default(1)),
+  limit: z.preprocess(emptyToUndefined, z.coerce.number().int().min(1).max(50).default(12)),
+  featured: z.preprocess((v) => v === "1" || v === "true" || v === true, z.boolean()).optional(),
+  discounted: z.preprocess((v) => v === "1" || v === "true" || v === true, z.boolean()).optional(),
+});
+export type ProductQuery = z.infer<typeof productQuerySchema>;
+
+// ─── Savat ──────────────────────────────────────────────
+
+export const addCartItemSchema = z.object({
+  productId: z.string().min(1, "Mahsulot ko'rsatilmagan"),
+  quantity: z.coerce.number().int().min(1).max(99).default(1),
+});
+
+export const updateCartItemSchema = z.object({
+  quantity: z.coerce.number().int().min(0).max(99),
+});
+
+// ─── Checkout ───────────────────────────────────────────
+
+export const phoneSchema = z
+  .string()
+  .trim()
+  .transform((value, ctx) => {
+    const phone = normalizePhone(value);
+    if (!phone) {
+      ctx.addIssue({ code: "custom", message: "Telefon raqam noto'g'ri. Masalan: +998 90 123 45 67" });
+      return z.NEVER;
+    }
+    return phone;
+  });
+
+export const checkoutSchema = z.object({
+  name: z.string().trim().min(2, "Ismingizni kiriting").max(100, "Ism juda uzun"),
+  phone: phoneSchema,
+  address: z.string().trim().min(5, "Manzilni to'liqroq yozing").max(500, "Manzil juda uzun"),
+  comment: optionalText(500),
+  /** Telegram.WebApp.initData — Mini App ichida bo'lsa yuboriladi */
+  initData: z.string().max(4096).optional(),
+});
+export type CheckoutInput = z.infer<typeof checkoutSchema>;
+
+// ─── Admin ──────────────────────────────────────────────
+
+export const productFormSchema = z
+  .object({
+    id: optionalText(40),
+    name: z.string().trim().min(2, "Nomini kiriting").max(150),
+    slug: optionalText(80),
+    sku: optionalText(40),
+    categoryId: z.string().min(1, "Kategoriyani tanlang"),
+    description: z.string().trim().max(5000).default(""),
+    price: z.coerce.number({ error: "Narxni kiriting" }).int("Butun son kiriting").min(1, "Narx 0 dan katta bo'lsin"),
+    discountPrice: optionalInt(1),
+    stock: z.coerce.number().int("Butun son kiriting").min(0, "Qoldiq manfiy bo'lishi mumkin emas"),
+    volume: optionalText(40),
+    pieces: optionalInt(1),
+    images: z.array(z.string().trim().min(1).max(500)).max(10, "Ko'pi bilan 10 ta rasm"),
+    isActive: z.boolean(),
+    isFeatured: z.boolean(),
+  })
+  .refine((d) => d.discountPrice == null || d.discountPrice < d.price, {
+    path: ["discountPrice"],
+    message: "Chegirma narxi asosiy narxdan kichik bo'lishi kerak",
+  });
+export type ProductFormInput = z.infer<typeof productFormSchema>;
+
+export const categoryFormSchema = z.object({
+  id: optionalText(40),
+  name: z.string().trim().min(2, "Nomini kiriting").max(80),
+  slug: optionalText(80),
+  dishType: z.enum(DISH_TYPES),
+  volume: optionalText(40),
+  collectionName: optionalText(80),
+  description: optionalText(500),
+  image: optionalText(500),
+  sortOrder: z.preprocess(emptyToUndefined, z.coerce.number().int().default(0)),
+});
+
+export const orderStatusSchema = z.enum(ORDER_STATUSES);
