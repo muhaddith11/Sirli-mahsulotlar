@@ -1,38 +1,33 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Manrope } from "next/font/google";
+import { Golos_Text } from "next/font/google";
+import { getI18n } from "@/i18n/server";
 import "./globals.css";
 
-const manrope = Manrope({
+const golos = Golos_Text({
   subsets: ["latin", "latin-ext", "cyrillic"],
-  variable: "--font-manrope",
+  variable: "--font-golos",
   display: "swap",
 });
 
-const fraunces = Fraunces({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-fraunces",
-  display: "swap",
-});
-
-export const metadata: Metadata = {
-  title: {
-    default: "Sirli Mahsulotlar — emal kastryulkalar va oshxona idishlari",
-    template: "%s · Sirli Mahsulotlar",
-  },
-  description:
-    "Emal kastryulkalar, choynaklar, tog'oralar va to'plamlar. Toshkent bo'ylab tez yetkazib berish, Telegram orqali qulay buyurtma.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  return {
+    title: { default: t.meta.title, template: `%s · ${t.common.shopName}` },
+    description: t.meta.description,
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#fbf6ee",
+  themeColor: "#ffffff",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const { locale } = await getI18n();
   return (
-    <html lang="uz" className={`${manrope.variable} ${fraunces.variable}`}>
+    <html lang={locale} className={golos.variable}>
       <body className="min-h-dvh">{children}</body>
     </html>
   );

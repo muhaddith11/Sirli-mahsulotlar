@@ -13,6 +13,7 @@ const cartInclude = {
         select: {
           id: true,
           name: true,
+          nameRu: true,
           slug: true,
           price: true,
           discountPrice: true,
@@ -37,6 +38,7 @@ function toCartData(cart: CartWithItems | null): CartData {
       productId: product.id,
       slug: product.slug,
       name: product.name,
+      nameRu: product.nameRu,
       image: product.images[0] ?? null,
       volume: product.volume,
       price: product.price,
@@ -84,8 +86,8 @@ async function getSellableProduct(productId: string) {
     where: { id: productId },
     select: { id: true, name: true, stock: true, isActive: true },
   });
-  if (!product || !product.isActive) throw new AppError("Mahsulot topilmadi yoki sotuvda emas", 404);
-  if (product.stock <= 0) throw new AppError(`"${product.name}" omborda qolmagan`, 409);
+  if (!product || !product.isActive) throw new AppError("productUnavailable", 404);
+  if (product.stock <= 0) throw new AppError("outOfStock", 409, { name: product.name });
   return product;
 }
 
@@ -96,9 +98,7 @@ export async function addToCart(cartId: string, productId: string, quantity: num
     select: { quantity: true },
   });
   const nextQuantity = (existing?.quantity ?? 0) + quantity;
-  if (nextQuantity > product.stock) {
-    throw new AppError(`Omborda faqat ${product.stock} dona bor`, 409);
-  }
+  if (nextQuantity > product.stock) throw new AppError("stockLimit", 409, { count: product.stock });
 
   await prisma.cartItem.upsert({
     where: { cartId_productId: { cartId, productId } },
@@ -112,12 +112,10 @@ export async function setCartItemQuantity(cartId: string, productId: string, qua
   if (quantity <= 0) return removeCartItem(cartId, productId);
 
   const product = await getSellableProduct(productId);
-  if (quantity > product.stock) {
-    throw new AppError(`Omborda faqat ${product.stock} dona bor`, 409);
-  }
+  if (quantity > product.stock) throw new AppError("stockLimit", 409, { count: product.stock });
 
   const { count } = await prisma.cartItem.updateMany({ where: { cartId, productId }, data: { quantity } });
-  if (count === 0) throw new AppError("Mahsulot savatda yo'q", 404);
+  if (count === 0) throw new AppError("notInCart", 404);
   return getCart(cartId);
 }
 

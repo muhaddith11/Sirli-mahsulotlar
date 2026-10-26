@@ -1,27 +1,24 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 type Props = {
   title: string;
-  subtitle?: string;
   href?: string;
   linkLabel?: string;
+  as?: "h1" | "h2";
 };
 
-export function SectionHeading({ title, subtitle, href, linkLabel = "Barchasi" }: Props) {
+export function SectionHeading({ title, href, linkLabel, as: Tag = "h2" }: Props) {
   return (
-    <div className="mb-5 flex items-end justify-between gap-4">
-      <div>
-        <h2 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h2>
-        {subtitle && <p className="mt-1 text-sm text-ink-soft">{subtitle}</p>}
-      </div>
-      {href && (
+    <div className="mb-3 flex items-center justify-between gap-4 md:mb-4">
+      <Tag className="text-xl font-bold tracking-[-0.02em] md:text-2xl">{title}</Tag>
+      {href && linkLabel && (
         <Link
           href={href}
-          className="group inline-flex shrink-0 items-center gap-1 text-sm font-bold text-berry-600 hover:text-berry-700"
+          className="-mr-1 inline-flex shrink-0 items-center gap-0.5 rounded-md px-1 py-1 text-sm font-medium text-ink-2 hover:text-brand"
         >
           {linkLabel}
-          <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
+          <ChevronRight className="size-4" />
         </Link>
       )}
     </div>

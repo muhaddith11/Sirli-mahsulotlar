@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { handleApiError, jsonError, readJson } from "@/lib/api";
+import { handleApiError, jsonErrorCode, readJson } from "@/lib/api";
 import { readCartId } from "@/lib/cart-cookie";
 import { removeCartItem, setCartItemQuantity } from "@/lib/services/cart";
 import { updateCartItemSchema } from "@/lib/validation";
@@ -15,7 +15,7 @@ export async function PATCH(request: Request, { params }: Context) {
     const { productId } = await params;
     const { quantity } = updateCartItemSchema.parse(await readJson(request));
     const cartId = await readCartId();
-    if (!cartId) return jsonError("Savat topilmadi", 404);
+    if (!cartId) return jsonErrorCode("cartNotFound", 404);
     return NextResponse.json(await setCartItemQuantity(cartId, productId, quantity));
   } catch (error) {
     return handleApiError(error);
@@ -27,7 +27,7 @@ export async function DELETE(_request: Request, { params }: Context) {
   try {
     const { productId } = await params;
     const cartId = await readCartId();
-    if (!cartId) return jsonError("Savat topilmadi", 404);
+    if (!cartId) return jsonErrorCode("cartNotFound", 404);
     return NextResponse.json(await removeCartItem(cartId, productId));
   } catch (error) {
     return handleApiError(error);

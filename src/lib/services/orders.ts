@@ -1,5 +1,6 @@
 import "server-only";
 import type { OrderStatus } from "@/generated/prisma/enums";
+import type { Locale } from "@/i18n";
 import { prisma } from "@/lib/prisma";
 import { AppError } from "@/lib/errors";
 import { effectivePrice } from "@/lib/format";
@@ -13,6 +14,7 @@ type CreateOrderInput = {
   phone: string;
   address: string;
   comment?: string;
+  locale: Locale;
   telegramUser?: TelegramWebAppUser | null;
 };
 
@@ -31,17 +33,17 @@ export async function createOrder(input: CreateOrderInput) {
       where: { id: input.cartId },
       include: { items: { include: { product: true }, orderBy: { createdAt: "asc" } } },
     });
-    if (!cart || cart.items.length === 0) throw new AppError("Savatingiz bo'sh", 400);
+    if (!cart || cart.items.length === 0) throw new AppError("cartEmpty", 400);
 
     for (const { product, quantity } of cart.items) {
-      if (!product.isActive) throw new AppError(`"${product.name}" hozir sotuvda emas`, 409);
+      if (!product.isActive) throw new AppError("productInactive", 409, { name: product.name });
       // Shartli kamaytirish: parallel buyurtmalarda qoldiq manfiyga tushmaydi
       const { count } = await tx.product.updateMany({
         where: { id: product.id, stock: { gte: quantity } },
         data: { stock: { decrement: quantity } },
       });
       if (count === 0) {
-        throw new AppError(`"${product.name}" omborda yetarli emas (qoldiq: ${product.stock} dona)`, 409);
+        throw new AppError("stockShort", 409, { name: product.name, count: product.stock });
       }
     }
 
@@ -84,6 +86,7 @@ export async function createOrder(input: CreateOrderInput) {
     const order = await tx.order.create({
       data: {
         source: input.telegramUser ? "TELEGRAM" : "WEB",
+        locale: input.locale,
         userId,
         customerName: input.name,
         phone: input.phone,
@@ -125,10 +128,10 @@ export async function sendNewOrderNotifications(order: OrderWithDetails) {
 export async function updateOrderStatus(orderId: string, status: OrderStatus) {
   return prisma.$transaction(async (tx) => {
     const current = await tx.order.findUnique({ where: { id: orderId }, include: { items: true } });
-    if (!current) throw new AppError("Buyurtma topilmadi", 404);
+    if (!current) throw new AppError("orderNotFound", 404);
     if (current.status === status) return null;
     if (current.status === "CANCELLED") {
-      throw new AppError("Bekor qilingan buyurtma holatini o'zgartirib bo'lmaydi", 409);
+      throw new AppError("orderCancelledLocked", 409);
     }
 
     if (status === "CANCELLED") {

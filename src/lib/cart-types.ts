@@ -4,6 +4,7 @@ export type CartLine = {
   productId: string;
   slug: string;
   name: string;
+  nameRu: string | null;
   image: string | null;
   volume: string | null;
   price: number;

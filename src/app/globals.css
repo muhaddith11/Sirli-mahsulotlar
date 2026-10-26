@@ -1,54 +1,79 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-golos), ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme {
-  --color-cream: #fbf6ee;
-  --color-cream-deep: #f4ecdf;
-  --color-ink: #2a1e17;
-  --color-ink-soft: #6b5b50;
-  --color-ink-faint: #a39488;
-  --color-line: #ece2d4;
+  /* Yuzalar */
+  --color-page: #f7f4ef;
+  --color-surface: #ffffff;
+  --color-cream: #f3e9d8;
+  --color-cream-soft: #faf5ec;
 
-  --color-berry-50: #fdf3f1;
-  --color-berry-100: #fbe4df;
-  --color-berry-200: #f5c3ba;
-  --color-berry-500: #c9443a;
-  --color-berry-600: #b8322a;
-  --color-berry-700: #92231d;
-  --color-berry-800: #6f1a16;
+  /* Matn */
+  --color-ink: #1f1b18;
+  --color-ink-2: #5e564f;
+  --color-ink-3: #746b64;
 
-  --color-leaf-50: #eef6ec;
-  --color-leaf-600: #3e7d3a;
-  --color-leaf-700: #2f6430;
+  /* Chiziqlar */
+  --color-line: #ebe5dd;
+  --color-line-strong: #d8cfc4;
 
-  --color-honey-100: #fdf0d5;
-  --color-honey-500: #e9a93b;
+  /* Brend: qizil — faqat harakat, narx belgisi, faol holat */
+  --color-brand: #c8172b;
+  --color-brand-hover: #b3121f;
+  --color-brand-press: #970f1a;
+  --color-brand-soft: #fcecec;
+
+  /* Holatlar */
+  --color-success: #15803d;
+  --color-success-soft: #e8f5ec;
+  --color-warning: #b45309;
+  --color-warning-soft: #fef3e2;
+
+  --radius-card: 12px;
+  --radius-field: 10px;
+
+  --shadow-bar: 0 -6px 20px -12px rgb(31 27 24 / 0.28);
+  --shadow-pop: 0 12px 32px -12px rgb(31 27 24 / 0.32);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
+    scrollbar-color: var(--color-line-strong) transparent;
   }
 
   body {
-    background-color: var(--color-cream);
+    background-color: var(--color-page);
     color: var(--color-ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   ::selection {
-    background-color: var(--color-berry-200);
+    background-color: var(--color-brand);
+    color: #fff;
   }
 
   input,
   select,
   textarea {
     font-size: 16px; /* iOS'da avtomatik zoom bo'lmasligi uchun */
+    caret-color: var(--color-brand);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  a {
+    text-underline-offset: 3px;
   }
 }
 
@@ -61,4 +86,34 @@
 
 @utility pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Savat belgisidagi son yangilanganda qisqa "sakrash" */
+@keyframes badge-bump {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.28); }
+  100% { transform: scale(1); }
+}
+
+@utility animate-bump {
+  animation: badge-bump 320ms var(--ease-out);
+}
+
+/* Pastdan chiqadigan panel (filtrlar) */
+@keyframes sheet-in {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
 }

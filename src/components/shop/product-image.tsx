@@ -15,7 +15,7 @@ type Props = {
 export function ProductImage({ src, alt, className, loading = "lazy" }: Props) {
   if (!src) {
     return (
-      <div className={cn("grid place-items-center bg-cream-deep text-berry-200", className)}>
+      <div className={cn("grid place-items-center bg-cream text-line-strong", className)}>
         <PotMark className="size-1/3" />
       </div>
     );

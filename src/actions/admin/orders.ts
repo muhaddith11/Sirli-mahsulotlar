@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { requireAdmin } from "@/lib/auth";
-import { AppError } from "@/lib/errors";
+import { getDictionary } from "@/i18n";
+import { AppError, errorText } from "@/lib/errors";
 import { sendOrderStatusNotification, updateOrderStatus } from "@/lib/services/orders";
 import { orderStatusSchema } from "@/lib/validation";
 import type { ActionResult } from "./types";
@@ -18,7 +19,7 @@ export async function updateOrderStatusAction(orderId: string, status: string): 
     const order = await updateOrderStatus(orderId, parsed.data);
     if (order) after(() => sendOrderStatusNotification(order));
   } catch (error) {
-    if (error instanceof AppError) return { ok: false, error: error.message };
+    if (error instanceof AppError) return { ok: false, error: errorText(error, getDictionary("uz")) };
     throw error;
   }
 

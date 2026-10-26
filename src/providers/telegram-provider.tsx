@@ -1,6 +1,8 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { hasLocaleCookie, writeLocaleCookie } from "@/i18n/client";
 
 export type WebApp = (typeof import("@twa-dev/sdk"))["default"];
 
@@ -9,6 +11,7 @@ export type TelegramUser = {
   first_name: string;
   last_name?: string;
   username?: string;
+  language_code?: string;
 };
 
 type TelegramContextValue = {
@@ -28,9 +31,12 @@ const TelegramContext = createContext<TelegramContextValue>({
   ready: false,
 });
 
-const BRAND_BG = "#fbf6ee";
+// Telegram sarlavhasi va foni sayt yuzalariga mos bo'lsin
+const HEADER_BG = "#ffffff";
+const PAGE_BG = "#f7f4ef";
 
 export function TelegramProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [value, setValue] = useState<TelegramContextValue>({ webApp: null, user: null, initData: "", ready: false });
 
   useEffect(() => {
@@ -48,12 +54,19 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
         WebApp.ready();
         WebApp.expand();
         if (WebApp.isVersionAtLeast("6.1")) {
-          WebApp.setHeaderColor(BRAND_BG);
-          WebApp.setBackgroundColor(BRAND_BG);
+          WebApp.setHeaderColor(HEADER_BG);
+          WebApp.setBackgroundColor(PAGE_BG);
         }
         if (WebApp.isVersionAtLeast("7.7")) WebApp.disableVerticalSwipes();
         if (WebApp.isVersionAtLeast("7.10")) WebApp.setBottomBarColor("#ffffff");
         document.documentElement.dataset.telegram = "true";
+
+        // Birinchi ochilishda tilni Telegram sozlamasidan olamiz (keyin foydalanuvchi o'zi almashtiradi)
+        const languageCode = (WebApp.initDataUnsafe.user as TelegramUser | undefined)?.language_code;
+        if (!hasLocaleCookie() && languageCode) {
+          writeLocaleCookie(languageCode.startsWith("ru") ? "ru" : "uz");
+          if (languageCode.startsWith("ru")) router.refresh();
+        }
 
         setValue({
           webApp: WebApp,
@@ -69,7 +82,7 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [router]);
 
   return <TelegramContext.Provider value={value}>{children}</TelegramContext.Provider>;
 }

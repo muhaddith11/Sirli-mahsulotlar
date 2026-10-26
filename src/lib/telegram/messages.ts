@@ -1,6 +1,7 @@
 import "server-only";
 import type { OrderSource, OrderStatus } from "@/generated/prisma/enums";
-import { ORDER_SOURCE_LABELS, ORDER_STATUS_EMOJI, ORDER_STATUS_LABELS, SHOP_NAME } from "@/lib/constants";
+import { fill, getDictionary, isLocale } from "@/i18n";
+import { ORDER_SOURCE_LABELS, ORDER_STATUS_EMOJI } from "@/lib/constants";
 import { formatDate, formatPhone, formatPrice } from "@/lib/format";
 
 export function escapeHtml(text: string): string {
@@ -62,29 +63,33 @@ export function newOrderMessage(order: OrderForMessage): string {
   return lines.join("\n");
 }
 
-/** Mijozga buyurtma qabul qilingani haqida xabar */
-export function orderReceivedMessage(order: Pick<OrderForMessage, "number" | "totalAmount">): string {
+type CustomerOrder = Pick<OrderForMessage, "number" | "totalAmount" | "status"> & { locale: string };
+
+function dictFor(order: { locale: string }) {
+  return getDictionary(isLocale(order.locale) ? order.locale : "uz");
+}
+
+/** Mijozga buyurtma qabul qilingani haqida xabar (mijoz tilida) */
+export function orderReceivedMessage(order: CustomerOrder): string {
+  const t = dictFor(order);
+  const locale = isLocale(order.locale) ? order.locale : "uz";
   return [
-    `✅ <b>Buyurtmangiz qabul qilindi!</b>`,
+    t.telegram.received,
     "",
-    `Buyurtma raqami: <b>#${order.number}</b>`,
-    `Summa: <b>${formatPrice(order.totalAmount)}</b>`,
+    `${t.telegram.orderNumber}: <b>#${order.number}</b>`,
+    `${t.telegram.sum}: <b>${formatPrice(order.totalAmount, locale)}</b>`,
     "",
-    `Operatorimiz tez orada siz bilan bog'lanadi. ${SHOP_NAME} ni tanlaganingiz uchun rahmat! 🌸`,
+    t.telegram.thanks,
   ].join("\n");
 }
 
-/** Mijozga buyurtma holati o'zgargani haqida xabar */
-export function orderStatusMessage(order: Pick<OrderForMessage, "number" | "status">): string {
-  const extra: Partial<Record<OrderStatus, string>> = {
-    PREPARING: "Buyurtmangiz yig'ilmoqda.",
-    DELIVERING: "Kuryer yo'lda — tez orada yetib boradi.",
-    COMPLETED: "Xaridingiz uchun rahmat! Yana kutib qolamiz 🌸",
-    CANCELLED: "Savollar bo'lsa, bizga yozing.",
-  };
+/** Mijozga buyurtma holati o'zgargani haqida xabar (mijoz tilida) */
+export function orderStatusMessage(order: Pick<CustomerOrder, "number" | "status" | "locale">): string {
+  const t = dictFor(order);
+  const extra = (t.telegram.statusExtra as Partial<Record<OrderStatus, string>>)[order.status];
   return [
-    `${ORDER_STATUS_EMOJI[order.status]} Buyurtma <b>#${order.number}</b> holati: <b>${ORDER_STATUS_LABELS[order.status]}</b>`,
-    extra[order.status] ?? "",
+    `${ORDER_STATUS_EMOJI[order.status]} ${fill(t.telegram.statusLine, { number: order.number, status: t.status[order.status] })}`,
+    extra ?? "",
   ]
     .filter(Boolean)
     .join("\n");

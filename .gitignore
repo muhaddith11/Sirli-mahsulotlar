@@ -21,3 +21,9 @@ next-env.d.ts
 .DS_Store
 npm-debug.log*
 .vercel
+
+# impeccable ish fayllari
+/.impeccable/review/
+/.impeccable/questions/
+/.impeccable/decision/
+/.impeccable/mocks/

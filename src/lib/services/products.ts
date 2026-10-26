@@ -8,6 +8,7 @@ import type { ProductQuery } from "@/lib/validation";
 export const productCardSelect = {
   id: true,
   name: true,
+  nameRu: true,
   slug: true,
   price: true,
   discountPrice: true,
@@ -15,7 +16,7 @@ export const productCardSelect = {
   stock: true,
   volume: true,
   pieces: true,
-  category: { select: { name: true, slug: true } },
+  category: { select: { name: true, nameRu: true, slug: true } },
 } satisfies Prisma.ProductSelect;
 
 export type ProductCardData = Prisma.ProductGetPayload<{ select: typeof productCardSelect }>;
@@ -35,7 +36,15 @@ function buildWhere(query: Partial<ProductQuery>): Prisma.ProductWhereInput {
   if (query.q) {
     const contains = { contains: query.q, mode: "insensitive" } as const;
     and.push({
-      OR: [{ name: contains }, { description: contains }, { sku: contains }, { category: { name: contains } }],
+      OR: [
+        { name: contains },
+        { nameRu: contains },
+        { description: contains },
+        { descriptionRu: contains },
+        { sku: contains },
+        { category: { name: contains } },
+        { category: { nameRu: contains } },
+      ],
     });
   }
 
@@ -101,7 +110,7 @@ export async function listProducts(query: Partial<ProductQuery>): Promise<Produc
 export const getProductBySlug = cache(async (slug: string) =>
   prisma.product.findFirst({
     where: { slug, isActive: true },
-    include: { category: { select: { id: true, name: true, slug: true } } },
+    include: { category: { select: { id: true, name: true, nameRu: true, slug: true } } },
   }),
 );
 
@@ -121,6 +130,7 @@ export async function listCategories() {
     select: {
       id: true,
       name: true,
+      nameRu: true,
       slug: true,
       dishType: true,
       volume: true,

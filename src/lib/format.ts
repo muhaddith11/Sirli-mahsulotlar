@@ -7,8 +7,8 @@ export function formatNumber(value: number): string {
     .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
-export function formatPrice(value: number): string {
-  return `${formatNumber(value)} so'm`;
+export function formatPrice(value: number, locale: "uz" | "ru" = "uz"): string {
+  return `${formatNumber(value)} ${locale === "ru" ? "сум" : "so'm"}`;
 }
 
 type Priced = { price: number; discountPrice: number | null };

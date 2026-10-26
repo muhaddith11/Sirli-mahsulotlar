@@ -34,31 +34,31 @@ export type ProductQuery = z.infer<typeof productQuerySchema>;
 
 export const addCartItemSchema = z.object({
   productId: z.string().min(1, "Mahsulot ko'rsatilmagan"),
-  quantity: z.coerce.number().int().min(1).max(99).default(1),
+  quantity: z.coerce.number().int().min(1).max(99, "quantityMax").default(1),
 });
 
 export const updateCartItemSchema = z.object({
-  quantity: z.coerce.number().int().min(0).max(99),
+  quantity: z.coerce.number().int().min(0).max(99, "quantityMax"),
 });
 
 // ─── Checkout ───────────────────────────────────────────
 
 export const phoneSchema = z
-  .string()
+  .string({ error: "phoneInvalid" })
   .trim()
   .transform((value, ctx) => {
     const phone = normalizePhone(value);
     if (!phone) {
-      ctx.addIssue({ code: "custom", message: "Telefon raqam noto'g'ri. Masalan: +998 90 123 45 67" });
+      ctx.addIssue({ code: "custom", message: "phoneInvalid" });
       return z.NEVER;
     }
     return phone;
   });
 
 export const checkoutSchema = z.object({
-  name: z.string().trim().min(2, "Ismingizni kiriting").max(100, "Ism juda uzun"),
+  name: z.string({ error: "nameRequired" }).trim().min(2, "nameRequired").max(100, "nameTooLong"),
   phone: phoneSchema,
-  address: z.string().trim().min(5, "Manzilni to'liqroq yozing").max(500, "Manzil juda uzun"),
+  address: z.string({ error: "addressShort" }).trim().min(5, "addressShort").max(500, "addressTooLong"),
   comment: optionalText(500),
   /** Telegram.WebApp.initData — Mini App ichida bo'lsa yuboriladi */
   initData: z.string().max(4096).optional(),

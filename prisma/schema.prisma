@@ -53,6 +53,8 @@ enum DishType {
 model Category {
   id             String   @id @default(cuid())
   name           String
+  /// Ruscha nomi (bo'lmasa o'zbekchasi ko'rsatiladi)
+  nameRu         String?
   slug           String   @unique
   dishType       DishType @default(OTHER)
   /// Hajmi, masalan "2–16 L"
@@ -71,9 +73,12 @@ model Category {
 model Product {
   id            String   @id @default(cuid())
   name          String
+  /// Ruscha nomi (bo'lmasa o'zbekchasi ko'rsatiladi)
+  nameRu        String?
   slug          String   @unique
   sku           String?  @unique
   description   String   @default("")
+  descriptionRu String?
   /// Asosiy narx (so'm)
   price         Int
   /// Chegirma narxi (so'm). Chegirma bo'lmasa — null
@@ -151,6 +156,8 @@ model Order {
   number          Int         @unique @default(autoincrement())
   status          OrderStatus @default(NEW)
   source          OrderSource @default(WEB)
+  /// Mijoz tili ("uz" | "ru") — Telegram xabarlari shu tilda yuboriladi
+  locale          String      @default("uz")
   userId          String?
   user            User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   customerName    String

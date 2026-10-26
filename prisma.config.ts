@@ -11,5 +11,7 @@ export default defineConfig({
     // Migratsiyalar pooler orqali emas, to'g'ridan-to'g'ri ulanishda bajariladi
     // (Neon/Vercel buni DATABASE_URL_UNPOOLED sifatida beradi)
     url: process.env.DATABASE_URL_UNPOOLED || env("DATABASE_URL"),
+    // `prisma migrate dev` uchun alohida bo'sh baza (ixtiyoriy; `npx prisma dev` buni beradi)
+    shadowDatabaseUrl: process.env.SHADOW_DATABASE_URL,
   },
 });

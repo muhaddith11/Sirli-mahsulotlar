@@ -4,16 +4,20 @@ import { notFound } from "next/navigation";
 import { CircleCheck } from "lucide-react";
 import { ProductImage } from "@/components/shop/product-image";
 import { TelegramCloseButton } from "@/components/shop/telegram-close-button";
-import { ORDER_STATUS_LABELS } from "@/lib/constants";
+import { getI18n } from "@/i18n/server";
 import { formatPrice } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
-export const metadata: Metadata = { title: "Buyurtma qabul qilindi" };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  return { title: t.meta.success };
+}
 
 export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/checkout/success">) {
   const { id } = await searchParams;
   if (typeof id !== "string") notFound();
 
+  const { locale, t } = await getI18n();
   // Buyurtma ID (cuid) taxmin qilib bo'lmaydi — shaxsiy ma'lumotlarni ko'rsatmaymiz
   const order = await prisma.order.findUnique({
     where: { id },
@@ -21,45 +25,65 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
       number: true,
       status: true,
       totalAmount: true,
-      items: { select: { id: true, productName: true, image: true, quantity: true, totalPrice: true } },
+      items: {
+        select: {
+          id: true,
+          productName: true,
+          image: true,
+          quantity: true,
+          totalPrice: true,
+          product: { select: { nameRu: true } },
+        },
+      },
     },
   });
   if (!order) notFound();
 
   return (
-    <div className="mx-auto max-w-lg py-10 text-center">
+    <div className="mx-auto max-w-lg pb-6 pt-8 md:pt-12">
       <TelegramCloseButton />
-      <span className="mx-auto grid size-20 place-items-center rounded-full bg-leaf-50 text-leaf-600">
-        <CircleCheck className="size-10" />
-      </span>
-      <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight">Rahmat! Buyurtmangiz qabul qilindi</h1>
-      <p className="mt-2 text-ink-soft">
-        Buyurtma raqami: <b className="text-ink">#{order.number}</b> · {ORDER_STATUS_LABELS[order.status]}
-      </p>
-      <p className="mt-1 text-sm text-ink-soft">Operatorimiz tez orada siz bilan bog&apos;lanadi.</p>
+      <div className="rounded-[var(--radius-card)] bg-surface p-6 text-center sm:p-8">
+        <CircleCheck className="mx-auto size-14 text-success" strokeWidth={1.5} />
+        <h1 className="mt-4 text-2xl font-bold tracking-[-0.02em]">{t.success.title}</h1>
+        <p className="mt-2 text-ink-2">{t.success.operator}</p>
 
-      <ul className="mt-8 space-y-2 rounded-3xl bg-white p-4 text-left ring-1 ring-line">
-        {order.items.map((item) => (
-          <li key={item.id} className="flex items-center gap-3 text-sm">
-            <ProductImage src={item.image} alt="" className="size-12 rounded-xl" />
-            <span className="line-clamp-2 flex-1">
-              {item.productName} <span className="text-ink-faint">× {item.quantity}</span>
-            </span>
-            <span className="shrink-0 font-semibold">{formatPrice(item.totalPrice)}</span>
-          </li>
-        ))}
-        <li className="flex justify-between border-t border-dashed border-line pt-3 font-bold">
-          <span>Jami</span>
-          <span>{formatPrice(order.totalAmount)}</span>
-        </li>
-      </ul>
+        <dl className="mx-auto mt-5 grid max-w-xs grid-cols-2 gap-px overflow-hidden rounded-[var(--radius-field)] bg-line text-sm">
+          <div className="bg-page px-3 py-2.5">
+            <dt className="text-xs text-ink-3">{t.success.number}</dt>
+            <dd className="text-base font-bold tabular">#{order.number}</dd>
+          </div>
+          <div className="bg-page px-3 py-2.5">
+            <dt className="text-xs text-ink-3">{t.success.status}</dt>
+            <dd className="text-base font-semibold">{t.status[order.status]}</dd>
+          </div>
+        </dl>
 
-      <Link
-        href="/products"
-        className="mt-8 inline-flex h-12 items-center rounded-full bg-ink px-6 text-sm font-bold text-cream hover:bg-berry-700"
-      >
-        Xaridni davom ettirish
-      </Link>
+        <ul className="mt-6 divide-y divide-line border-y border-line text-left">
+          {order.items.map((item) => (
+            <li key={item.id} className="flex items-center gap-3 py-3 text-sm">
+              <span className="shrink-0 overflow-hidden rounded-lg bg-cream">
+                <ProductImage src={item.image} alt="" className="aspect-[4/5] w-11" />
+              </span>
+              <span className="line-clamp-2 flex-1">
+                {(locale === "ru" && item.product?.nameRu) || item.productName}{" "}
+                <span className="text-ink-3 tabular">× {item.quantity}</span>
+              </span>
+              <span className="shrink-0 font-medium tabular">{formatPrice(item.totalPrice, locale)}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-4 flex justify-between text-base font-bold">
+          <span>{t.success.total}</span>
+          <span className="tabular">{formatPrice(order.totalAmount, locale)}</span>
+        </p>
+
+        <Link
+          href="/products"
+          className="mt-7 inline-flex h-12 w-full items-center justify-center rounded-[var(--radius-field)] bg-brand text-[15px] font-semibold text-white hover:bg-brand-hover"
+        >
+          {t.success.continue}
+        </Link>
+      </div>
     </div>
   );
 }

@@ -1,46 +1,59 @@
 import Link from "next/link";
-import { Clock, MapPin, Phone, Send } from "lucide-react";
+import { Send, Store, Truck } from "lucide-react";
+import { localized, type Dictionary, type Locale } from "@/i18n";
+import type { HeaderCategory } from "./header";
 import { Logo } from "./logo";
 
-export function Footer() {
+type Props = { t: Dictionary; locale: Locale; categories: HeaderCategory[]; botUrl: string | null };
+
+export function Footer({ t, locale, categories, botUrl }: Props) {
   return (
-    <footer className="mt-16 border-t border-line bg-cream-deep/60">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="mt-12 border-t border-line bg-surface">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr] lg:px-6">
         <div className="space-y-3">
-          <Logo />
-          <p className="max-w-xs text-sm leading-relaxed text-ink-soft">
-            Emal kastryulkalar, choynaklar va oshxona idishlari. Sifatli, chiroyli va uzoq xizmat qiladi.
-          </p>
+          <Logo label={t.nav.homeLabel} />
+          <p className="max-w-xs text-sm leading-relaxed text-ink-2">{t.footer.about}</p>
         </div>
 
         <div>
-          <h3 className="mb-3 text-sm font-bold">Katalog</h3>
-          <ul className="space-y-2 text-sm text-ink-soft">
-            <li><Link className="hover:text-berry-600" href="/products?category=kastryulkalar">Kastryulkalar</Link></li>
-            <li><Link className="hover:text-berry-600" href="/products?category=toplamlar">To&apos;plamlar</Link></li>
-            <li><Link className="hover:text-berry-600" href="/products?category=choynaklar">Choynaklar</Link></li>
-            <li><Link className="hover:text-berry-600" href="/products?discounted=1">Chegirmalar</Link></li>
+          <h2 className="mb-3 text-sm font-semibold">{t.footer.catalog}</h2>
+          <ul className="space-y-2 text-sm text-ink-2">
+            {categories.map((category) => (
+              <li key={category.id}>
+                <Link className="hover:text-brand" href={`/products?category=${category.slug}`}>
+                  {localized(locale, category.name, category.nameRu)}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
         <div>
-          <h3 className="mb-3 text-sm font-bold">Bog&apos;lanish</h3>
-          <ul className="space-y-2.5 text-sm text-ink-soft">
-            <li className="flex items-center gap-2"><Phone className="size-4 text-berry-600" /> +998 90 000 00 00</li>
-            <li className="flex items-center gap-2"><Send className="size-4 text-berry-600" /> Telegram orqali buyurtma</li>
-            <li className="flex items-center gap-2"><MapPin className="size-4 text-berry-600" /> Toshkent sh.</li>
+          <h2 className="mb-3 text-sm font-semibold">{t.footer.buyers}</h2>
+          <ul className="space-y-2.5 text-sm text-ink-2">
+            <li className="flex items-center gap-2">
+              <Send className="size-4 shrink-0 text-ink-3" />
+              {botUrl ? (
+                <a href={botUrl} className="hover:text-brand" target="_blank" rel="noreferrer">
+                  {t.footer.howToOrder}
+                </a>
+              ) : (
+                t.footer.howToOrder
+              )}
+            </li>
+            <li className="flex items-center gap-2">
+              <Truck className="size-4 shrink-0 text-ink-3" />
+              {t.footer.delivery}
+            </li>
+            <li className="flex items-center gap-2">
+              <Store className="size-4 shrink-0 text-ink-3" />
+              {t.footer.pickup}
+            </li>
           </ul>
-        </div>
-
-        <div>
-          <h3 className="mb-3 text-sm font-bold">Ish vaqti</h3>
-          <p className="flex items-center gap-2 text-sm text-ink-soft">
-            <Clock className="size-4 text-berry-600" /> Har kuni 09:00 – 20:00
-          </p>
         </div>
       </div>
-      <p className="border-t border-line py-4 text-center text-xs text-ink-faint">
-        © {new Date().getFullYear()} Sirli Mahsulotlar
+      <p className="border-t border-line py-4 text-center text-xs text-ink-3">
+        © {new Date().getFullYear()} {t.footer.rights}
       </p>
     </footer>
   );

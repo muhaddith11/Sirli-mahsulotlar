@@ -1,0 +1,44 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          ".impeccable/decision/model-pick.html"
+        ],
+        "createdAt": "2026-10-26T14:12:26.604Z",
+        "reason": "decision-round sketch only, not shipping UI; page renders its text as bars"
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          ".impeccable/decision/assigned.html"
+        ],
+        "createdAt": "2026-10-26T14:13:09.893Z",
+        "reason": "user confirmed: keep red and cream brand colors (PRODUCT.md Brand Commitments); decision sketch only"
+      },
+      {
+        "rule": "overused-font",
+        "value": "*",
+        "files": [
+          ".impeccable/decision/canon.html"
+        ],
+        "createdAt": "2026-10-26T14:13:10.206Z",
+        "reason": "decision sketch of the category-standard card, not shipping UI"
+      },
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          ".impeccable/decision/canon.html"
+        ],
+        "createdAt": "2026-10-26T14:16:32.421Z",
+        "reason": "decision sketch of the category-standard card, not shipping UI"
+      }
+    ]
+  }
+}

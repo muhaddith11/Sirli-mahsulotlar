@@ -9,6 +9,7 @@ const prisma = new PrismaClient({
 type SeedCategory = {
   slug: string;
   name: string;
+  nameRu: string;
   dishType: DishType;
   volume?: string;
   collectionName?: string;
@@ -20,6 +21,7 @@ type SeedCategory = {
 const categories: SeedCategory[] = [
   {
     slug: "kastryulkalar",
+    nameRu: "Кастрюли",
     name: "Kastryulkalar",
     dishType: "POT",
     volume: "2–16 L",
@@ -29,6 +31,7 @@ const categories: SeedCategory[] = [
   },
   {
     slug: "toplamlar",
+    nameRu: "Наборы",
     name: "To'plamlar",
     dishType: "SET",
     collectionName: "Ko'knori, Qulupnay",
@@ -38,6 +41,7 @@ const categories: SeedCategory[] = [
   },
   {
     slug: "choynaklar",
+    nameRu: "Чайники",
     name: "Choynaklar",
     dishType: "KETTLE",
     volume: "2–3 L",
@@ -47,6 +51,7 @@ const categories: SeedCategory[] = [
   },
   {
     slug: "togoralar",
+    nameRu: "Тазы",
     name: "Tog'oralar",
     dishType: "BOWL",
     description: "Xamir qorish, meva-sabzavot yuvish uchun keng tog'oralar.",
@@ -55,6 +60,7 @@ const categories: SeedCategory[] = [
   },
   {
     slug: "krujkalar",
+    nameRu: "Кружки",
     name: "Krujkalar",
     dishType: "MUG",
     volume: "400 ml",
@@ -64,6 +70,7 @@ const categories: SeedCategory[] = [
   },
   {
     slug: "kovshlar",
+    nameRu: "Ковши",
     name: "Kovshlar",
     dishType: "LADLE",
     volume: "1–2 L",
@@ -77,6 +84,8 @@ type SeedProduct = {
   slug: string;
   sku: string;
   name: string;
+  nameRu: string;
+  descriptionRu: string;
   category: string;
   price: number;
   discountPrice?: number;
@@ -91,6 +100,8 @@ type SeedProduct = {
 const products: SeedProduct[] = [
   {
     slug: "kastryulka-qulupnay-16l",
+    nameRu: "Эмалированная кастрюля «Клубника» 16 л",
+    descriptionRu: "Эмалированная кастрюля с толстыми стенками для большой семьи и праздников.\n\n• Объём: 16 литров\n• С крышкой\n• Подходит для газовых, электрических и индукционных плит\n• Внутреннее покрытие — пищевая эмаль",
     sku: "KS-QLP-16",
     name: 'Emal kastryulka "Qulupnay" 16 L',
     category: "kastryulkalar",
@@ -105,6 +116,8 @@ const products: SeedProduct[] = [
   },
   {
     slug: "kastryulka-gilos-3l",
+    nameRu: "Эмалированная кастрюля «Вишня» 3 л",
+    descriptionRu: "Кастрюля удобного размера для ежедневной готовки. Белая эмаль с рисунком вишни.\n\n• Объём: 3 литра\n• Подходит для всех типов плит",
     sku: "KS-GLS-3",
     name: 'Emal kastryulka "Gilos" 3 L',
     category: "kastryulkalar",
@@ -118,6 +131,8 @@ const products: SeedProduct[] = [
   },
   {
     slug: "kastryulka-gilos-5l",
+    nameRu: "Эмалированная кастрюля «Вишня» 5 л",
+    descriptionRu: "Кастрюля среднего размера из серии «Вишня».\n\n• Объём: 5 литров\n• С крышкой",
     sku: "KS-GLS-5",
     name: 'Emal kastryulka "Gilos" 5 L',
     category: "kastryulkalar",
@@ -130,6 +145,8 @@ const products: SeedProduct[] = [
   },
   {
     slug: "kastryulka-good-food-4l",
+    nameRu: "Кастрюля «Good Food» 4 л",
+    descriptionRu: "Минималистичный дизайн для современной кухни: белая эмаль и чёрная надпись.\n\n• Объём: 4 литра\n• С крышкой",
     sku: "KS-GF-4",
     name: 'Kastryulka "Good Food" 4 L',
     category: "kastryulkalar",
@@ -142,6 +159,8 @@ const products: SeedProduct[] = [
   },
   {
     slug: "kastryulka-my-kitchen-4l",
+    nameRu: "Кастрюля «My Kitchen» чёрная 4 л",
+    descriptionRu: "Чёрная эмаль и золотистая кромка — современный вид для вашей кухни.\n\n• Объём: 4 литра",
     sku: "KS-MK-4",
     name: 'Kastryulka "My Kitchen" qora 4 L',
     category: "kastryulkalar",
@@ -154,6 +173,8 @@ const products: SeedProduct[] = [
   },
   {
     slug: "kastryulka-moviy-nuqta-4l",
+    nameRu: "Кастрюля «Синий горошек» 4 л",
+    descriptionRu: "Классическая синяя эмаль в белый горошек.\n\n• Объём: 4 литра",
     sku: "KS-MN-4",
     name: 'Kastryulka "Moviy nuqta" 4 L',
     category: "kastryulkalar",
@@ -165,6 +186,8 @@ const products: SeedProduct[] = [
   },
   {
     slug: "toplam-koknori-6",
+    nameRu: "Набор кастрюль «Мак» (6 предметов)",
+    descriptionRu: "Набор из 3 кастрюль и 3 крышек с красными маками.\n\n• Объёмы: 2, 3 и 4 литра",
     sku: "NB-KKN-6",
     name: 'Kastryulka to\'plami "Ko\'knori" (6 dona)',
     category: "toplamlar",
@@ -176,10 +199,12 @@ const products: SeedProduct[] = [
     isFeatured: true,
     images: ["/products/set-poppy.svg", "/products/pot-strawberry.svg"],
     description:
-      "3 ta kastryulka va 3 ta qopqoqdan iborat to'plam. Qizil ko'knori gullari bilan bezatilgan.\n\n• Hajmlar: 2, 3 va 4 litr\n• Chiroyli sovg'a qutisida",
+      "3 ta kastryulka va 3 ta qopqoqdan iborat to'plam. Qizil ko'knori gullari bilan bezatilgan.\n\n• Hajmlar: 2, 3 va 4 litr",
   },
   {
     slug: "toplam-qulupnay-15",
+    nameRu: "Эмалированный набор «Клубника» (15 предметов)",
+    descriptionRu: "Полный набор для кухни: кастрюли, чайник, ковш и таз.\n\n• 15 предметов",
     sku: "NB-QLP-15",
     name: 'Emal to\'plam "Qulupnay" (15 dona)',
     category: "toplamlar",
@@ -189,10 +214,12 @@ const products: SeedProduct[] = [
     isFeatured: true,
     images: ["/products/set-strawberry.svg", "/products/kettle-rose.svg"],
     description:
-      "Oshxona uchun to'liq jamlanma: kastryulkalar, choynak, kovsh va tog'ora.\n\n• 15 dona buyum\n• Sovg'a qutisida\n• Ishlab chiqaruvchi kafolati",
+      "Oshxona uchun to'liq jamlanma: kastryulkalar, choynak, kovsh va tog'ora.\n\n• 15 dona buyum",
   },
   {
     slug: "choynak-atirgul-2-5l",
+    nameRu: "Эмалированный чайник «Роза» 2,5 л",
+    descriptionRu: "Чайник с розовыми розами. Деревянная ручка не нагревается.\n\n• Объём: 2,5 литра",
     sku: "CH-ATR-25",
     name: 'Emal choynak "Atirgul" 2.5 L',
     category: "choynaklar",
@@ -205,6 +232,8 @@ const products: SeedProduct[] = [
   },
   {
     slug: "choynak-limon-3l",
+    nameRu: "Эмалированный чайник «Лимон» 3 л",
+    descriptionRu: "Чайник с ярким лимонным узором.\n\n• Объём: 3 литра",
     sku: "CH-LMN-3",
     name: 'Emal choynak "Limon" 3 L',
     category: "choynaklar",
@@ -217,6 +246,8 @@ const products: SeedProduct[] = [
   },
   {
     slug: "togora-bahor-40",
+    nameRu: "Таз «Весна» 40 см",
+    descriptionRu: "Широкий и глубокий таз — для теста, мытья фруктов и овощей.\n\n• Диаметр: 40 см\n• Объём: 8 литров",
     sku: "TG-BHR-40",
     name: 'Tog\'ora "Bahor" 40 sm',
     category: "togoralar",
@@ -228,6 +259,8 @@ const products: SeedProduct[] = [
   },
   {
     slug: "krujka-limon-400",
+    nameRu: "Кружка «Лимон» 400 мл",
+    descriptionRu: "Эмалированная кружка в ретро-стиле для чая и кофе.\n\n• Объём: 400 мл",
     sku: "KR-LMN-04",
     name: 'Krujka "Limon" 400 ml',
     category: "krujkalar",
@@ -239,6 +272,8 @@ const products: SeedProduct[] = [
   },
   {
     slug: "krujka-gilos-400",
+    nameRu: "Кружка «Вишня» 400 мл",
+    descriptionRu: "Эмалированная кружка с рисунком вишни.\n\n• Объём: 400 мл",
     sku: "KR-GLS-04",
     name: 'Krujka "Gilos" 400 ml',
     category: "krujkalar",
@@ -250,6 +285,8 @@ const products: SeedProduct[] = [
   },
   {
     slug: "kovsh-moviy-1-5l",
+    nameRu: "Ковш «Синий горошек» 1,5 л",
+    descriptionRu: "Ковш с длинной ручкой для кипячения молока.\n\n• Объём: 1,5 литра",
     sku: "KV-MV-15",
     name: 'Kovsh "Moviy nuqta" 1.5 L',
     category: "kovshlar",
