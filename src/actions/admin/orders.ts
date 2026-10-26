@@ -1,11 +1,12 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { after } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { getDictionary } from "@/i18n";
 import { AppError, errorText } from "@/lib/errors";
 import { sendOrderStatusNotification, updateOrderStatus } from "@/lib/services/orders";
+import { CATALOG_TAG } from "@/lib/services/products";
 import { orderStatusSchema } from "@/lib/validation";
 import type { ActionResult } from "./types";
 
@@ -24,6 +25,10 @@ export async function updateOrderStatusAction(orderId: string, status: string): 
   }
 
   revalidatePath("/admin", "layout");
-  if (parsed.data === "CANCELLED") revalidatePath("/", "layout"); // qoldiq qaytdi
+  if (parsed.data === "CANCELLED") {
+    // qoldiq qaytdi
+    updateTag(CATALOG_TAG);
+    revalidatePath("/", "layout");
+  }
   return { ok: true };
 }

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { handleApiError, readJson } from "@/lib/api";
 import { formatDate } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
+import { enforceRateLimit } from "@/lib/rate-limit";
 import { verifyTelegramInitData } from "@/lib/telegram/init-data";
 
 const bodySchema = z.object({
@@ -18,6 +19,7 @@ const bodySchema = z.object({
  */
 export async function POST(request: Request) {
   try {
+    await enforceRateLimit("my-orders", 60, 10 * 60);
     const body = bodySchema.parse(await readJson(request));
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
     const telegramUser = body.initData && botToken ? verifyTelegramInitData(body.initData, botToken) : null;

@@ -1,7 +1,10 @@
+import { revalidateTag } from "next/cache";
 import { after, NextResponse } from "next/server";
 import { getLocale } from "@/i18n/server";
 import { handleApiError, jsonErrorCode, readJson } from "@/lib/api";
 import { readCartId } from "@/lib/cart-cookie";
+import { CATALOG_TAG } from "@/lib/services/products";
+import { enforceRateLimit } from "@/lib/rate-limit";
 import { createOrder, sendNewOrderNotifications } from "@/lib/services/orders";
 import { verifyTelegramInitData } from "@/lib/telegram/init-data";
 import { checkoutSchema } from "@/lib/validation";
@@ -15,6 +18,8 @@ import { checkoutSchema } from "@/lib/validation";
  */
 export async function POST(request: Request) {
   try {
+    // Bitta IP'dan 10 daqiqada ko'pi bilan 8 ta buyurtma (spam va xato tugma bosishlardan himoya)
+    await enforceRateLimit("checkout", 8, 10 * 60);
     const input = checkoutSchema.parse(await readJson(request));
     const cartId = await readCartId();
     if (!cartId) return jsonErrorCode("cartEmpty", 400);
@@ -33,6 +38,8 @@ export async function POST(request: Request) {
       telegramUser,
     });
 
+    // Qoldiq o'zgardi — katalog keshi darhol yangilansin
+    revalidateTag(CATALOG_TAG, { expire: 0 });
     after(() => sendNewOrderNotifications(order));
 
     return NextResponse.json(

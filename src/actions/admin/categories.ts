@@ -1,11 +1,12 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth";
 import { isUniqueConstraintError } from "@/lib/errors";
 import { slugify } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
+import { CATALOG_TAG } from "@/lib/services/products";
 import { categoryFormSchema } from "@/lib/validation";
 import type { ActionResult } from "./types";
 
@@ -43,6 +44,7 @@ export async function saveCategoryAction(_prev: ActionResult, formData: FormData
     throw error;
   }
 
+  updateTag(CATALOG_TAG);
   revalidatePath("/", "layout");
   return { ok: true };
 }
@@ -54,6 +56,7 @@ export async function deleteCategoryAction(categoryId: string): Promise<ActionRe
     return { ok: false, error: `Kategoriyada ${count} ta mahsulot bor. Avval ularni boshqa kategoriyaga o'tkazing.` };
   }
   await prisma.category.delete({ where: { id: categoryId } });
+  updateTag(CATALOG_TAG);
   revalidatePath("/", "layout");
   return { ok: true };
 }

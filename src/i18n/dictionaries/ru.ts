@@ -204,6 +204,7 @@ const ru: Dictionary = {
     CANCELLED: "Отменён",
   },
   errors: {
+    retry: "Повторить",
     generic: "Произошла ошибка. Попробуйте ещё раз чуть позже.",
     invalid: "Неверные данные",
     nameRequired: "Введите имя",
@@ -222,7 +223,7 @@ const ru: Dictionary = {
     quantityMax: "Не больше 99 шт.",
     orderNotFound: "Заказ не найден",
     orderCancelledLocked: "Статус отменённого заказа нельзя изменить",
-    tooManyRequests: "Слишком много попыток. Попробуйте через минуту.",
+    tooManyRequests: "Слишком много попыток. Попробуйте чуть позже.",
   },
   telegram: {
     received: "✅ <b>Ваш заказ принят!</b>",

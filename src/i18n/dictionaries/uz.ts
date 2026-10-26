@@ -202,6 +202,7 @@ const uz = {
     CANCELLED: "Bekor qilindi",
   },
   errors: {
+    retry: "Qayta urinish",
     generic: "Xatolik yuz berdi. Birozdan so'ng qayta urinib ko'ring.",
     invalid: "Ma'lumotlar noto'g'ri",
     nameRequired: "Ismingizni kiriting",
@@ -220,7 +221,7 @@ const uz = {
     quantityMax: "Ko'pi bilan 99 dona",
     orderNotFound: "Buyurtma topilmadi",
     orderCancelledLocked: "Bekor qilingan buyurtma holatini o'zgartirib bo'lmaydi",
-    tooManyRequests: "Juda ko'p urinish. Bir daqiqadan so'ng qayta urinib ko'ring.",
+    tooManyRequests: "Juda ko'p urinish. Birozdan so'ng qayta urinib ko'ring.",
   },
   telegram: {
     received: "✅ <b>Buyurtmangiz qabul qilindi!</b>",

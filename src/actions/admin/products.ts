@@ -1,16 +1,18 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth";
 import { isUniqueConstraintError } from "@/lib/errors";
 import { slugify } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
+import { CATALOG_TAG } from "@/lib/services/products";
 import { productFormSchema } from "@/lib/validation";
 import type { ActionResult } from "./types";
 
 function revalidateShop() {
+  updateTag(CATALOG_TAG);
   revalidatePath("/", "layout");
 }
 

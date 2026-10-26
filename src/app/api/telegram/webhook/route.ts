@@ -1,5 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { after, NextResponse } from "next/server";
 import type { CallbackQuery, Message, Update } from "telegraf/types";
 import { readJson } from "@/lib/api";
@@ -12,6 +12,7 @@ import {
   sendOrderStatusNotification,
   updateOrderStatus,
 } from "@/lib/services/orders";
+import { CATALOG_TAG } from "@/lib/services/products";
 import { getPublicAppUrl, getTelegram, isAdminChat, sendHtmlMessage } from "@/lib/telegram/bot";
 import { newOrderMessage } from "@/lib/telegram/messages";
 import { cancelConfirmKeyboard, orderAdminKeyboard, parseOrderCallback } from "@/lib/telegram/order-keyboard";
@@ -141,7 +142,11 @@ async function handleCallback(query: CallbackQuery) {
   const order = await getOrderWithDetails(parsed.orderId);
   if (!order) return answer("Buyurtma topilmadi", true);
   revalidatePath("/admin", "layout");
-  if (order.status === "CANCELLED") revalidatePath("/", "layout"); // qoldiq qaytdi
+  if (order.status === "CANCELLED") {
+    // qoldiq qaytdi
+    revalidateTag(CATALOG_TAG, { expire: 0 });
+    revalidatePath("/", "layout");
+  }
 
   await edit(newOrderMessage(order), orderAdminKeyboard(order.id, order.status)).catch((error: unknown) => {
     // "message is not modified" — xabar allaqachon shu holatda

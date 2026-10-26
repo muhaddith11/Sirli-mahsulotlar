@@ -1,9 +1,18 @@
 import "server-only";
+import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { effectivePrice } from "@/lib/format";
 import type { ProductQuery } from "@/lib/validation";
+
+/** Katalog keshi tegi: mahsulot, kategoriya yoki qoldiq o'zgarganda yangilanadi */
+export const CATALOG_TAG = "catalog";
+
+/** Katalog so'rovlari 5 daqiqa keshlanadi (Neon "uyg'onishi"ni ham yashiradi) */
+function cachedCatalog<A extends unknown[], R>(fn: (...args: A) => Promise<R>, key: string) {
+  return unstable_cache(fn, [key], { tags: [CATALOG_TAG], revalidate: 300 });
+}
 
 export const productCardSelect = {
   id: true,
@@ -66,7 +75,7 @@ function buildWhere(query: Partial<ProductQuery>): Prisma.ProductWhereInput {
 }
 
 /** Mahsulotlarni qidirish, filtrlash va sahifalash */
-export async function listProducts(
+async function listProductsUncached(
   query: Partial<ProductQuery>,
   options: { excludeIds?: string[] } = {},
 ): Promise<ProductList> {
@@ -119,7 +128,7 @@ export const getProductBySlug = cache(async (slug: string) =>
 );
 
 /** O'xshash mahsulotlar: avval shu kategoriyadan, yetmasa — boshqa kategoriyalardan to'ldiriladi */
-export async function getRelatedProducts(categoryId: string, excludeId: string, take = 5) {
+async function getRelatedProductsUncached(categoryId: string, excludeId: string, take = 5) {
   const sameCategory = await prisma.product.findMany({
     where: { categoryId, isActive: true, id: { not: excludeId } },
     orderBy: [{ stock: "desc" }, { createdAt: "desc" }],
@@ -138,7 +147,7 @@ export async function getRelatedProducts(categoryId: string, excludeId: string, 
 }
 
 /** Kategoriyalar va har biridagi faol mahsulotlar soni */
-export async function listCategories() {
+async function listCategoriesUncached() {
   return prisma.category.findMany({
     orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     select: {
@@ -155,4 +164,8 @@ export async function listCategories() {
   });
 }
 
-export type CategoryWithCount = Awaited<ReturnType<typeof listCategories>>[number];
+export const listProducts = cachedCatalog(listProductsUncached, "list-products");
+export const getRelatedProducts = cachedCatalog(getRelatedProductsUncached, "related-products");
+export const listCategories = cachedCatalog(listCategoriesUncached, "list-categories");
+
+export type CategoryWithCount = Awaited<ReturnType<typeof listCategoriesUncached>>[number];

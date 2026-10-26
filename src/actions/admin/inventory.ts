@@ -1,12 +1,14 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { CATALOG_TAG } from "@/lib/services/products";
 
 type StockResult = { ok: true; stock: number } | { ok: false; error: string };
 
 function revalidate() {
+  updateTag(CATALOG_TAG);
   revalidatePath("/", "layout");
 }
 

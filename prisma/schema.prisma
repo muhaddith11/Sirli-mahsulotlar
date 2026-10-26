@@ -190,3 +190,16 @@ model OrderItem {
 
   @@index([orderId])
 }
+
+// ─────────────────────────────────────────────
+// Xizmat jadvallari
+// ─────────────────────────────────────────────
+
+/// So'rovlar chegarasi (spamdan himoya): kalit — masalan "checkout:<ip>"
+model RateLimit {
+  key     String   @id
+  count   Int
+  resetAt DateTime
+
+  @@index([resetAt])
+}
