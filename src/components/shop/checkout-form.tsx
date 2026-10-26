@@ -408,7 +408,7 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
                   aria-label={t.checkout.promo}
                   aria-invalid={Boolean(errors.promoCode)}
                   autoCapitalize="characters"
-                  className={cn(inputClass(errors.promoCode), "flex-1 uppercase")}
+                  className={cn(inputClass(errors.promoCode), "flex-1")}
                 />
                 <button
                   type="button"

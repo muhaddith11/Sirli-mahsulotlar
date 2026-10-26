@@ -320,23 +320,31 @@ const zones: { name: string; nameRu: string }[] = [
 async function main() {
   const categoryIds = new Map<string, string>();
 
+  // Xavfsiz seed: mavjud yozuvlar ustidan yozilmaydi (egasining narx, qoldiq va matnlari saqlanadi),
+  // faqat yo'qlari qo'shiladi va bo'sh ruscha maydonlar to'ldiriladi. Jonli bazada ham ishlatish mumkin.
   for (const { slug, ...data } of categories) {
-    const category = await prisma.category.upsert({
-      where: { slug },
-      create: { slug, ...data },
-      update: data,
-    });
+    const existing = await prisma.category.findUnique({ where: { slug } });
+    const category = existing
+      ? await prisma.category.update({ where: { slug }, data: { nameRu: existing.nameRu ?? data.nameRu } })
+      : await prisma.category.create({ data: { slug, ...data } });
     categoryIds.set(slug, category.id);
   }
 
   for (const { slug, category, ...data } of products) {
     const categoryId = categoryIds.get(category);
     if (!categoryId) throw new Error(`Kategoriya topilmadi: ${category}`);
-    await prisma.product.upsert({
-      where: { slug },
-      create: { slug, categoryId, ...data },
-      update: { categoryId, ...data },
-    });
+    const existing = await prisma.product.findUnique({ where: { slug } });
+    if (existing) {
+      await prisma.product.update({
+        where: { slug },
+        data: {
+          nameRu: existing.nameRu ?? data.nameRu,
+          descriptionRu: existing.descriptionRu ?? data.descriptionRu,
+        },
+      });
+    } else {
+      await prisma.product.create({ data: { slug, categoryId, ...data } });
+    }
   }
 
   // Hududlar faqat bo'sh bazaga qo'shiladi — egasi kiritgan narxlar ustidan yozilmaydi

@@ -27,7 +27,7 @@ Imkoniyatlar:
 npm install
 cp .env.example .env          # qiymatlarni to'ldiring
 npx prisma migrate dev        # jadvallarni yaratish
-npm run db:seed               # demo kategoriya va mahsulotlar
+npm run db:seed               # demo katalog va 14 hudud (xavfsiz: mavjudlarini o'zgartirmaydi)
 npm run dev                   # http://localhost:3000
 ```
 
