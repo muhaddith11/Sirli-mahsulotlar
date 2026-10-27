@@ -100,8 +100,13 @@ type SeedProduct = {
   description: string;
 };
 
-/** Demo rasmning fonsiz nusxasi — "Eng ommabop" vitrinasida yoy ustida turadi */
-const cutout = (name: string) => ({ spinFrames: [`/products/cutout/${name}.svg`], spinCutout: true });
+const spinFrames = (dir: string) => Array.from({ length: 36 }, (_, i) => `/spin/${dir}/${String(i).padStart(2, "0")}.webp`);
+
+/** Demo rasmdan yasalgan 360° kadrlar (naqsh idish atrofida aylanadi) — "Eng ommabop" vitrinasida aylanib turadi */
+const cutout = (name: string) => ({ spinFrames: spinFrames(name), spinCutout: true });
+
+/** Avvalgi bitta kadrli demo rasm — 36 kadrga almashtiriladi */
+const isDemoPlaceholder = (frames: string[]) => frames.length === 1 && frames[0].startsWith("/products/cutout/");
 
 const products: SeedProduct[] = [
   {
@@ -116,7 +121,7 @@ const products: SeedProduct[] = [
     stock: 10,
     isFeatured: true,
     images: ["/products/choynak-gilos.webp", "/products/choynak-gilos-foto.webp"],
-    spinFrames: Array.from({ length: 36 }, (_, i) => `/spin/choynak-gilos/${String(i).padStart(2, "0")}.webp`),
+    spinFrames: spinFrames("choynak-gilos"),
     spinCutout: true,
     description: "Oq emal choynak, gilos, olma va oq gullar naqshi bilan. Qopqog'i va metall dastasi bor.",
   },
@@ -368,8 +373,8 @@ async function main() {
         data: {
           nameRu: existing.nameRu ?? data.nameRu,
           descriptionRu: existing.descriptionRu ?? data.descriptionRu,
-          // 360° faqat bo'sh bo'lsa to'ldiriladi — egasi yuklagan kadrlar saqlanadi
-          ...(existing.spinFrames.length === 0 && data.spinFrames
+          // 360° faqat bo'sh (yoki eski demo rasm) bo'lsa to'ldiriladi — egasi yuklagan kadrlar saqlanadi
+          ...((existing.spinFrames.length === 0 || isDemoPlaceholder(existing.spinFrames)) && data.spinFrames
             ? { spinFrames: data.spinFrames, spinCutout: data.spinCutout ?? false }
             : {}),
         },

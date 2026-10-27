@@ -206,12 +206,13 @@ export function SpinViewer({
 
   // Hammasi yuklangach o'zi aylanadi
   useEffect(() => {
-    state.current.play = autoPlay && active && ready;
+    // Siyrak kadrlar (chorak qismi) kelishi bilan aylana boshlaydi — qolganlari yo'l-yo'lakay yuklanadi
+    state.current.play = autoPlay && active && loaded >= Math.ceil(count / 4);
     if (!active) {
       state.current.position = 0;
       state.current.velocity = 0;
     }
-  }, [autoPlay, active, ready]);
+  }, [autoPlay, active, loaded, count]);
 
   const percent = count ? Math.round((loaded / count) * 100) : 0;
   const reportDegree = () =>

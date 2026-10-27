@@ -22,11 +22,13 @@ export type ShowcaseItem = {
 
 /** Mahsulot markazdan bir qadam o'tganda qo'shimcha burilishi (gradus) */
 const TRAVEL_TURN = 150;
+/** Har bir mahsulot o'z o'qi atrofida boshqalardan biroz farqli fazada aylanadi */
+const PHASE = 47;
 
 /**
  * "Eng ommabop" vitrinasi (agrumeafarm.it uslubida): sahifa pastga surilganda vitrina joyida
  * qotib turadi, mahsulotlar qizil gumbaz ustida yoy bo'ylab suzib o'tadi va o'tayotganda aylanadi.
- * Markazdagi mahsulot o'zi ham sekin aylanadi; doira-matn surish bilan buriladi.
+ * Har bir mahsulot o'z o'qi atrofida doim aylanib turadi; doira-matn surish bilan buriladi.
  */
 export function SpinShowcase({ items }: { items: ShowcaseItem[] }) {
   const { locale, t } = useI18n();
@@ -180,10 +182,9 @@ export function SpinShowcase({ items }: { items: ShowcaseItem[] }) {
                     label={fill(t.product.spinLabel, { name: item.name })}
                     interactive={false}
                     badge={false}
-                    active={Math.abs(i - active) <= 1}
-                    autoPlay={i === active}
+                    active={Math.abs(i - active) <= 2}
                     period={10}
-                    turn={() => turns.current[i] ?? 0}
+                    turn={() => (turns.current[i] ?? 0) + i * PHASE}
                     className="aspect-square w-full"
                   />
                 </div>
