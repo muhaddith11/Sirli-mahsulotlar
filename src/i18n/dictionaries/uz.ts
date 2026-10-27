@@ -54,6 +54,7 @@ const uz = {
     showcaseItem: "{index}-mahsulot",
     showcasePrev: "Oldingi mahsulot",
     showcaseNext: "Keyingi mahsulot",
+    showcaseScroll: "Pastga suring",
   },
   card: {
     addToCart: "Savatga",

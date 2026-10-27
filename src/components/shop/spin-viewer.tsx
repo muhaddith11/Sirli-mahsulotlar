@@ -20,6 +20,8 @@ type Props = {
   hint?: string;
   /** Bir to'liq aylanish, soniya */
   period?: number;
+  /** Tashqaridan qo'shiladigan burilish (gradus) — masalan, vitrinada surish bilan birga aylanish */
+  turn?: () => number;
   className?: string;
 };
 
@@ -45,6 +47,7 @@ export function SpinViewer({
   badge = true,
   hint,
   period = 9,
+  turn,
   className,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -70,7 +73,13 @@ export function SpinViewer({
     idleUntil: 0,
     visible: true,
     play: false,
+    turn: undefined as (() => number) | undefined,
     draw: () => {},
+  });
+
+  // Eng so'nggi turn funksiyasi rAF siklida o'qiladi
+  useEffect(() => {
+    state.current.turn = turn;
   });
 
   // Yangi kadrlar to'plami — holatni tozalash
@@ -128,7 +137,8 @@ export function SpinViewer({
     };
 
     s.draw = () => {
-      const index = nearestLoaded(wrapFrame(s.position, count));
+      const extra = s.turn ? (s.turn() / 360) * count : 0;
+      const index = nearestLoaded(wrapFrame(s.position + extra, count));
       if (index < 0 || index === s.drawn) return;
       const image = s.images[index];
       const { width, height } = canvas;

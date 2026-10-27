@@ -148,12 +148,14 @@ async function getRelatedProductsUncached(categoryId: string, excludeId: string,
 
 /** "Eng ommabop" vitrinasi: omborda bor, foni olib tashlangan 360° kadrli mahsulotlar, ommaboplik tartibida */
 async function listShowcaseProductsUncached(take = 6) {
-  return prisma.product.findMany({
+  const rows = await prisma.product.findMany({
     where: { isActive: true, stock: { gt: 0 }, spinCutout: true, spinFrames: { isEmpty: false } },
     orderBy: [{ isFeatured: "desc" }, { orderItems: { _count: "desc" } }, { createdAt: "desc" }],
     take,
     select: { ...productCardSelect, spinFrames: true },
   });
+  // Haqiqiy 360° (ko'p kadrli) mahsulotlar oldinda — vitrina ular bilan ochiladi
+  return rows.sort((a, b) => Number(b.spinFrames.length > 1) - Number(a.spinFrames.length > 1));
 }
 
 /** Kategoriyalar va har biridagi faol mahsulotlar soni */

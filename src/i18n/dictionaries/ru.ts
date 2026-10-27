@@ -56,6 +56,7 @@ const ru: Dictionary = {
     showcaseItem: "Товар {index}",
     showcasePrev: "Предыдущий товар",
     showcaseNext: "Следующий товар",
+    showcaseScroll: "Листайте вниз",
   },
   card: {
     addToCart: "В корзину",

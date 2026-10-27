@@ -17,7 +17,8 @@ type Props = {
 
 export function ProductGallery({ images, name, badge, spinFrames = [] }: Props) {
   const { t } = useI18n();
-  const hasSpin = spinFrames.length > 0;
+  // Bitta kadr — aylanish emas (vitrina uchun shaffof rasm)
+  const hasSpin = spinFrames.length > 1;
   const [mode, setMode] = useState<"spin" | "photos">(hasSpin ? "spin" : "photos");
   const [active, setActive] = useState(0);
   const track = useRef<HTMLDivElement>(null);

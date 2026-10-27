@@ -94,12 +94,35 @@ type SeedProduct = {
   pieces?: number;
   isFeatured?: boolean;
   images: string[];
+  /** 360° kadrlar (1 ta bo'lsa — aylanmaydigan shaffof rasm, faqat vitrina uchun) */
+  spinFrames?: string[];
+  spinCutout?: boolean;
   description: string;
 };
 
+/** Demo rasmning fonsiz nusxasi — "Eng ommabop" vitrinasida yoy ustida turadi */
+const cutout = (name: string) => ({ spinFrames: [`/products/cutout/${name}.svg`], spinCutout: true });
+
 const products: SeedProduct[] = [
   {
+    // Egasining rasmidan yasalgan 3D model — 360° kadrlar /public/spin ichida
+    slug: "choynak-gilos",
+    nameRu: "Эмалированный чайник «Вишня»",
+    descriptionRu: "Белый эмалированный чайник с рисунком вишни, яблок и белых цветов. С крышкой и металлической ручкой.",
+    sku: "CH-GLS",
+    name: 'Emal choynak "Gilos"',
+    category: "choynaklar",
+    price: 165_000,
+    stock: 10,
+    isFeatured: true,
+    images: ["/products/choynak-gilos.webp", "/products/choynak-gilos-foto.webp"],
+    spinFrames: Array.from({ length: 36 }, (_, i) => `/spin/choynak-gilos/${String(i).padStart(2, "0")}.webp`),
+    spinCutout: true,
+    description: "Oq emal choynak, gilos, olma va oq gullar naqshi bilan. Qopqog'i va metall dastasi bor.",
+  },
+  {
     slug: "kastryulka-qulupnay-16l",
+    ...cutout("pot-strawberry"),
     nameRu: "Эмалированная кастрюля «Клубника» 16 л",
     descriptionRu: "Эмалированная кастрюля с толстыми стенками для большой семьи и праздников.\n\n• Объём: 16 литров\n• С крышкой\n• Подходит для газовых, электрических и индукционных плит\n• Внутреннее покрытие — пищевая эмаль",
     sku: "KS-QLP-16",
@@ -116,6 +139,7 @@ const products: SeedProduct[] = [
   },
   {
     slug: "kastryulka-gilos-3l",
+    ...cutout("pot-cherry"),
     nameRu: "Эмалированная кастрюля «Вишня» 3 л",
     descriptionRu: "Кастрюля удобного размера для ежедневной готовки. Белая эмаль с рисунком вишни.\n\n• Объём: 3 литра\n• Подходит для всех типов плит",
     sku: "KS-GLS-3",
@@ -186,6 +210,7 @@ const products: SeedProduct[] = [
   },
   {
     slug: "toplam-koknori-6",
+    ...cutout("set-poppy"),
     nameRu: "Набор кастрюль «Мак» (6 предметов)",
     descriptionRu: "Набор из 3 кастрюль и 3 крышек с красными маками.\n\n• Объёмы: 2, 3 и 4 литра",
     sku: "NB-KKN-6",
@@ -246,6 +271,7 @@ const products: SeedProduct[] = [
   },
   {
     slug: "togora-bahor-40",
+    ...cutout("bowl-spring"),
     nameRu: "Таз «Весна» 40 см",
     descriptionRu: "Широкий и глубокий таз — для теста, мытья фруктов и овощей.\n\n• Диаметр: 40 см\n• Объём: 8 литров",
     sku: "TG-BHR-40",
@@ -272,6 +298,7 @@ const products: SeedProduct[] = [
   },
   {
     slug: "krujka-gilos-400",
+    ...cutout("mug-cherry"),
     nameRu: "Кружка «Вишня» 400 мл",
     descriptionRu: "Эмалированная кружка с рисунком вишни.\n\n• Объём: 400 мл",
     sku: "KR-GLS-04",
@@ -285,6 +312,7 @@ const products: SeedProduct[] = [
   },
   {
     slug: "kovsh-moviy-1-5l",
+    ...cutout("ladle-blue"),
     nameRu: "Ковш «Синий горошек» 1,5 л",
     descriptionRu: "Ковш с длинной ручкой для кипячения молока.\n\n• Объём: 1,5 литра",
     sku: "KV-MV-15",
@@ -340,6 +368,10 @@ async function main() {
         data: {
           nameRu: existing.nameRu ?? data.nameRu,
           descriptionRu: existing.descriptionRu ?? data.descriptionRu,
+          // 360° faqat bo'sh bo'lsa to'ldiriladi — egasi yuklagan kadrlar saqlanadi
+          ...(existing.spinFrames.length === 0 && data.spinFrames
+            ? { spinFrames: data.spinFrames, spinCutout: data.spinCutout ?? false }
+            : {}),
         },
       });
     } else {
