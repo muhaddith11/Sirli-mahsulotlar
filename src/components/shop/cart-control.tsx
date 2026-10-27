@@ -11,6 +11,10 @@ type Props = {
   productName: string;
   stock: number;
   size?: "sm" | "lg";
+  /** inverse — qizil fon ustida (krem tugma) */
+  tone?: "brand" | "inverse";
+  /** Katta tugmada ham qisqa "Savatga" yozuvi */
+  shortLabel?: boolean;
   className?: string;
 };
 
@@ -18,7 +22,7 @@ type Props = {
  * "Savatga" tugmasi. Mahsulot savatga tushgach, o'sha joyning o'zida
  * "− 1 +" miqdor tanlagichiga aylanadi (asosiy interaksiya).
  */
-export function CartControl({ productId, productName, stock, size = "sm", className }: Props) {
+export function CartControl({ productId, productName, stock, size = "sm", tone = "brand", shortLabel, className }: Props) {
   const { t } = useI18n();
   const { quantityOf, addItem, updateQuantity, isPending } = useCart();
   const quantity = quantityOf(productId);
@@ -43,8 +47,12 @@ export function CartControl({ productId, productName, stock, size = "sm", classN
           "absolute inset-0 flex items-center justify-center gap-1.5 rounded-[var(--radius-field)] font-semibold transition-[opacity,transform,background-color] duration-200 ease-[var(--ease-out)]",
           text,
           soldOut
-            ? "cursor-not-allowed border border-line-strong text-ink-3"
-            : "bg-brand text-white hover:bg-brand-hover active:scale-[0.98] active:bg-brand-press",
+            ? tone === "inverse"
+              ? "cursor-not-allowed border border-white/40 text-white/80"
+              : "cursor-not-allowed border border-line-strong text-ink-3"
+            : tone === "inverse"
+              ? "bg-cream-soft text-brand hover:bg-white active:scale-[0.98] active:bg-cream"
+              : "bg-brand text-white hover:bg-brand-hover active:scale-[0.98] active:bg-brand-press",
           inCart && "pointer-events-none scale-95 opacity-0",
         )}
       >
@@ -53,14 +61,15 @@ export function CartControl({ productId, productName, stock, size = "sm", classN
         ) : (
           !soldOut && <ShoppingCart className={size === "lg" ? "size-5" : "size-4"} strokeWidth={2} />
         )}
-        {soldOut ? t.card.soldOut : size === "lg" ? t.product.addToCart : t.card.addToCart}
+        {soldOut ? t.card.soldOut : size === "lg" && !shortLabel ? t.product.addToCart : t.card.addToCart}
       </button>
 
       {/* Miqdor tanlagich */}
       <div
         aria-hidden={!inCart}
         className={cn(
-          "absolute inset-0 flex items-center justify-between rounded-[var(--radius-field)] bg-brand-soft text-brand transition-[opacity,transform] duration-200 ease-[var(--ease-out)]",
+          "absolute inset-0 flex items-center justify-between rounded-[var(--radius-field)] text-brand transition-[opacity,transform] duration-200 ease-[var(--ease-out)]",
+          tone === "inverse" ? "bg-cream-soft" : "bg-brand-soft",
           inCart ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0",
         )}
       >

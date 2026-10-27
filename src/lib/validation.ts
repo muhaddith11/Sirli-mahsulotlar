@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { DISH_TYPES, ORDER_STATUSES, PRODUCT_SORTS } from "./constants";
 import { normalizePhone } from "./format";
+import { SPIN_MAX_FRAMES } from "./spin";
 
 /** Bo'sh satrni undefined'ga aylantiradi (formalar va query parametrlar uchun) */
 const emptyToUndefined = (value: unknown) =>
@@ -94,6 +95,8 @@ export const productFormSchema = z
     volume: optionalText(40),
     pieces: optionalInt(1),
     images: z.array(z.string().trim().min(1).max(500)).max(10, "Ko'pi bilan 10 ta rasm"),
+    spinFrames: z.array(z.string().trim().min(1).max(500)).max(SPIN_MAX_FRAMES, "360° kadrlari juda ko'p"),
+    spinCutout: z.boolean(),
     isActive: z.boolean(),
     isFeatured: z.boolean(),
   })

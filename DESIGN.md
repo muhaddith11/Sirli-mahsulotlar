@@ -345,6 +345,12 @@ The card's "Savatga" button and the stepper are stacked in the same box. On firs
 ### Status Pills
 6px radius, 12px/600, soft background with matching strong text from the status tones. Used in My Orders.
 
+### 360° Spin Viewer
+Frames cut from a turntable video in the admin (36 frames, one every 10°). A canvas swaps between the frames. When a product has frames, the product gallery opens on the spin view, which turns slowly by itself (one turn in about 9s, paused while offscreen and under reduced motion). A horizontal drag rotates the product, with a short inertia, while a vertical swipe still scrolls the page (`touch-action: pan-y`). On phones, a "360° | Rasmlar" pill switch sits top-right. On desktop, a "360°" tile leads the thumbnail column. Until the first drag, an ink pill hint "Aylantirish uchun suring" shows at the bottom.
+
+### Popular Showcase ("Eng ommabop")
+This is the owner-requested creative block. It sits directly under the category tiles, so categories stay the first screen. It is a 12px cream panel with a red brand dome rising from the bottom and a cream circular text ring on the dome that turns slowly. Products with cut-out (transparent) spin frames that are in stock stand on the dome in a snap carousel. The centre product spins and floats gently (5.5s). Neighbours are pulled in, scaled to 0.6, dipped and tilted along the arc and dimmed with brightness, never with opacity, because opacity turns them pink on the red. The name, price and an inverse cream "Savatga" stepper sit on the red. The block is hidden when no product qualifies.
+
 ## Do's and Don'ts
 
 ### Do:
@@ -359,6 +365,6 @@ The card's "Savatga" button and the stepper are stacked in the same box. On firs
 ### Don't:
 - **Don't** introduce a second accent color for actions, links or highlights. Status tones are for order status only.
 - **Don't** put shadows on cards, tiles or panels. Use Bar and Pop only for floating or fixed layers.
-- **Don't** replace the familiar marketplace structure (search, categories, dense grid, add on card) with a boutique banner-led layout or a themed costume.
+- **Don't** replace the familiar marketplace structure (search, categories, dense grid, add on card) with a boutique banner-led layout or a themed costume. The Popular Showcase is the one expressive block, and it always sits below the categories.
 - **Don't** write unconfirmed promises in UI copy (delivery times, warranties, ratings, reviews, installments).
 - **Don't** remove or reorder the five-tab bottom navigation on phones.

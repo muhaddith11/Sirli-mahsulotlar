@@ -60,6 +60,7 @@ export default async function ProductPage({ params }: Props) {
       <div className="grid gap-5 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] md:gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)_320px]">
         <ProductGallery
           images={product.images}
+          spinFrames={product.spinFrames}
           name={name}
           badge={
             off > 0 ? (

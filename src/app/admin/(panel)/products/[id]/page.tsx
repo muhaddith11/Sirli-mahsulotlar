@@ -51,6 +51,8 @@ export default async function EditProductPage({ params }: PageProps<"/admin/prod
           volume: product.volume,
           pieces: product.pieces,
           images: product.images,
+          spinFrames: product.spinFrames,
+          spinCutout: product.spinCutout,
           isActive: product.isActive,
           isFeatured: product.isFeatured,
         }}

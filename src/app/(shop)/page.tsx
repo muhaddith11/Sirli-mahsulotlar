@@ -4,16 +4,20 @@ import { CategoryTiles } from "@/components/shop/category-tiles";
 import { ProductGrid, ProductRail } from "@/components/shop/product-card";
 import { SectionHeading } from "@/components/shop/section-heading";
 import { ServiceStrip } from "@/components/shop/service-strip";
+import { SpinShowcase } from "@/components/shop/spin-showcase";
 import { getI18n } from "@/i18n/server";
-import { listCategories, listProducts } from "@/lib/services/products";
+import { localized } from "@/i18n/config";
+import { discountPercent, effectivePrice, keepUnits } from "@/lib/format";
+import { listCategories, listProducts, listShowcaseProducts } from "@/lib/services/products";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [{ locale, t }, categories, discounted] = await Promise.all([
+  const [{ locale, t }, categories, discounted, showcase] = await Promise.all([
     getI18n(),
     listCategories(),
     listProducts({ discounted: true, limit: 10, sort: "popular" }),
+    listShowcaseProducts(),
   ]);
   // Chegirmadagilar tepada bor — ommabop ro'yxatda takrorlanmasin
   const popular = await listProducts({ limit: 15, sort: "popular" }, { excludeIds: discounted.items.map((p) => p.id) });
@@ -28,6 +32,20 @@ export default async function HomePage() {
           </h1>
           <CategoryTiles categories={categories} locale={locale} t={t} />
         </section>
+      )}
+
+      {showcase.length > 0 && (
+        <SpinShowcase
+          items={showcase.map((product) => ({
+            id: product.id,
+            slug: product.slug,
+            name: keepUnits(localized(locale, product.name, product.nameRu)),
+            price: effectivePrice(product),
+            oldPrice: discountPercent(product) > 0 ? product.price : null,
+            stock: product.stock,
+            frames: product.spinFrames,
+          }))}
+        />
       )}
 
       <ServiceStrip t={t} />

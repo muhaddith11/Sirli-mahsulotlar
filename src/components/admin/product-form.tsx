@@ -7,6 +7,7 @@ import { saveProductAction } from "@/actions/admin/products";
 import { INITIAL_ACTION_RESULT } from "@/actions/admin/types";
 import { adminInput, Field, Toggle } from "./form-fields";
 import { ImageManager } from "./image-manager";
+import { SpinManager } from "./spin-manager";
 
 export type ProductFormValues = {
   id?: string;
@@ -23,6 +24,8 @@ export type ProductFormValues = {
   volume: string | null;
   pieces: number | null;
   images: string[];
+  spinFrames: string[];
+  spinCutout: boolean;
   isActive: boolean;
   isFeatured: boolean;
 };
@@ -100,6 +103,15 @@ export function ProductForm({ product, categories }: Props) {
           <h2 className="mb-1 font-bold">Rasmlar</h2>
           <p className="mb-4 text-xs text-ink-3">Birinchi rasm katalogda ko&apos;rinadi. JPG/PNG/WEBP, 5 MB gacha.</p>
           <ImageManager initial={product?.images ?? []} error={errors.images} />
+        </section>
+
+        <section className="rounded-[var(--radius-card)] bg-surface p-5 ring-1 ring-line">
+          <h2 className="mb-1 font-bold">360° ko&apos;rinish</h2>
+          <p className="mb-4 text-xs text-ink-3">
+            Mahsulot aylanadigan patnisda bir marta to&apos;liq aylanayotgan 10–15 soniyalik video. Kadrlar shu yerning o&apos;zida
+            ajratiladi, video serverga yuklanmaydi.
+          </p>
+          <SpinManager initial={product?.spinFrames ?? []} initialCutout={product?.spinCutout ?? false} error={errors.spinFrames} />
         </section>
       </div>
 

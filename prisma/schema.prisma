@@ -85,6 +85,10 @@ model Product {
   discountPrice Int?
   /// Rasm URL'lari, birinchisi — asosiy rasm
   images        String[]
+  /// 360° aylanish kadrlari (videodan ajratilgan, aylanish tartibida)
+  spinFrames    String[] @default([])
+  /// Kadrlarning foni olib tashlangan (shaffof) — "Eng ommabop" vitrinasiga chiqadi
+  spinCutout    Boolean  @default(false)
   /// Ombordagi qoldiq (dona)
   stock         Int      @default(0)
   /// Hajmi, masalan "16 L" yoki "400 ml"

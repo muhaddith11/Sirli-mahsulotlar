@@ -2,12 +2,14 @@
 
 import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth";
 import { isUniqueConstraintError } from "@/lib/errors";
 import { slugify } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { CATALOG_TAG } from "@/lib/services/products";
+import { deleteUploads } from "@/lib/uploads";
 import { productFormSchema } from "@/lib/validation";
 import type { ActionResult } from "./types";
 
@@ -31,6 +33,8 @@ export async function saveProductAction(_prev: ActionResult, formData: FormData)
   const parsed = productFormSchema.safeParse({
     ...Object.fromEntries(formData),
     images: formData.getAll("images").map(String).filter(Boolean),
+    spinFrames: formData.getAll("spinFrames").map(String).filter(Boolean),
+    spinCutout: formData.get("spinCutout") === "on",
     isActive: formData.get("isActive") === "on",
     isFeatured: formData.get("isFeatured") === "on",
   });
@@ -53,8 +57,11 @@ export async function saveProductAction(_prev: ActionResult, formData: FormData)
     discountPrice: data.discountPrice ?? null,
     volume: data.volume ?? null,
     pieces: data.pieces ?? null,
+    spinCutout: data.spinFrames.length > 0 && data.spinCutout,
     slug: await uniqueSlug(slugify(slug || data.name), id),
   };
+
+  const previous = id ? await prisma.product.findUnique({ where: { id }, select: { spinFrames: true } }) : null;
 
   try {
     if (id) {
@@ -69,6 +76,10 @@ export async function saveProductAction(_prev: ActionResult, formData: FormData)
     throw error;
   }
 
+  // Almashtirilgan 360° kadrlar endi kerak emas
+  const unused = previous?.spinFrames.filter((url) => !values.spinFrames.includes(url)) ?? [];
+  if (unused.length) after(() => deleteUploads(unused));
+
   revalidateShop();
   redirect("/admin/products");
 }
@@ -76,7 +87,8 @@ export async function saveProductAction(_prev: ActionResult, formData: FormData)
 export async function deleteProductAction(productId: string): Promise<ActionResult> {
   await requireAdmin();
   // Buyurtmalar tarixidagi nom va narxlar saqlanib qoladi (OrderItem.productId → NULL)
-  await prisma.product.delete({ where: { id: productId } });
+  const removed = await prisma.product.delete({ where: { id: productId }, select: { spinFrames: true } });
+  if (removed.spinFrames.length) after(() => deleteUploads(removed.spinFrames));
   revalidateShop();
   return { ok: true };
 }

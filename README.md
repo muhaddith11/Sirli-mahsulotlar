@@ -13,6 +13,7 @@ Imkoniyatlar:
 - **O'zbek va rus tillari** — til almashtirgich, Telegram'da foydalanuvchi tilidan avtomatik; mahsulot va kategoriyalar uchun ruscha nom/tavsif.
 - **Yetkazib berish yoki do'kondan olib ketish**; 14 hudud bo'yicha narxni egasi admin paneldan kiritadi (bo'sh — "operator aytadi"), bepul yetkazish chegarasi.
 - **Promokodlar** (foiz yoki summa, eng kam buyurtma, ishlatish soni, muddat).
+- **360° ko'rinish** — admin mahsulot aylanayotgan videoni yuklaydi, brauzerning o'zi 36 ta kadr ajratadi, fonni olib tashlaydi va yuklaydi (video serverga bormaydi). Foni olingan mahsulotlar bosh sahifadagi **"Eng ommabop"** vitrinasida aylanib turadi.
 - **Buyurtmalarim** — Telegram'da imzo orqali, saytda shu qurilmadagi buyurtmalar.
 - Katalog keshi, spamdan himoya (IP bo'yicha so'rov chegarasi), kunlik tozalash cron'i.
 - Dizayn tizimi: [DESIGN.md](DESIGN.md), mahsulot ma'lumotlari: [PRODUCT.md](PRODUCT.md).

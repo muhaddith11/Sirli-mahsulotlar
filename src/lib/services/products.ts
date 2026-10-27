@@ -146,6 +146,16 @@ async function getRelatedProductsUncached(categoryId: string, excludeId: string,
   return [...sameCategory, ...others];
 }
 
+/** "Eng ommabop" vitrinasi: omborda bor, foni olib tashlangan 360° kadrli mahsulotlar, ommaboplik tartibida */
+async function listShowcaseProductsUncached(take = 6) {
+  return prisma.product.findMany({
+    where: { isActive: true, stock: { gt: 0 }, spinCutout: true, spinFrames: { isEmpty: false } },
+    orderBy: [{ isFeatured: "desc" }, { orderItems: { _count: "desc" } }, { createdAt: "desc" }],
+    take,
+    select: { ...productCardSelect, spinFrames: true },
+  });
+}
+
 /** Kategoriyalar va har biridagi faol mahsulotlar soni */
 async function listCategoriesUncached() {
   return prisma.category.findMany({
@@ -167,5 +177,6 @@ async function listCategoriesUncached() {
 export const listProducts = cachedCatalog(listProductsUncached, "list-products");
 export const getRelatedProducts = cachedCatalog(getRelatedProductsUncached, "related-products");
 export const listCategories = cachedCatalog(listCategoriesUncached, "list-categories");
+export const listShowcaseProducts = cachedCatalog(listShowcaseProductsUncached, "showcase-products");
 
 export type CategoryWithCount = Awaited<ReturnType<typeof listCategoriesUncached>>[number];

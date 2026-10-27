@@ -1,5 +1,7 @@
 import "server-only";
+import { unlink } from "node:fs/promises";
 import path from "node:path";
+import { del } from "@vercel/blob";
 
 export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 
@@ -27,4 +29,14 @@ export function isSafeUploadName(name: string): boolean {
 
 export function contentTypeFor(name: string): string {
   return CONTENT_TYPES[path.extname(name)] ?? "application/octet-stream";
+}
+
+/** Endi ishlatilmaydigan yuklangan fayllarni o'chiradi (Vercel Blob yoki lokal papka). Xatolar jim o'tadi. */
+export async function deleteUploads(urls: string[]): Promise<void> {
+  const blobs = urls.filter((url) => /^https:\/\/[^/]+\.blob\.vercel-storage\.com\//.test(url));
+  const local = urls
+    .map((url) => /^\/api\/uploads\/([^/?#]+)$/.exec(url)?.[1])
+    .filter((name): name is string => !!name && isSafeUploadName(name));
+  if (blobs.length && process.env.BLOB_READ_WRITE_TOKEN) await del(blobs).catch(() => {});
+  await Promise.all(local.map((name) => unlink(path.join(getUploadDir(), name)).catch(() => {})));
 }
