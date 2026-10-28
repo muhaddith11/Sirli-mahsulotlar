@@ -1,6 +1,7 @@
 import "server-only";
 import { Telegram } from "telegraf";
-import type { InlineKeyboardMarkup } from "telegraf/types";
+import type { InlineKeyboardButton, InlineKeyboardMarkup } from "telegraf/types";
+import { ADMIN_COMMANDS } from "./commands";
 
 let client: Telegram | null = null;
 
@@ -29,6 +30,20 @@ export function isAdminChat(...ids: Array<number | string | undefined>): boolean
 export function getPublicAppUrl(): string | null {
   const url = process.env.APP_URL?.replace(/\/$/, "");
   return url?.startsWith("https://") ? url : null;
+}
+
+/**
+ * "Admin panel" tugmasi. Shaxsiy chatda Mini App bo'lib ochiladi va egasi Telegram orqali parolsiz kiradi;
+ * guruhda web_app tugmasi ishlamaydi — u yerda oddiy havola (brauzerda, parol bilan).
+ */
+export function adminPanelButton(appUrl: string, chatType: string): InlineKeyboardButton {
+  const url = `${appUrl}/admin/login`;
+  return chatType === "private" ? { text: "⚙️ Admin panel", web_app: { url } } : { text: "⚙️ Admin panel", url };
+}
+
+/** Egasi chatining buyruqlar menyusiga /admin qo'shadi (faqat shu chatda ko'rinadi) */
+export async function setAdminCommands(chatId: number | string) {
+  await getTelegram()?.setMyCommands(ADMIN_COMMANDS, { scope: { type: "chat", chat_id: chatId } });
 }
 
 type SendOptions = { keyboard?: InlineKeyboardMarkup };

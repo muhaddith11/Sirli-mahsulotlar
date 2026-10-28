@@ -1,5 +1,6 @@
 import { createHmac } from "node:crypto";
 import { describe, expect, it } from "vitest";
+import { adminPanelButton, isAdminChat } from "@/lib/telegram/bot";
 import { verifyTelegramInitData } from "@/lib/telegram/init-data";
 import { escapeHtml, newOrderMessage, type OrderForMessage } from "@/lib/telegram/messages";
 import { orderAdminKeyboard, parseOrderCallback } from "@/lib/telegram/order-keyboard";
@@ -42,6 +43,27 @@ describe("Telegram initData", () => {
 
   it("hash'siz satr rad etiladi", () => {
     expect(verifyTelegramInitData("user=%7B%7D", TOKEN)).toBeNull();
+  });
+
+  it("admin kirishi uchun qisqa muddat: 2 soatlik ma'lumot 1 soatlik chegaradan o'tmaydi", () => {
+    const twoHours = { ...freshFields(), auth_date: String(Math.floor(Date.now() / 1000) - 2 * 3600) };
+    const signed = signInitData(twoHours).toString();
+    expect(verifyTelegramInitData(signed, TOKEN)).toMatchObject({ id: 42 });
+    expect(verifyTelegramInitData(signed, TOKEN, 60 * 60)).toBeNull();
+  });
+});
+
+describe("admin panel tugmasi", () => {
+  it("shaxsiy chatda Mini App, guruhda oddiy havola", () => {
+    expect(adminPanelButton("https://shop.uz", "private")).toMatchObject({ web_app: { url: "https://shop.uz/admin/login" } });
+    expect(adminPanelButton("https://shop.uz", "supergroup")).toMatchObject({ url: "https://shop.uz/admin/login" });
+  });
+
+  it("faqat ro'yxatdagi chat admin hisoblanadi", () => {
+    process.env.TELEGRAM_ADMIN_CHAT_ID = "111, -100222";
+    expect(isAdminChat(111)).toBe(true);
+    expect(isAdminChat(333, "-100222")).toBe(true);
+    expect(isAdminChat(333, undefined)).toBe(false);
   });
 });
 

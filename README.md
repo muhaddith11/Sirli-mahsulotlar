@@ -73,7 +73,9 @@ Chiqqan `postgres://...` manzilini `DATABASE_URL` ga yozing va `DATABASE_POOL_MA
 4. Botga `/id` yozing — u chat ID'ingizni qaytaradi. Uni `TELEGRAM_ADMIN_CHAT_ID` ga yozing va serverni qayta ishga tushiring.
 5. Bot do'kon egasiga xabar yubora olishi uchun egasi botga avval `/start` yozgan bo'lishi kerak.
 
-Bot buyruqlari: `/start` — do'kon va "Buyurtmalarim" tugmalari, `/yangi` — (egasi uchun) faol buyurtmalar, `/id` — chat ID.
+Bot buyruqlari: `/start` — do'kon va "Buyurtmalarim" tugmalari, `/admin` — (egasi uchun) admin panel tugmasi, `/yangi` — (egasi uchun) faol buyurtmalar, `/id` — chat ID.
+
+**Admin panel tugmasi** faqat `TELEGRAM_ADMIN_CHAT_ID` ro'yxatidagi chatda chiqadi: `/start` javobida va `/admin` buyrug'ida; egasi `/start` yozganda menyusiga `/admin` ham qo'shiladi. Shaxsiy chatda tugma admin panelni Mini App ichida ochadi va egasi **parolsiz** kiradi — server `initData` imzosini bot tokeni bilan tekshiradi (1 soatdan eski bo'lmasin) va foydalanuvchi ID ro'yxatda bo'lsagina sessiya ochadi. Guruhda tugma oddiy havola bo'ladi (brauzerda, parol bilan).
 Egasiga kelgan har bir buyurtma xabarida holat tugmalari bor (Tayyorlanmoqda → Yetkazilmoqda → Yakunlandi, bekor qilish — tasdiq bilan); mijozga yangi holat haqida o'z tilida xabar boradi.
 
 Mini App ichida:

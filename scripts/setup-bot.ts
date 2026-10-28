@@ -8,6 +8,7 @@
  */
 import "dotenv/config";
 import { Telegram } from "telegraf";
+import { ADMIN_COMMANDS } from "../src/lib/telegram/commands";
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const appUrl = process.env.APP_URL?.replace(/\/$/, "");
@@ -36,6 +37,12 @@ await telegram.setMyCommands(
   ],
   { language_code: "ru" },
 );
+// Do'kon egasi chat(lar)ida menyuga /admin ham chiqadi — boshqalarga ko'rinmaydi
+for (const chatId of (process.env.TELEGRAM_ADMIN_CHAT_ID ?? "").split(",").map((id) => id.trim()).filter(Boolean)) {
+  await telegram
+    .setMyCommands(ADMIN_COMMANDS, { scope: { type: "chat", chat_id: chatId } })
+    .catch((error: unknown) => console.warn(`⚠ ${chatId}: admin buyruqlari o'rnatilmadi (egasi botga /start yozganmi?)`, error));
+}
 await telegram.setWebhook(`${appUrl}/api/telegram/webhook`, {
   secret_token: secret,
   allowed_updates: ["message", "callback_query"],

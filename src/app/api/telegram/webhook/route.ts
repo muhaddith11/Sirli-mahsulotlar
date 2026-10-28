@@ -13,7 +13,14 @@ import {
   updateOrderStatus,
 } from "@/lib/services/orders";
 import { CATALOG_TAG } from "@/lib/services/products";
-import { getPublicAppUrl, getTelegram, isAdminChat, sendHtmlMessage } from "@/lib/telegram/bot";
+import {
+  adminPanelButton,
+  getPublicAppUrl,
+  getTelegram,
+  isAdminChat,
+  sendHtmlMessage,
+  setAdminCommands,
+} from "@/lib/telegram/bot";
 import { newOrderMessage } from "@/lib/telegram/messages";
 import { cancelConfirmKeyboard, orderAdminKeyboard, parseOrderCallback } from "@/lib/telegram/order-keyboard";
 
@@ -30,6 +37,7 @@ function isAuthorized(request: Request): boolean {
  * POST /api/telegram/webhook
  *   /start  — do'konni va "Buyurtmalarim"ni ochish tugmalari
  *   /id     — chat ID (TELEGRAM_ADMIN_CHAT_ID uchun)
+ *   /admin  — (egasi uchun) admin panelni ochish tugmasi
  *   /yangi  — (egasi uchun) faol buyurtmalar, holat tugmalari bilan
  *   tugmalar — buyurtma holatini Telegram'ning o'zida o'zgartirish
  * Webhook'ni `npm run bot:setup` o'rnatadi.
@@ -64,7 +72,7 @@ async function handleCommand(message: Message.TextMessage) {
     const greeting = ru
       ? "Здравствуйте! 🌸\n<b>Sirli Mahsulotlar</b> — эмалированные кастрюли, чайники и кухонная посуда.\n\nОткройте каталог кнопкой ниже и оформите заказ в пару нажатий."
       : "Assalomu alaykum! 🌸\n<b>Sirli Mahsulotlar</b> — emal kastryulkalar, choynaklar va oshxona idishlari.\n\nPastdagi tugma orqali katalogni oching va bir necha bosishda buyurtma bering.";
-    const adminHint = admin ? "\n\n👤 Do'kon egasi: faol buyurtmalar — /yangi" : "";
+    const adminHint = admin ? "\n\n👤 Do'kon egasi: admin panel — /admin, faol buyurtmalar — /yangi" : "";
     await sendHtmlMessage(
       chatId,
       greeting + adminHint,
@@ -74,11 +82,27 @@ async function handleCommand(message: Message.TextMessage) {
               inline_keyboard: [
                 [{ text: ru ? "🛍 Открыть магазин" : "🛍 Do'konni ochish", web_app: { url: appUrl } }],
                 [{ text: ru ? "📦 Мои заказы" : "📦 Buyurtmalarim", web_app: { url: `${appUrl}/orders` } }],
+                // Admin panel tugmasi faqat do'kon egasiga ko'rinadi
+                ...(admin ? [[adminPanelButton(appUrl, message.chat.type)]] : []),
               ],
             },
           }
         : {},
     );
+    if (admin) after(() => setAdminCommands(chatId).catch((error) => console.error("[telegram] admin buyruqlari:", error)));
+    return;
+  }
+
+  if (text.startsWith("/admin") && isAdminChat(chatId, message.from?.id)) {
+    const appUrl = getPublicAppUrl();
+    if (!appUrl) {
+      await sendHtmlMessage(chatId, "APP_URL https:// manzil bilan o'rnatilmagan — admin panel tugmasini yaratib bo'lmadi.");
+      return;
+    }
+    await sendHtmlMessage(chatId, "⚙️ <b>Admin panel</b>\nMahsulotlar, buyurtmalar va omborni boshqarish.", {
+      keyboard: { inline_keyboard: [[adminPanelButton(appUrl, message.chat.type)]] },
+    });
+    after(() => setAdminCommands(chatId).catch((error) => console.error("[telegram] admin buyruqlari:", error)));
     return;
   }
 
