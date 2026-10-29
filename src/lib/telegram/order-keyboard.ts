@@ -9,11 +9,13 @@ import { getPublicAppUrl } from "./bot";
  *   st:<orderId>:<STATUS> — holatni o'zgartirish
  *   cx:<orderId>          — bekor qilishni so'rash (tasdiqlash tugmalari chiqadi)
  *   back:<orderId>        — tasdiqlashdan qaytish
+ *   pay:<orderId>:ok|no   — to'lov chekini tasdiqlash yoki rad etish
  */
 export type OrderCallback =
   | { action: "status"; orderId: string; status: OrderStatus }
   | { action: "askCancel"; orderId: string }
-  | { action: "back"; orderId: string };
+  | { action: "back"; orderId: string }
+  | { action: "payment"; orderId: string; approve: boolean };
 
 const STATUSES: readonly OrderStatus[] = ["NEW", "PREPARING", "DELIVERING", "COMPLETED", "CANCELLED"];
 
@@ -26,6 +28,7 @@ export function parseOrderCallback(data: string | undefined): OrderCallback | nu
   }
   if (kind === "cx") return { action: "askCancel", orderId };
   if (kind === "back") return { action: "back", orderId };
+  if (kind === "pay" && (status === "ok" || status === "no")) return { action: "payment", orderId, approve: status === "ok" };
   return null;
 }
 
@@ -59,6 +62,20 @@ export function orderAdminKeyboard(
   if (next.length > 2) rows.push(next.slice(2).map((s) => statusButton(orderId, s)));
   if (status !== "COMPLETED" && status !== "CANCELLED") {
     rows.push([{ text: "❌ Bekor qilish", callback_data: `cx:${orderId}` }]);
+  }
+  const link = adminLinkRow(orderId);
+  if (link.length) rows.push(link);
+  return { inline_keyboard: rows };
+}
+
+/** Chek ostidagi tugmalar: tekshirilayotganda — tasdiqlash/rad etish, qarordan keyin — faqat admin panel havolasi */
+export function paymentReviewKeyboard(orderId: string, pending: boolean): InlineKeyboardMarkup {
+  const rows: InlineKeyboardButton[][] = [];
+  if (pending) {
+    rows.push([
+      { text: "✅ Tasdiqlash", callback_data: `pay:${orderId}:ok` },
+      { text: "❌ Rad etish", callback_data: `pay:${orderId}:no` },
+    ]);
   }
   const link = adminLinkRow(orderId);
   if (link.length) rows.push(link);

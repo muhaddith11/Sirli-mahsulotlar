@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, MapPin, MessageSquare, Phone, Send, Store } from "lucide-react";
+import { ArrowLeft, FileText, MapPin, MessageSquare, Phone, Send, Store } from "lucide-react";
 import { OrderStatusSelect } from "@/components/admin/order-status-select";
+import { PaymentReviewButtons } from "@/components/admin/payment-review";
 import { Card } from "@/components/admin/ui";
 import { ProductImage } from "@/components/shop/product-image";
-import { ORDER_SOURCE_LABELS } from "@/lib/constants";
+import { cn } from "@/lib/cn";
+import { ORDER_SOURCE_LABELS, PAYMENT_METHOD_LABELS, PAYMENT_STATUS_LABELS, PAYMENT_STATUS_STYLES } from "@/lib/constants";
 import { formatDate, formatPhone, formatPrice } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
@@ -97,49 +99,94 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
           </dl>
         </Card>
 
-        <Card className="space-y-4 p-4 sm:p-5">
-          <h2 className="font-bold">Mijoz</h2>
-          <p className="text-lg font-semibold">{order.customerName}</p>
-          <div className="flex flex-wrap gap-2">
-            <a
-              href={`tel:${order.phone}`}
-              className="inline-flex items-center gap-2 rounded-full bg-success-soft px-4 py-2 text-sm font-bold text-success"
-            >
-              <Phone className="size-4" /> {formatPhone(order.phone)}
-            </a>
-            {telegramLink && (
+        <div className="space-y-6">
+          <Card className="space-y-4 p-4 sm:p-5">
+            <h2 className="font-bold">Mijoz</h2>
+            <p className="text-lg font-semibold">{order.customerName}</p>
+            <div className="flex flex-wrap gap-2">
               <a
-                href={telegramLink}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-info-soft px-4 py-2 text-sm font-bold text-info"
+                href={`tel:${order.phone}`}
+                className="inline-flex items-center gap-2 rounded-full bg-success-soft px-4 py-2 text-sm font-bold text-success"
               >
-                <Send className="size-4" /> {order.user?.username ? `@${order.user.username}` : "Telegram"}
+                <Phone className="size-4" /> {formatPhone(order.phone)}
               </a>
+              {telegramLink && (
+                <a
+                  href={telegramLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-info-soft px-4 py-2 text-sm font-bold text-info"
+                >
+                  <Send className="size-4" /> {order.user?.username ? `@${order.user.username}` : "Telegram"}
+                </a>
+              )}
+            </div>
+            {order.deliveryMethod === "PICKUP" ? (
+              <div className="flex gap-3 text-sm">
+                <Store className="mt-0.5 size-4 shrink-0 text-brand" />
+                <p className="font-medium">Do&apos;kondan olib ketadi</p>
+              </div>
+            ) : (
+              <div className="flex gap-3 text-sm">
+                <MapPin className="mt-0.5 size-4 shrink-0 text-brand" />
+                <p className="whitespace-pre-line">
+                  {order.deliveryZoneName && <span className="block font-medium">{order.deliveryZoneName}</span>}
+                  {order.deliveryAddress}
+                </p>
+              </div>
             )}
-          </div>
-          {order.deliveryMethod === "PICKUP" ? (
-            <div className="flex gap-3 text-sm">
-              <Store className="mt-0.5 size-4 shrink-0 text-brand" />
-              <p className="font-medium">Do&apos;kondan olib ketadi</p>
+            {order.locale === "ru" && <p className="text-xs text-ink-3">Mijoz tili: ruscha</p>}
+            {order.comment && (
+              <div className="flex gap-3 rounded-[var(--radius-field)] bg-page p-3 text-sm">
+                <MessageSquare className="mt-0.5 size-4 shrink-0 text-brand" />
+                <p className="whitespace-pre-line">{order.comment}</p>
+              </div>
+            )}
+          </Card>
+
+          <Card className="space-y-3 p-4 sm:p-5">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="font-bold">To&apos;lov</h2>
+              {order.paymentMethod === "CARD" && (
+                <span
+                  className={cn("inline-flex rounded-full px-2.5 py-1 text-xs font-bold ring-1", PAYMENT_STATUS_STYLES[order.paymentStatus])}
+                >
+                  {PAYMENT_STATUS_LABELS[order.paymentStatus]}
+                </span>
+              )}
             </div>
-          ) : (
-            <div className="flex gap-3 text-sm">
-              <MapPin className="mt-0.5 size-4 shrink-0 text-brand" />
-              <p className="whitespace-pre-line">
-                {order.deliveryZoneName && <span className="block font-medium">{order.deliveryZoneName}</span>}
-                {order.deliveryAddress}
-              </p>
-            </div>
-          )}
-          {order.locale === "ru" && <p className="text-xs text-ink-3">Mijoz tili: ruscha</p>}
-          {order.comment && (
-            <div className="flex gap-3 rounded-[var(--radius-field)] bg-page p-3 text-sm">
-              <MessageSquare className="mt-0.5 size-4 shrink-0 text-brand" />
-              <p className="whitespace-pre-line">{order.comment}</p>
-            </div>
-          )}
-        </Card>
+            <p className="text-sm">{PAYMENT_METHOD_LABELS[order.paymentMethod]}</p>
+            {order.paymentMethod === "CARD" && (
+              <>
+                {!order.receiptFileId ? (
+                  <p className="rounded-[var(--radius-field)] bg-page p-3 text-sm text-ink-2">
+                    Mijoz hali chek yubormagan. Chek botga kelganda shu yerda va Telegram&apos;ingizda ko&apos;rinadi.
+                  </p>
+                ) : order.receiptMime === "application/pdf" ? (
+                  <a
+                    href={`/api/admin/receipts/${order.id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 rounded-[var(--radius-field)] bg-page px-3 py-2 text-sm font-semibold hover:text-brand"
+                  >
+                    <FileText className="size-4" /> Chekni ochish (PDF)
+                  </a>
+                ) : (
+                  <a href={`/api/admin/receipts/${order.id}`} target="_blank" rel="noreferrer" className="block">
+                    <img
+                      src={`/api/admin/receipts/${order.id}`}
+                      alt={`Buyurtma #${order.number} to'lov cheki`}
+                      className="max-h-80 w-full rounded-[var(--radius-field)] bg-page object-contain ring-1 ring-line"
+                    />
+                  </a>
+                )}
+                {order.receiptAt && <p className="text-xs text-ink-3">Chek yuborilgan: {formatDate(order.receiptAt)}</p>}
+                {order.paidAt && <p className="text-xs text-ink-3">Tasdiqlangan: {formatDate(order.paidAt)}</p>}
+                <PaymentReviewButtons orderId={order.id} status={order.paymentStatus} />
+              </>
+            )}
+          </Card>
+        </div>
       </div>
     </>
   );

@@ -30,6 +30,16 @@ export type StoreSettingsData = {
   pickupAddressRu: string | null;
   workingHours: string | null;
   workingHoursRu: string | null;
+  /** Kartaga o'tkazma rekvizitlari (checkout, buyurtma sahifasi va bot xabarlari uchun) */
+  payment: PaymentSettings | null;
+};
+
+export type PaymentSettings = {
+  /** Faqat raqamlar; bo'sh bo'lishi mumkin (faqat QR berilgan bo'lsa) */
+  cardNumber: string | null;
+  cardHolder: string | null;
+  /** QR kodi rasmi URL'i */
+  qr: string | null;
 };
 
 export const getStoreSettings = unstable_cache(
@@ -41,6 +51,11 @@ export const getStoreSettings = unstable_cache(
       pickupAddressRu: row?.pickupAddressRu ?? null,
       workingHours: row?.workingHours ?? null,
       workingHoursRu: row?.workingHoursRu ?? null,
+      // Karta raqami ham, QR ham bo'lmasa — kartaga o'tkazma o'chiq
+      payment:
+        row?.cardNumber || row?.paymentQr
+          ? { cardNumber: row.cardNumber, cardHolder: row.cardHolder, qr: row.paymentQr }
+          : null,
     };
   },
   ["store-settings"],

@@ -78,6 +78,12 @@ Bot buyruqlari: `/start` — do'kon va "Buyurtmalarim" tugmalari, `/admin` — (
 **Admin panel tugmasi** faqat `TELEGRAM_ADMIN_CHAT_ID` ro'yxatidagi chatda chiqadi: `/start` javobida va `/admin` buyrug'ida; egasi `/start` yozganda menyusiga `/admin` ham qo'shiladi. Shaxsiy chatda tugma admin panelni Mini App ichida ochadi va egasi **parolsiz** kiradi — server `initData` imzosini bot tokeni bilan tekshiradi (1 soatdan eski bo'lmasin) va foydalanuvchi ID ro'yxatda bo'lsagina sessiya ochadi. Guruhda tugma oddiy havola bo'ladi (brauzerda, parol bilan).
 Egasiga kelgan har bir buyurtma xabarida holat tugmalari bor (Tayyorlanmoqda → Yetkazilmoqda → Yakunlandi, bekor qilish — tasdiq bilan); mijozga yangi holat haqida o'z tilida xabar boradi.
 
+**Kartaga o'tkazma (to'lov cheki bilan).** Admin panel → **To'lov**: karta raqami, karta egasi va QR rasm. Ulardan biri kiritilsa, checkout'da ikki variant chiqadi — «Qabul qilganda» (avvalgidek) va «Kartaga o'tkazma»:
+1. Mijoz checkout'da summa, karta raqami (nusxa olish tugmasi bilan) va QR'ni ko'radi; Mini App'dan buyurtma bersa, rekvizitlar QR bilan bot chatiga ham keladi.
+2. To'lab, chekni (skrinshot yoki PDF) botga yuboradi. Saytdan buyurtma bergan mijoz «Chekni Telegram'da yuborish» tugmasini bosadi (`/start pay_<id>` — buyurtma uning Telegram'iga bog'lanadi).
+3. Chek mijozning to'lov kutilayotgan oxirgi buyurtmasiga yoziladi va do'kon egasiga «✅ Tasdiqlash / ❌ Rad etish» tugmalari bilan boradi.
+4. Egasi qaror qilgach, mijozga o'z tilida «to'lov tasdiqlandi» yoki «chekni qayta yuboring» xabari boradi. Xuddi shu tugmalar admin paneldagi buyurtma sahifasida ham bor (chek rasmi bilan — u Telegram'dan server orqali olinadi, bot tokeni brauzerga chiqmaydi).
+
 Mini App ichida:
 - foydalanuvchi ismi Telegram profilidan avtomatik to'ldiriladi, telefonni bir bosishda ulashish mumkin;
 - mahsulot, savat va checkout sahifalarida asosiy amal Telegram'ning pastki **MainButton** tugmasida bo'ladi; "Orqaga" tugmasi ham Telegram'niki;

@@ -33,6 +33,11 @@ export function normalizePhone(input: string): string | null {
 }
 
 /** "+998901234567" → "+998 90 123 45 67" */
+/** Karta raqami 4 tadan guruhlab: "8600123412341234" → "8600 1234 1234 1234" */
+export function formatCardNumber(value: string): string {
+  return value.replace(/\D/g, "").replace(/(\d{4})(?=\d)/g, "$1 ");
+}
+
 export function formatPhone(phone: string): string {
   const d = phone.replace(/\D/g, "");
   if (d.length !== 12) return phone;

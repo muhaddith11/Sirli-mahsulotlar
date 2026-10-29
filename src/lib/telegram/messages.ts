@@ -1,8 +1,14 @@
 import "server-only";
-import type { OrderSource, OrderStatus } from "@/generated/prisma/enums";
+import type { OrderSource, OrderStatus, PaymentMethod, PaymentStatus } from "@/generated/prisma/enums";
 import { fill, getDictionary, isLocale } from "@/i18n";
-import { ORDER_SOURCE_LABELS, ORDER_STATUS_EMOJI, ORDER_STATUS_LABELS } from "@/lib/constants";
-import { formatDate, formatPhone, formatPrice } from "@/lib/format";
+import {
+  ORDER_SOURCE_LABELS,
+  ORDER_STATUS_EMOJI,
+  ORDER_STATUS_LABELS,
+  PAYMENT_STATUS_EMOJI,
+  PAYMENT_STATUS_LABELS,
+} from "@/lib/constants";
+import { formatCardNumber, formatDate, formatPhone, formatPrice } from "@/lib/format";
 
 export function escapeHtml(text: string): string {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -23,6 +29,8 @@ export type OrderForMessage = {
   promoCodeText?: string | null;
   promoDiscount?: number;
   totalAmount: number;
+  paymentMethod?: PaymentMethod;
+  paymentStatus?: PaymentStatus;
   createdAt: Date;
   locale?: string;
   items: { productName: string; unitPrice: number; quantity: number; totalPrice: number }[];
@@ -77,6 +85,7 @@ export function newOrderMessage(order: OrderForMessage): string {
       ? []
       : [`🚚 Yetkazish: ${order.deliveryFee == null ? "narxni operator aytadi" : order.deliveryFee === 0 ? "bepul" : formatPrice(order.deliveryFee)}`]),
     `💰 <b>To'lov: ${formatPrice(order.totalAmount)}</b>${order.deliveryFee == null && order.deliveryMethod !== "PICKUP" ? " + yetkazish" : ""}`,
+    ...(order.paymentMethod ? [paymentLine(order.paymentMethod, order.paymentStatus ?? "UNPAID")] : []),
     "",
     `🕒 ${formatDate(order.createdAt)}`,
   );
@@ -84,24 +93,79 @@ export function newOrderMessage(order: OrderForMessage): string {
   return lines.join("\n");
 }
 
+function paymentLine(method: PaymentMethod, status: PaymentStatus): string {
+  if (method === "CASH") return "💵 Qabul qilganda to'laydi";
+  return `💳 Kartaga o'tkazma — ${PAYMENT_STATUS_EMOJI[status]} ${PAYMENT_STATUS_LABELS[status]}`;
+}
+
+/** Botga kelgan chek ostidagi matn (do'kon egasiga); qaror qilingach yangi holat bilan qayta chiziladi */
+export function receiptAdminCaption(
+  order: Pick<OrderForMessage, "number" | "customerName" | "phone" | "totalAmount" | "deliveryMethod" | "deliveryFee"> & {
+    paymentStatus: PaymentStatus;
+  },
+): string {
+  const deliveryExtra = order.deliveryFee == null && order.deliveryMethod !== "PICKUP" ? " + yetkazish" : "";
+  return [
+    `🧾 <b>To'lov cheki — buyurtma #${order.number}</b>`,
+    `👤 ${escapeHtml(order.customerName)} · 📞 ${formatPhone(order.phone)}`,
+    `💰 Summa: <b>${formatPrice(order.totalAmount)}</b>${deliveryExtra}`,
+    `${PAYMENT_STATUS_EMOJI[order.paymentStatus]} <b>${PAYMENT_STATUS_LABELS[order.paymentStatus]}</b>`,
+  ].join("\n");
+}
+
 type CustomerOrder = Pick<OrderForMessage, "number" | "totalAmount" | "status"> & { locale: string };
+
+/** Kartaga o'tkazma rekvizitlari (do'kon sozlamalaridan) */
+export type PaymentDetails = { cardNumber: string | null; cardHolder: string | null };
+
+type PayableOrder = Pick<OrderForMessage, "number" | "totalAmount" | "deliveryMethod" | "deliveryFee"> & { locale: string };
+
+/** Mijozga: qaysi kartaga qancha o'tkazish va chekni shu chatga yuborish (mijoz tilida) */
+export function paymentInstructionsMessage(order: PayableOrder, payment: PaymentDetails): string {
+  const t = dictFor(order);
+  const locale = isLocale(order.locale) ? order.locale : "uz";
+  const deliveryExtra =
+    order.deliveryMethod !== "PICKUP" && order.deliveryFee == null ? ` (${t.telegram.payDeliveryExtra})` : "";
+  return [
+    t.telegram.payTitle,
+    ...(payment.cardNumber ? [`${t.telegram.payCard}: <code>${formatCardNumber(payment.cardNumber)}</code>`] : []),
+    ...(payment.cardHolder ? [`${t.telegram.payHolder}: ${escapeHtml(payment.cardHolder)}`] : []),
+    `${t.telegram.payAmount}: <b>${formatPrice(order.totalAmount, locale)}</b>${deliveryExtra}`,
+    "",
+    t.telegram.paySendReceipt,
+  ].join("\n");
+}
+
+/** Mijozga: chek tasdiqlandi yoki rad etildi */
+export function paymentResultMessage(order: { number: number; locale: string }, approved: boolean): string {
+  const t = dictFor(order);
+  return fill(approved ? t.telegram.paymentApproved : t.telegram.paymentRejected, { number: order.number });
+}
 
 function dictFor(order: { locale: string }) {
   return getDictionary(isLocale(order.locale) ? order.locale : "uz");
 }
 
-/** Mijozga buyurtma qabul qilingani haqida xabar (mijoz tilida) */
-export function orderReceivedMessage(order: CustomerOrder): string {
+/**
+ * Mijozga buyurtma qabul qilingani haqida xabar (mijoz tilida).
+ * Kartaga o'tkazmada — rekvizitlar va "chekni shu chatga yuboring".
+ */
+export function orderReceivedMessage(
+  order: CustomerOrder & Partial<PayableOrder> & { paymentMethod?: PaymentMethod },
+  payment?: PaymentDetails | null,
+): string {
   const t = dictFor(order);
   const locale = isLocale(order.locale) ? order.locale : "uz";
-  return [
+  const lines = [
     t.telegram.received,
     "",
     `${t.telegram.orderNumber}: <b>#${order.number}</b>`,
     `${t.telegram.sum}: <b>${formatPrice(order.totalAmount, locale)}</b>`,
     "",
-    t.telegram.thanks,
-  ].join("\n");
+  ];
+  if (order.paymentMethod === "CARD" && payment) lines.push(paymentInstructionsMessage(order, payment), "");
+  lines.push(t.telegram.thanks);
+  return lines.join("\n");
 }
 
 /** Mijozga buyurtma holati o'zgargani haqida xabar (mijoz tilida) */

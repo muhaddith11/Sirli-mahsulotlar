@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   discountPercent,
   effectivePrice,
+  formatCardNumber,
   formatPhone,
   formatPhoneInput,
   formatPrice,
@@ -68,5 +69,13 @@ describe("slugify", () => {
   it("o'zbekcha apostrof va kirill harflarini lotin slug'ga aylantiradi", () => {
     expect(slugify("To'plam \"Ko'knori\" 6 dona")).toBe("toplam-koknori-6-dona");
     expect(slugify("Кастрюля Клубника")).toBe("kastryulya-klubnika");
+  });
+});
+
+describe("karta raqami", () => {
+  it("4 tadan guruhlanadi, ortiqcha belgilar olib tashlanadi", () => {
+    expect(formatCardNumber("8600123412341234")).toBe("8600 1234 1234 1234");
+    expect(formatCardNumber("8600-1234 12")).toBe("8600 1234 12");
+    expect(formatCardNumber("")).toBe("");
   });
 });

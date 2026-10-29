@@ -2,8 +2,16 @@ import { createHmac } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { adminPanelButton, isAdminChat } from "@/lib/telegram/bot";
 import { verifyTelegramInitData } from "@/lib/telegram/init-data";
-import { escapeHtml, newOrderMessage, type OrderForMessage } from "@/lib/telegram/messages";
-import { orderAdminKeyboard, parseOrderCallback } from "@/lib/telegram/order-keyboard";
+import {
+  escapeHtml,
+  newOrderMessage,
+  orderReceivedMessage,
+  paymentInstructionsMessage,
+  paymentResultMessage,
+  receiptAdminCaption,
+  type OrderForMessage,
+} from "@/lib/telegram/messages";
+import { orderAdminKeyboard, parseOrderCallback, paymentReviewKeyboard } from "@/lib/telegram/order-keyboard";
 
 const TOKEN = "123456:TEST-TOKEN";
 
@@ -128,5 +136,55 @@ describe("do'kon egasi xabari", () => {
 
   it("escapeHtml", () => {
     expect(escapeHtml("<b>&</b>")).toBe("&lt;b&gt;&amp;&lt;/b&gt;");
+  });
+});
+
+describe("kartaga o'tkazma", () => {
+  const payment = { cardNumber: "8600123412341234", cardHolder: "ALI <VALI>" };
+  const order = {
+    number: 12,
+    status: "NEW" as const,
+    totalAmount: 250000,
+    deliveryMethod: "DELIVERY" as const,
+    deliveryFee: null,
+    locale: "uz",
+    paymentMethod: "CARD" as const,
+  };
+
+  it("chek tugmalari callback'i o'qiladi", () => {
+    expect(parseOrderCallback("pay:abc:ok")).toEqual({ action: "payment", orderId: "abc", approve: true });
+    expect(parseOrderCallback("pay:abc:no")).toEqual({ action: "payment", orderId: "abc", approve: false });
+    expect(parseOrderCallback("pay:abc:maybe")).toBeNull();
+  });
+
+  it("tekshiruvdagi chekda tasdiqlash/rad etish bor, qarordan keyin — yo'q", () => {
+    expect(paymentReviewKeyboard("o1", true).inline_keyboard.flat().map((b) => b.text)).toEqual(
+      expect.arrayContaining(["✅ Tasdiqlash", "❌ Rad etish"]),
+    );
+    expect(paymentReviewKeyboard("o1", false).inline_keyboard.flat().some((b) => b.text.includes("Tasdiqlash"))).toBe(false);
+  });
+
+  it("mijozga rekvizitlar: guruhlangan karta, qochirilgan ism, yetkazish alohida", () => {
+    const text = paymentInstructionsMessage(order, payment);
+    expect(text).toContain("<code>8600 1234 1234 1234</code>");
+    expect(text).toContain("ALI &lt;VALI&gt;");
+    expect(text).toContain("yetkazib berish narxi alohida");
+    expect(text).toContain("chekni");
+  });
+
+  it("buyurtma qabul qilindi xabarida rekvizitlar faqat kartaga o'tkazmada", () => {
+    expect(orderReceivedMessage(order, payment)).toContain("8600 1234 1234 1234");
+    expect(orderReceivedMessage({ ...order, paymentMethod: "CASH" }, payment)).not.toContain("8600");
+  });
+
+  it("ruscha mijozga ruscha matn", () => {
+    expect(paymentResultMessage({ number: 12, locale: "ru" }, true)).toContain("подтверждена");
+    expect(paymentResultMessage({ number: 12, locale: "uz" }, false)).toContain("tasdiqlanmadi");
+  });
+
+  it("do'kon egasi xabarida to'lov holati ko'rinadi", () => {
+    const caption = receiptAdminCaption({ ...order, customerName: "Ali", phone: "+998901234567", paymentStatus: "REVIEW" });
+    expect(caption).toContain("#12");
+    expect(caption).toContain("tekshiring");
   });
 });

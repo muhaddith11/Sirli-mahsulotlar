@@ -11,7 +11,7 @@ import { checkoutSchema } from "@/lib/validation";
 
 /**
  * POST /api/checkout — buyurtmani rasmiylashtirish
- * body: { name, phone, deliveryMethod, zoneId?, address?, comment?, promoCode?, initData? }
+ * body: { name, phone, deliveryMethod, paymentMethod, zoneId?, address?, comment?, promoCode?, initData? }
  *
  * Buyurtma bazaga saqlangach, javob qaytariladi va shundan keyin (after)
  * do'kon egasining Telegram'iga batafsil xabar yuboriladi.
@@ -35,6 +35,7 @@ export async function POST(request: Request) {
       address: input.address,
       comment: input.comment,
       deliveryMethod: input.deliveryMethod,
+      paymentMethod: input.paymentMethod,
       zoneId: input.zoneId,
       promoCode: input.promoCode,
       locale: await getLocale(),

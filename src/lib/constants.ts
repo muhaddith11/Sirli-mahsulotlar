@@ -1,4 +1,4 @@
-import type { DishType, OrderSource, OrderStatus } from "@/generated/prisma/enums";
+import type { DishType, OrderSource, OrderStatus, PaymentMethod, PaymentStatus } from "@/generated/prisma/enums";
 
 export const SHOP_NAME = "Sirli Mahsulotlar";
 export const CART_COOKIE = "cart_id";
@@ -42,6 +42,33 @@ export const ORDER_STATUS_STYLES: Record<OrderStatus, string> = {
 export const ORDER_SOURCE_LABELS: Record<OrderSource, string> = {
   WEB: "Sayt",
   TELEGRAM: "Telegram",
+};
+
+export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
+  CASH: "Qabul qilganda",
+  CARD: "Kartaga o'tkazma",
+};
+
+/** Kartaga o'tkazmaning holati (admin panel va do'kon egasi xabarlari uchun) */
+export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
+  UNPAID: "Chek kutilmoqda",
+  REVIEW: "Chek yuborildi — tekshiring",
+  PAID: "To'lov tasdiqlangan",
+  REJECTED: "Chek rad etilgan",
+};
+
+export const PAYMENT_STATUS_EMOJI: Record<PaymentStatus, string> = {
+  UNPAID: "⏳",
+  REVIEW: "🧾",
+  PAID: "✅",
+  REJECTED: "❌",
+};
+
+export const PAYMENT_STATUS_STYLES: Record<PaymentStatus, string> = {
+  UNPAID: "bg-page text-ink-2 ring-line-strong",
+  REVIEW: "bg-warning-soft text-warning ring-warning/20",
+  PAID: "bg-success-soft text-success ring-success/20",
+  REJECTED: "bg-brand-soft text-brand ring-brand/20",
 };
 
 export const DISH_TYPES = [

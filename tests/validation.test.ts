@@ -21,6 +21,12 @@ describe("checkout validatsiyasi", () => {
     expect(result.promoCode).toBeUndefined();
   });
 
+  it("to'lov usuli: standart — qabul qilganda, faqat CASH yoki CARD", () => {
+    expect(checkoutSchema.parse({ ...base, deliveryMethod: "PICKUP" }).paymentMethod).toBe("CASH");
+    expect(checkoutSchema.parse({ ...base, deliveryMethod: "PICKUP", paymentMethod: "CARD" }).paymentMethod).toBe("CARD");
+    expect(checkoutSchema.safeParse({ ...base, deliveryMethod: "PICKUP", paymentMethod: "CRYPTO" }).success).toBe(false);
+  });
+
   it("noto'g'ri telefon — lug'at kodi bilan xato", () => {
     const result = checkoutSchema.safeParse({ ...base, phone: "123", deliveryMethod: "PICKUP" });
     expect(result.error?.issues[0]?.message).toBe("phoneInvalid");

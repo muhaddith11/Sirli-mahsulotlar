@@ -159,6 +159,18 @@ enum DeliveryMethod {
   PICKUP // Do'kondan olib ketish
 }
 
+enum PaymentMethod {
+  CASH // Qabul qilganda (naqd yoki karta)
+  CARD // Kartaga o'tkazma — oldindan, chek botga yuboriladi
+}
+
+enum PaymentStatus {
+  UNPAID // Chek hali yuborilmagan
+  REVIEW // Chek yuborildi — do'kon egasi tekshiradi
+  PAID // Tasdiqlandi
+  REJECTED // Rad etildi — mijoz chekni qayta yuboradi
+}
+
 model Order {
   id               String         @id @default(cuid())
   /// Mijozga ko'rsatiladigan qisqa raqam (#1, #2, ...)
@@ -189,6 +201,13 @@ model Order {
   promoDiscount    Int            @default(0)
   /// To'lanadigan summa: itemsAmount − promoDiscount + deliveryFee (so'm)
   totalAmount      Int
+  paymentMethod    PaymentMethod  @default(CASH)
+  paymentStatus    PaymentStatus  @default(UNPAID)
+  /// Mijoz botga yuborgan to'lov cheki (Telegram file_id) va uning turi (image/jpeg, application/pdf, ...)
+  receiptFileId    String?
+  receiptMime      String?
+  receiptAt        DateTime?
+  paidAt           DateTime?
   items            OrderItem[]
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
@@ -282,5 +301,10 @@ model StoreSettings {
   pickupAddressRu String?
   workingHours    String?
   workingHoursRu  String?
+  /// Kartaga o'tkazma: karta raqami (faqat raqamlar), egasining ismi va to'lov QR kodi rasmi (URL).
+  /// Raqam ham, QR ham bo'lmasa — checkout'da "Kartaga o'tkazma" varianti chiqmaydi.
+  cardNumber      String?
+  cardHolder      String?
+  paymentQr       String?
   updatedAt       DateTime @updatedAt
 }

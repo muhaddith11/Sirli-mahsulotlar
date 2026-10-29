@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Boxes, ClipboardList, LayoutDashboard, Package, Tags, TicketPercent, Truck } from "lucide-react";
+import { Boxes, ClipboardList, CreditCard, LayoutDashboard, Package, Tags, TicketPercent, Truck } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 const ITEMS = [
@@ -12,6 +12,7 @@ const ITEMS = [
   { href: "/admin/inventory", label: "Ombor", icon: Boxes, badgeKey: "lowStock" as const },
   { href: "/admin/categories", label: "Kategoriyalar", icon: Tags },
   { href: "/admin/delivery", label: "Yetkazib berish", icon: Truck },
+  { href: "/admin/payment", label: "To'lov", icon: CreditCard },
   { href: "/admin/promo", label: "Promokodlar", icon: TicketPercent },
 ];
 

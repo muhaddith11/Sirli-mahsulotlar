@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Check, Clock, Info, LoaderCircle, MapPin, Send, Store, Truck, X } from "lucide-react";
+import { Banknote, Check, Clock, CreditCard, Info, LoaderCircle, MapPin, Send, Store, Truck, X } from "lucide-react";
 import { fill, localized } from "@/i18n/config";
 import { useI18n } from "@/i18n/provider";
 import { useMainButton } from "@/hooks/use-main-button";
@@ -16,10 +16,20 @@ import { promoDiscountFor, type PromoTerms } from "@/lib/promo-discount";
 import { useCart } from "@/providers/cart-provider";
 import { haptic, useTelegram } from "@/providers/telegram-provider";
 import { checkoutTotal, OrderSummary } from "./order-summary";
+import { PaymentDetails, type CheckoutPayment } from "./payment-details";
 import { ProductImage } from "./product-image";
 
 type Method = "DELIVERY" | "PICKUP";
-type Values = { name: string; phone: string; address: string; comment: string; zoneId: string; deliveryMethod: Method };
+type PayMethod = "CASH" | "CARD";
+type Values = {
+  name: string;
+  phone: string;
+  address: string;
+  comment: string;
+  zoneId: string;
+  deliveryMethod: Method;
+  paymentMethod: PayMethod;
+};
 type Errors = Partial<Record<keyof Values | "promoCode", string>>;
 
 export type CheckoutZone = { id: string; name: string; nameRu: string | null; price: number | null; freeFrom: number | null };
@@ -28,14 +38,24 @@ export type CheckoutStore = {
   pickupAddressRu: string | null;
   workingHours: string | null;
   workingHoursRu: string | null;
+  /** Kartaga o'tkazma rekvizitlari; null — variant o'chiq */
+  payment: CheckoutPayment | null;
 };
 
 const STORAGE_KEY = "sirli:checkout-contact";
 
-const EMPTY_VALUES: Values = { name: "", phone: "+998 ", address: "", comment: "", zoneId: "", deliveryMethod: "DELIVERY" };
+const EMPTY_VALUES: Values = {
+  name: "",
+  phone: "+998 ",
+  address: "",
+  comment: "",
+  zoneId: "",
+  deliveryMethod: "DELIVERY",
+  paymentMethod: "CASH",
+};
 
 /** Avvalgi buyurtmadagi kontaktlar (forma faqat klientda, savat yuklangach chiziladi) */
-function readSavedValues(zones: CheckoutZone[]): Values {
+function readSavedValues(zones: CheckoutZone[], cardAvailable: boolean): Values {
   if (typeof window === "undefined") return EMPTY_VALUES;
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null") as Partial<Values> | null;
@@ -45,6 +65,7 @@ function readSavedValues(zones: CheckoutZone[]): Values {
       ...saved,
       comment: "",
       zoneId: saved.zoneId && zones.some((z) => z.id === saved.zoneId) ? saved.zoneId : "",
+      paymentMethod: saved.paymentMethod === "CARD" && cardAvailable ? "CARD" : "CASH",
     };
   } catch {
     return EMPTY_VALUES; // localStorage mavjud bo'lmasligi mumkin (masalan, maxfiy rejim)
@@ -57,7 +78,7 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
   const { t, locale } = useI18n();
   const { cart, loaded, refresh } = useCart();
   const { webApp, user, initData } = useTelegram();
-  const [values, setValues] = useState<Values>(() => readSavedValues(zones));
+  const [values, setValues] = useState<Values>(() => readSavedValues(zones, Boolean(store.payment)));
   const [nameTouched, setNameTouched] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
@@ -101,6 +122,7 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
   };
 
   const pickup = values.deliveryMethod === "PICKUP";
+  const payByCard = values.paymentMethod === "CARD" && store.payment != null;
   const zone = zones.find((z) => z.id === values.zoneId) ?? null;
   // Savat o'zgarsa chegirma shu formula bilan qayta hisoblanadi (serverdagi bilan bir xil)
   const promoDiscount = promo ? promoDiscountFor(promo, cart.total) : 0;
@@ -122,6 +144,7 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
           name: nameValue,
           address: pickup ? "" : values.address,
           zoneId: pickup ? undefined : values.zoneId || undefined,
+          paymentMethod: payByCard ? "CARD" : "CASH",
           promoCode: promoBelowMinimum ? undefined : promo?.code,
           initData: initData || undefined,
         }),
@@ -137,8 +160,11 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
       }
 
       try {
-        const { phone, address, zoneId, deliveryMethod } = values;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ name: nameValue, phone, address, zoneId, deliveryMethod }));
+        const { phone, address, zoneId, deliveryMethod, paymentMethod } = values;
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ name: nameValue, phone, address, zoneId, deliveryMethod, paymentMethod }),
+        );
       } catch {}
       rememberOrder(data.orderId);
       setDone(true);
@@ -359,6 +385,48 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
           )}
         </section>
 
+        {store.payment && (
+          <section className="space-y-4 rounded-[var(--radius-card)] bg-surface p-4 sm:p-6">
+            <h2 className="text-lg font-bold tracking-[-0.01em]">{t.payment.method}</h2>
+
+            <div role="radiogroup" aria-label={t.payment.method} className="grid grid-cols-2 gap-2">
+              {(
+                [
+                  { value: "CASH", label: t.payment.cash, hint: t.payment.cashHint, icon: Banknote },
+                  { value: "CARD", label: t.payment.card, hint: t.payment.cardHint, icon: CreditCard },
+                ] as const
+              ).map(({ value, label, hint, icon: Icon }) => {
+                const active = values.paymentMethod === value;
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => setValues((v) => ({ ...v, paymentMethod: value }))}
+                    className={cn(
+                      "flex min-h-14 items-center gap-2.5 rounded-[var(--radius-field)] border px-3 py-2.5 text-left transition-colors",
+                      active ? "border-brand bg-brand-soft" : "border-line-strong hover:border-ink-3",
+                    )}
+                  >
+                    <Icon className={cn("size-5 shrink-0", active ? "text-brand" : "text-ink-3")} strokeWidth={1.75} />
+                    <span className="min-w-0">
+                      <span className={cn("block text-sm font-medium", active ? "text-ink" : "text-ink-2")}>{label}</span>
+                      <span className="block text-xs leading-snug text-ink-3">{hint}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {payByCard && store.payment && (
+              <PaymentDetails payment={store.payment} amount={totalText} deliveryExtra={!pickup && fee == null}>
+                {inTelegram ? t.payment.stepsTelegram : t.payment.stepsWeb}
+              </PaymentDetails>
+            )}
+          </section>
+        )}
+
         <section className="space-y-4 rounded-[var(--radius-card)] bg-surface p-4 sm:p-6">
           <Field label={t.checkout.comment} hint={t.checkout.optional} error={errors.comment}>
             <input
@@ -433,7 +501,7 @@ export function CheckoutForm({ zones, store }: { zones: CheckoutZone[]; store: C
 
           <p className="flex items-start gap-2.5 rounded-[var(--radius-field)] bg-cream-soft p-3 text-[13px] leading-relaxed text-ink-2">
             <Info className="mt-0.5 size-4 shrink-0 text-ink-3" />
-            {t.checkout.note}
+            {payByCard ? t.payment.note : t.checkout.note}
           </p>
         </section>
       </form>

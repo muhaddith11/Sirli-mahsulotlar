@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CircleCheck } from "lucide-react";
+import { CircleCheck, Send } from "lucide-react";
+import { PaymentDetails } from "@/components/shop/payment-details";
 import { ProductImage } from "@/components/shop/product-image";
 import { TelegramCloseButton } from "@/components/shop/telegram-close-button";
 import { getI18n } from "@/i18n/server";
+import { cn } from "@/lib/cn";
+import { PAYMENT_STATUS_STYLES } from "@/lib/constants";
 import { formatPrice, keepUnits } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
+import { getPaymentSettings } from "@/lib/services/payments";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getI18n();
@@ -25,8 +29,11 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
       number: true,
       status: true,
       totalAmount: true,
+      source: true,
       deliveryMethod: true,
       deliveryFee: true,
+      paymentMethod: true,
+      paymentStatus: true,
       promoCodeText: true,
       promoDiscount: true,
       items: {
@@ -42,6 +49,10 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
     },
   });
   if (!order) notFound();
+
+  // Kartaga o'tkazma: tasdiqlanmaguncha rekvizitlar va chek yuborish yo'li ko'rsatiladi
+  const payment = order.paymentMethod === "CARD" && order.paymentStatus !== "PAID" ? await getPaymentSettings() : null;
+  const botUsername = process.env.TELEGRAM_BOT_USERNAME;
 
   return (
     <div className="mx-auto max-w-lg pb-6 pt-8 md:pt-12">
@@ -60,7 +71,49 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
             <dt className="text-xs text-ink-3">{t.success.status}</dt>
             <dd className="text-base font-semibold">{t.status[order.status]}</dd>
           </div>
+          {order.paymentMethod === "CARD" && (
+            <div className="col-span-2 flex items-center justify-between gap-2 bg-page px-3 py-2.5">
+              <dt className="text-xs text-ink-3">{t.payment.statusLabel}</dt>
+              <dd
+                className={cn(
+                  "rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1",
+                  PAYMENT_STATUS_STYLES[order.paymentStatus],
+                )}
+              >
+                {t.payment.status[order.paymentStatus]}
+              </dd>
+            </div>
+          )}
         </dl>
+
+        {payment && (
+          <div className="mt-5">
+            <PaymentDetails
+              payment={payment}
+              amount={formatPrice(order.totalAmount, locale)}
+              deliveryExtra={order.deliveryMethod === "DELIVERY" && order.deliveryFee == null}
+            >
+              {order.source === "TELEGRAM" ? (
+                t.payment.sendReceiptTelegram
+              ) : (
+                <>
+                  <p>{t.payment.sendReceiptWeb}</p>
+                  {botUsername && (
+                    <a
+                      href={`https://t.me/${botUsername}?start=pay_${id}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-3 flex h-11 items-center justify-center gap-2 rounded-[var(--radius-field)] bg-[#229ED9] text-sm font-semibold text-white hover:bg-[#1c8cc2]"
+                    >
+                      <Send className="size-4" />
+                      {t.payment.sendReceipt}
+                    </a>
+                  )}
+                </>
+              )}
+            </PaymentDetails>
+          </div>
+        )}
 
         <ul className="mt-6 divide-y divide-line border-y border-line text-left">
           {order.items.map((item) => (

@@ -9,6 +9,7 @@ import type { TelegramWebAppUser } from "@/lib/telegram/init-data";
 import { newOrderMessage, orderReceivedMessage, orderStatusMessage } from "@/lib/telegram/messages";
 import { orderAdminKeyboard } from "@/lib/telegram/order-keyboard";
 import { deliveryFeeFor } from "./delivery";
+import { getPaymentSettings, sendPaymentMessage } from "./payments";
 import { findApplicablePromo } from "./promo";
 
 type CreateOrderInput = {
@@ -18,6 +19,7 @@ type CreateOrderInput = {
   address: string;
   comment?: string;
   deliveryMethod: "DELIVERY" | "PICKUP";
+  paymentMethod: "CASH" | "CARD";
   zoneId?: string;
   promoCode?: string;
   locale: Locale;
@@ -35,6 +37,9 @@ const orderWithDetails = {
  * buyurtma saqlanadi, savat tozalanadi.
  */
 export async function createOrder(input: CreateOrderInput) {
+  // Tranzaksiyadan oldin: sozlamalar alohida ulanishda o'qiladi
+  if (input.paymentMethod === "CARD" && !(await getPaymentSettings())) throw new AppError("paymentUnavailable", 409);
+
   return prisma.$transaction(async (tx) => {
     const cart = await tx.cart.findUnique({
       where: { id: input.cartId },
@@ -134,6 +139,7 @@ export async function createOrder(input: CreateOrderInput) {
         promoCodeText: promo?.promo.code ?? null,
         promoDiscount,
         totalAmount: itemsAmount - promoDiscount + (deliveryFee ?? 0),
+        paymentMethod: input.paymentMethod,
         items: { create: items },
       },
       include: orderWithDetails,
@@ -166,7 +172,11 @@ export async function sendNewOrderNotifications(order: OrderWithDetails) {
   await notifyAdmins(newOrderMessage(order), { keyboard: orderAdminKeyboard(order.id, order.status, order.deliveryMethod) });
 
   if (order.user?.telegramId) {
-    await sendHtmlMessage(order.user.telegramId.toString(), orderReceivedMessage(order)).catch((error) =>
+    const chatId = order.user.telegramId.toString();
+    // Kartaga o'tkazmada mijozga rekvizitlar va QR ham boradi — chekni shu chatga yuboradi
+    const payment = order.paymentMethod === "CARD" ? await getPaymentSettings() : null;
+    const html = orderReceivedMessage(order, payment);
+    await (payment ? sendPaymentMessage(chatId, html, payment) : sendHtmlMessage(chatId, html)).catch((error) =>
       console.error("[telegram] mijozga xabar yuborilmadi:", error),
     );
   }

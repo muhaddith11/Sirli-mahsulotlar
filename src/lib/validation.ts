@@ -63,6 +63,7 @@ export const checkoutSchema = z
     name: z.string({ error: "nameRequired" }).trim().min(2, "nameRequired").max(100, "nameTooLong"),
     phone: phoneSchema,
     deliveryMethod: z.enum(["DELIVERY", "PICKUP"]).default("DELIVERY"),
+    paymentMethod: z.enum(["CASH", "CARD"]).default("CASH"),
     zoneId: optionalText(40),
     address: z.string().trim().max(500, "addressTooLong").default(""),
     comment: optionalText(500),
