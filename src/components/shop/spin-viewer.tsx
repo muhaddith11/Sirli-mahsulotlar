@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MoveHorizontal } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { wrapFrame } from "@/lib/spin";
+import { liveModelFor } from "@/lib/spin-live/registry";
+import type { LiveSpin } from "@/lib/spin-live/render";
 
 type Props = {
   frames: string[];
@@ -39,6 +41,7 @@ function loadOrder(count: number): number[] {
 
 /**
  * 360° ko'rinish: videodan olingan kadrlar canvas'da almashtiriladi.
+ * Mahsulotning jonli modeli bo'lsa (spin-live), har kadrda real vaqtda chiziladi — kadrlar faqat zaxira.
  * Gorizontal surish aylantiradi, vertikal surish sahifani aylantiradi (touch-action: pan-y).
  */
 export function SpinViewer({
@@ -58,17 +61,26 @@ export function SpinViewer({
   const [progress, setProgress] = useState({ key: "", count: 0 });
   const [touched, setTouched] = useState(false);
   const [degree, setDegree] = useState(0);
+  const model = useMemo(() => liveModelFor(frames), [frames]);
+  const [live, setLive] = useState({ key: "", status: "" as "" | "ready" | "failed" });
+  const liveReady = live.key === key && live.status === "ready";
+  // Jonli model ishlamasa (WebGL yo'q, kontekst yo'qoldi) — hamma kadrlar yuklanadi
+  const useFrames = !model || (live.key === key && live.status === "failed");
   const loaded = progress.key === key ? progress.count : 0;
   const count = frames.length;
-  const ready = count > 0 && loaded >= count;
+  const ready = liveReady || (count > 0 && loaded >= count);
 
   // Animatsiya holati render'ga ta'sir qilmaydi — ref'larda
   const state = useRef({
     images: [] as HTMLImageElement[],
     requested: [] as boolean[],
     ok: [] as boolean[],
+    live: null as LiveSpin | null,
+    liveFor: "",
+    liveToken: null as symbol | null,
+    release: () => {},
     position: 0,
-    drawn: -1,
+    drawn: NaN,
     velocity: 0,
     dragging: false,
     lastX: 0,
@@ -92,16 +104,47 @@ export function SpinViewer({
     s.requested = frames.map(() => false);
     s.ok = frames.map(() => false);
     s.position = 0;
-    s.drawn = -1;
+    s.drawn = NaN;
     return () => {
       for (const image of s.images) if (image) image.onload = null;
+      s.release();
+      s.release = () => {};
+      s.live = null;
+      s.liveFor = "";
+      s.liveToken = null;
     };
   }, [frames]);
 
-  // Faol bo'lsa hamma kadrlar, aks holda faqat birinchisi yuklanadi
+  // Jonli model faol bo'lganda bir marta yuklanadi (three.js ham faqat shunda keladi)
   useEffect(() => {
     const s = state.current;
-    for (const index of active ? loadOrder(frames.length) : [0]) {
+    if (!model || !active || s.liveFor === key) return;
+    const token = Symbol();
+    s.liveFor = key;
+    s.liveToken = token;
+    const fail = () => {
+      if (s.liveToken !== token) return;
+      s.live = null;
+      s.drawn = NaN;
+      setLive({ key, status: "failed" });
+    };
+    import("@/lib/spin-live/render")
+      .then(({ loadLiveSpin }) => loadLiveSpin(model, fail))
+      .then(({ spin, release }) => {
+        if (s.liveToken !== token) return release();
+        s.live = spin;
+        s.release = release;
+        s.drawn = NaN;
+        s.draw();
+        setLive({ key, status: "ready" });
+      })
+      .catch(fail);
+  }, [model, active, key]);
+
+  // Faol bo'lsa hamma kadrlar, aks holda faqat birinchisi (jonli model bo'lsa — u tayyor bo'lguncha ko'rinadi)
+  useEffect(() => {
+    const s = state.current;
+    for (const index of active && useFrames ? loadOrder(frames.length) : [0]) {
       if (s.requested[index]) continue;
       s.requested[index] = true;
       const image = new Image();
@@ -118,7 +161,7 @@ export function SpinViewer({
       image.src = frames[index];
       s.images[index] = image;
     }
-  }, [frames, key, active]);
+  }, [frames, key, active, useFrames]);
 
   // Chizish, o'lcham, ko'rinish va aylanish sikli
   useEffect(() => {
@@ -155,6 +198,20 @@ export function SpinViewer({
     s.draw = () => {
       const extra = s.turn ? (s.turn() / 360) * count : 0;
       const exact = s.position + extra;
+      if (s.live) {
+        // Jonli model: aniq burchakda chiziladi — kadr yo'q, sakrash ham yo'q
+        const degrees = ((((exact / count) * 360) % 360) + 360) % 360;
+        const liveKey = -1 - Math.round(degrees * 100);
+        if (liveKey === s.drawn) return;
+        const { width, height } = canvas;
+        const scale = Math.min(width / s.live.width, height / s.live.height);
+        const w = Math.round(s.live.width * scale);
+        const h = Math.round(s.live.height * scale);
+        context.clearRect(0, 0, width, height);
+        s.live.draw(context, degrees, Math.round((width - w) / 2), Math.round((height - h) / 2), w, h);
+        s.drawn = liveKey;
+        return;
+      }
       const base = Math.floor(exact);
       const from = nearestLoaded(wrapFrame(base, count));
       if (from < 0) return;
@@ -183,7 +240,7 @@ export function SpinViewer({
       const rect = canvas.getBoundingClientRect();
       canvas.width = Math.max(1, Math.round(rect.width * dpr));
       canvas.height = Math.max(1, Math.round(rect.height * dpr));
-      s.drawn = -1;
+      s.drawn = NaN;
       s.draw();
     };
     resize();
@@ -231,14 +288,15 @@ export function SpinViewer({
   // Hammasi yuklangach o'zi aylanadi
   useEffect(() => {
     // Siyrak kadrlar (chorak qismi) kelishi bilan aylana boshlaydi — qolganlari yo'l-yo'lakay yuklanadi
-    state.current.play = autoPlay && active && loaded >= Math.ceil(count / 4);
+    state.current.play = autoPlay && active && (liveReady || loaded >= Math.ceil(count / 4));
     if (!active) {
       state.current.position = 0;
       state.current.velocity = 0;
     }
-  }, [autoPlay, active, loaded, count]);
+  }, [autoPlay, active, loaded, count, liveReady]);
 
-  const percent = count ? Math.round((loaded / count) * 100) : 0;
+  // Jonli model yuklanayotganda foiz ko'rsatilmaydi — kadrlar yuklanmaydi
+  const percent = useFrames ? (count ? Math.round((loaded / count) * 100) : 0) : 100;
   const reportDegree = () =>
     setDegree(
       Math.round((wrapFrame(state.current.position, count) / count) * 360),
@@ -319,7 +377,7 @@ export function SpinViewer({
         />
         {badge && (
           <span className="pointer-events-none absolute right-3 top-3 rounded-md bg-surface/90 px-2 py-1 text-xs font-bold text-ink tabular">
-            {ready ? "360°" : `360° · ${percent}%`}
+            {ready || percent === 100 ? "360°" : `360° · ${percent}%`}
           </span>
         )}
         {interactive && hint && (
