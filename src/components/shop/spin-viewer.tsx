@@ -25,6 +25,9 @@ type Props = {
   className?: string;
 };
 
+/** Ikki kadr orasidagi o'tish bosqichlari: bundan mayda farq qayta chizilmaydi */
+const BLEND_STEPS = 32;
+
 /** Avval siyrak kadrlar (har 4-, keyin har 2-), so'ng qolgani — aylanish tez "jonlanadi" */
 function loadOrder(count: number): number[] {
   const order: number[] = [];
@@ -136,10 +139,7 @@ export function SpinViewer({
       return -1;
     };
 
-    s.draw = () => {
-      const extra = s.turn ? (s.turn() / 360) * count : 0;
-      const index = nearestLoaded(wrapFrame(s.position + extra, count));
-      if (index < 0 || index === s.drawn) return;
+    const paint = (index: number, alpha: number) => {
       const image = s.images[index];
       const { width, height } = canvas;
       const scale = Math.min(
@@ -148,10 +148,34 @@ export function SpinViewer({
       );
       const w = image.naturalWidth * scale;
       const h = image.naturalHeight * scale;
-      context.clearRect(0, 0, width, height);
-      context.imageSmoothingQuality = "high";
+      context.globalAlpha = alpha;
       context.drawImage(image, (width - w) / 2, (height - h) / 2, w, h);
-      s.drawn = index;
+    };
+
+    s.draw = () => {
+      const extra = s.turn ? (s.turn() / 360) * count : 0;
+      const exact = s.position + extra;
+      const base = Math.floor(exact);
+      const from = nearestLoaded(wrapFrame(base, count));
+      if (from < 0) return;
+      const next = nearestLoaded(wrapFrame(base + 1, count));
+      // Kadrlar orasidagi ulush: ikki qo'shni kadr aralashtiriladi — aylanish sakrab emas, silliq bo'ladi
+      const mix = next === from ? 0 : Math.round((exact - base) * BLEND_STEPS) / BLEND_STEPS;
+      const key = (from * count + next) * (BLEND_STEPS + 1) + mix * BLEND_STEPS;
+      if (key === s.drawn) return;
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.imageSmoothingQuality = "high";
+      if (mix === 0 || mix === 1) {
+        paint(mix === 1 ? next : from, 1);
+      } else {
+        // "lighter" alfa bilan qo'shadi: shaffof chetlar xiralashmaydi, mahsulot to'liq ko'rinadi
+        context.globalCompositeOperation = "lighter";
+        paint(from, 1 - mix);
+        paint(next, mix);
+        context.globalCompositeOperation = "source-over";
+      }
+      context.globalAlpha = 1;
+      s.drawn = key;
     };
 
     const resize = () => {

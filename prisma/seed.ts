@@ -102,6 +102,9 @@ type SeedProduct = {
 
 const spinFrames = (dir: string) => Array.from({ length: 36 }, (_, i) => `/spin/${dir}/${String(i).padStart(2, "0")}.webp`);
 
+/** 3D modeldan: har 10° kadr (NN.webp) va orasidagi 5° kadr (NN.5.webp) — 72 kadr, aylanish silliqroq */
+const modelFrames = (dir: string) => spinFrames(dir).flatMap((frame) => [frame, frame.replace(".webp", ".5.webp")]);
+
 /** Demo rasmdan yasalgan 360° kadrlar (naqsh idish atrofida aylanadi) — "Eng ommabop" vitrinasida aylanib turadi */
 const cutout = (name: string) => ({ spinFrames: spinFrames(name), spinCutout: true });
 
@@ -121,7 +124,7 @@ const products: SeedProduct[] = [
     stock: 10,
     isFeatured: true,
     images: ["/products/choynak-gilos.webp", "/products/choynak-gilos-foto.webp"],
-    spinFrames: spinFrames("choynak-gilos"),
+    spinFrames: modelFrames("choynak-gilos"),
     spinCutout: true,
     description: "Oq emal choynak, gilos, olma va oq gullar naqshi bilan. Qopqog'i va metall dastasi bor.",
   },

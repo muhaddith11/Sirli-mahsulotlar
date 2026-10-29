@@ -24,6 +24,8 @@ export type ShowcaseItem = {
 const TRAVEL_TURN = 150;
 /** Har bir mahsulot o'z o'qi atrofida boshqalardan biroz farqli fazada aylanadi */
 const PHASE = 47;
+/** Vitrina surishdan qancha kechikib ergashadi (soniya) — qanchalik katta, shunchalik "suzuvchan" */
+const FOLLOW = 0.12;
 
 /**
  * "Eng ommabop" vitrinasi (agrumeafarm.it uslubida): sahifa pastga surilganda vitrina joyida
@@ -56,8 +58,7 @@ export function SpinShowcase({ items }: { items: ShowcaseItem[] }) {
     return { position, step, stickyTop };
   }, [count, moving]);
 
-  const layout = useCallback(() => {
-    const { position } = progress();
+  const layout = useCallback((position: number) => {
     const width = card.current?.clientWidth ?? 0;
     visuals.current.forEach((visual, i) => {
       if (!visual) return;
@@ -77,14 +78,29 @@ export function SpinShowcase({ items }: { items: ShowcaseItem[] }) {
     const nearest = Math.round(position);
     setActive((prev) => (prev === nearest ? prev : nearest));
     setStarted((prev) => prev || position > 0.15);
-  }, [progress]);
+  }, []);
 
+  // Vitrina surishga yumshoq ergashadi: g'ildirak "zinapoyasi" ham silliq harakatga aylanadi
   useEffect(() => {
-    let frame = requestAnimationFrame(layout);
-    const schedule = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(layout);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let shown: number | null = null;
+    let previous = performance.now();
+    let frame = 0;
+    const tick = (now: number) => {
+      const target = progress().position;
+      const dt = Math.min(0.05, Math.max(0, (now - previous) / 1000));
+      previous = now;
+      const next = shown === null || reduced.matches ? target : shown + (target - shown) * (1 - Math.exp(-dt / FOLLOW));
+      shown = Math.abs(target - next) < 0.001 ? target : next;
+      layout(shown);
+      frame = shown === target ? 0 : requestAnimationFrame(tick);
     };
+    const schedule = () => {
+      if (frame) return;
+      previous = performance.now();
+      frame = requestAnimationFrame(tick);
+    };
+    schedule();
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
     return () => {
@@ -92,7 +108,7 @@ export function SpinShowcase({ items }: { items: ShowcaseItem[] }) {
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
     };
-  }, [layout]);
+  }, [layout, progress]);
 
   /** Kerakli mahsulot markazga kelguncha sahifani suradi */
   const goTo = (index: number) => {
