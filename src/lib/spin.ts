@@ -3,8 +3,8 @@
  * Sof funksiyalar — admin brauzerida ham, testlarda ham ishlaydi.
  */
 
-/** Bitta aylanishdan olinadigan kadrlar soni (har 10°) */
-export const SPIN_FRAME_COUNT = 36;
+/** Bitta aylanishdan olinadigan kadrlar soni (har 5°) — qo'shni kadrlar yaqin, aylanish silliq */
+export const SPIN_FRAME_COUNT = 72;
 export const SPIN_MAX_FRAMES = 72;
 
 export type Rgb = [number, number, number];

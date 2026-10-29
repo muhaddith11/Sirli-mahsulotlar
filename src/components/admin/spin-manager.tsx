@@ -138,7 +138,7 @@ function toBlob(canvas: HTMLCanvasElement): Promise<Blob> {
   );
 }
 
-/** 36 ta tayyor kadr: kesish → fonni olib tashlash → hamma kadrda bir xil chegaraga qirqish → WebP */
+/** 72 ta tayyor kadr: kesish → fonni olib tashlash → hamma kadrda bir xil chegaraga qirqish → WebP */
 async function buildFrames(video: HTMLVideoElement, s: Settings, onProgress: (done: number) => void): Promise<Blob[]> {
   const times = frameTimes(s.start, s.end, SPIN_FRAME_COUNT);
   const rect = cropRect(video, s);
