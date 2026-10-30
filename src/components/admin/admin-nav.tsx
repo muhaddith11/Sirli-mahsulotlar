@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Boxes, ClipboardList, CreditCard, LayoutDashboard, Package, Tags, TicketPercent, Truck } from "lucide-react";
+import { Boxes, ClipboardList, CreditCard, LayoutDashboard, Package, Sparkles, Tags, TicketPercent, Truck } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 const ITEMS = [
   { href: "/admin", label: "Boshqaruv", icon: LayoutDashboard, exact: true },
   { href: "/admin/orders", label: "Buyurtmalar", icon: ClipboardList, badgeKey: "newOrders" as const },
   { href: "/admin/products", label: "Mahsulotlar", icon: Package },
+  { href: "/admin/showcase", label: "Vitrina", icon: Sparkles },
   { href: "/admin/inventory", label: "Ombor", icon: Boxes, badgeKey: "lowStock" as const },
   { href: "/admin/categories", label: "Kategoriyalar", icon: Tags },
   { href: "/admin/delivery", label: "Yetkazib berish", icon: Truck },

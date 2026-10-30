@@ -5,6 +5,7 @@ import { ProductRowActions } from "@/components/admin/product-row-actions";
 import { EmptyState, PageHeader, Pagination, PrimaryLink, StockBadge } from "@/components/admin/ui";
 import { ProductImage } from "@/components/shop/product-image";
 import type { Prisma } from "@/generated/prisma/client";
+import { cn } from "@/lib/cn";
 import { ADMIN_PAGE_SIZE } from "@/lib/constants";
 import { formatPrice } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
@@ -111,6 +112,17 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
                   {product.category.name}
                   {product.sku && ` · ${product.sku}`}
                   {!product.isActive && <span className="ml-1.5 rounded bg-page px-1.5 py-0.5 font-semibold text-ink-3">Yashirin</span>}
+                  {product.spinCutout && product.spinFrames.length > 0 && (
+                    <Link
+                      href="/admin/showcase"
+                      className={cn(
+                        "ml-1.5 inline-block whitespace-nowrap rounded px-1.5 py-0.5 text-[11px] font-bold",
+                        product.inShowcase ? "bg-success-soft text-success" : "bg-info-soft text-info",
+                      )}
+                    >
+                      {product.inShowcase ? "3D · Vitrinada" : "3D"}
+                    </Link>
+                  )}
                 </p>
               </div>
               <div className="w-32 text-right">

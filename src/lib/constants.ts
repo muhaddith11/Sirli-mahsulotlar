@@ -5,6 +5,7 @@ export const CART_COOKIE = "cart_id";
 export const LOW_STOCK_THRESHOLD = 5;
 export const CATALOG_PAGE_SIZE = 12;
 export const ADMIN_PAGE_SIZE = 20;
+export const SHOWCASE_LIMIT = 6;
 
 export const ORDER_STATUSES = [
   "NEW",

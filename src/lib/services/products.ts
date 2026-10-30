@@ -2,12 +2,16 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import type { Prisma } from "@/generated/prisma/client";
+import { SHOWCASE_LIMIT } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import { effectivePrice } from "@/lib/format";
 import type { ProductQuery } from "@/lib/validation";
 
 /** Katalog keshi tegi: mahsulot, kategoriya yoki qoldiq o'zgarganda yangilanadi */
 export const CATALOG_TAG = "catalog";
+
+/** 3D modeli bor mahsulot: foni olib tashlangan 360° kadrlari bor, vitrinaga qo'yish mumkin */
+export const SHOWCASE_READY = { spinCutout: true, spinFrames: { isEmpty: false } } satisfies Prisma.ProductWhereInput;
 
 /** Katalog so'rovlari 5 daqiqa keshlanadi (Neon "uyg'onishi"ni ham yashiradi) */
 function cachedCatalog<A extends unknown[], R>(fn: (...args: A) => Promise<R>, key: string) {
@@ -147,12 +151,12 @@ async function getRelatedProductsUncached(categoryId: string, excludeId: string,
 }
 
 /**
- * "Eng ommabop" vitrinasi: omborda bor, foni olib tashlangan 360° kadrli mahsulotlar.
+ * "Eng ommabop" vitrinasi: admin tanlagan, omborda bor 3D mahsulotlar.
  * Tartib: "Tavsiya etilgan"lar oldinda, ular ichida eng yangi qo'shilgani birinchi; ko'p kadrlilar bittalikdan oldin.
  */
-async function listShowcaseProductsUncached(take = 6) {
+async function listShowcaseProductsUncached(take = SHOWCASE_LIMIT) {
   const rows = await prisma.product.findMany({
-    where: { isActive: true, stock: { gt: 0 }, spinCutout: true, spinFrames: { isEmpty: false } },
+    where: { ...SHOWCASE_READY, inShowcase: true, isActive: true, stock: { gt: 0 } },
     orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
     take,
     select: { ...productCardSelect, spinFrames: true },

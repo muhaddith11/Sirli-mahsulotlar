@@ -87,8 +87,10 @@ model Product {
   images        String[]
   /// 360° aylanish kadrlari (videodan ajratilgan, aylanish tartibida)
   spinFrames    String[] @default([])
-  /// Kadrlarning foni olib tashlangan (shaffof) — "Eng ommabop" vitrinasiga chiqadi
+  /// Kadrlarning foni olib tashlangan (shaffof) — "Eng ommabop" vitrinasiga qo'yish mumkin
   spinCutout    Boolean  @default(false)
+  /// Admin "Vitrina" bo'limidan tanlagan: bosh sahifadagi vitrinada turadi
+  inShowcase    Boolean  @default(false)
   /// Ombordagi qoldiq (dona)
   stock         Int      @default(0)
   /// Hajmi, masalan "16 L" yoki "400 ml"

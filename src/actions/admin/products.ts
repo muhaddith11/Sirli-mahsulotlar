@@ -5,10 +5,11 @@ import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth";
+import { SHOWCASE_LIMIT } from "@/lib/constants";
 import { isUniqueConstraintError } from "@/lib/errors";
 import { slugify } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
-import { CATALOG_TAG } from "@/lib/services/products";
+import { CATALOG_TAG, SHOWCASE_READY } from "@/lib/services/products";
 import { deleteUploads } from "@/lib/uploads";
 import { productFormSchema } from "@/lib/validation";
 import type { ActionResult } from "./types";
@@ -98,6 +99,21 @@ export async function toggleProductActiveAction(productId: string): Promise<Acti
   const product = await prisma.product.findUnique({ where: { id: productId }, select: { isActive: true } });
   if (!product) return { ok: false, error: "Mahsulot topilmadi" };
   await prisma.product.update({ where: { id: productId }, data: { isActive: !product.isActive } });
+  revalidateShop();
+  return { ok: true };
+}
+
+export async function setShowcaseAction(productId: string, inShowcase: boolean): Promise<ActionResult> {
+  await requireAdmin();
+  const product = await prisma.product.findFirst({ where: { id: productId, ...SHOWCASE_READY }, select: { inShowcase: true } });
+  if (!product) return { ok: false, error: "Bu mahsulotda 3D model yo'q" };
+  if (inShowcase && !product.inShowcase) {
+    const placed = await prisma.product.count({ where: { ...SHOWCASE_READY, inShowcase: true } });
+    if (placed >= SHOWCASE_LIMIT) {
+      return { ok: false, error: `Vitrinaga ${SHOWCASE_LIMIT} ta mahsulot sig'adi. Avval bittasini olib tashlang` };
+    }
+  }
+  await prisma.product.update({ where: { id: productId }, data: { inShowcase } });
   revalidateShop();
   return { ok: true };
 }

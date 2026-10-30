@@ -93,6 +93,7 @@ type SeedProduct = {
   volume?: string;
   pieces?: number;
   isFeatured?: boolean;
+  inShowcase?: boolean;
   images: string[];
   /** 360° kadrlar (1 ta bo'lsa — aylanmaydigan shaffof rasm, faqat vitrina uchun) */
   spinFrames?: string[];
@@ -164,6 +165,7 @@ const products: SeedProduct[] = [
     price: 165_000,
     stock: 10,
     isFeatured: true,
+    inShowcase: true,
     images: [
       "/products/choynak-pion.webp",
       "/products/choynak-pion-foto-1.webp",
@@ -252,6 +254,7 @@ const products: SeedProduct[] = [
     price: 165_000,
     stock: 10,
     isFeatured: true,
+    inShowcase: true,
     images: [
       "/products/choynak-hoxloma.webp",
       "/products/choynak-hoxloma-foto-1.webp",
@@ -274,6 +277,7 @@ const products: SeedProduct[] = [
     price: 165_000,
     stock: 10,
     isFeatured: true,
+    inShowcase: true,
     images: [
       "/products/choynak-gornitsa.webp",
       "/products/choynak-gornitsa-foto-1.webp",
@@ -296,6 +300,7 @@ const products: SeedProduct[] = [
     price: 165_000,
     stock: 10,
     isFeatured: true,
+    inShowcase: true,
     images: [
       "/products/toplam-qoziqorin.webp",
       "/products/toplam-qoziqorin-foto-1.webp",
@@ -318,6 +323,7 @@ const products: SeedProduct[] = [
     price: 165_000,
     stock: 10,
     isFeatured: true,
+    inShowcase: true,
     images: [
       "/products/choynak-zepter.webp",
       "/products/choynak-zepter-foto-1.webp",
@@ -339,6 +345,7 @@ const products: SeedProduct[] = [
     price: 165_000,
     stock: 10,
     isFeatured: true,
+    inShowcase: true,
     images: [
       "/products/choynak-emerald.webp",
       "/products/choynak-emerald-foto-1.webp",

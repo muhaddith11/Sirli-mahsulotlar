@@ -554,7 +554,7 @@ export function SpinManager({ initial, initialCutout, error }: { initial: string
           <p className="font-semibold">{frames.length} ta kadr</p>
           <p className="max-w-56 text-xs text-ink-3">
             {cutout
-              ? "Foni olib tashlangan — bosh sahifadagi «Eng ommabop» vitrinasiga ham chiqadi."
+              ? "Foni olib tashlangan — «Vitrina» bo'limidan bosh sahifaga qo'yish mumkin."
               : "Fon bilan — faqat mahsulot sahifasida ko'rinadi."}
           </p>
           <div className="flex gap-2 pt-1">
