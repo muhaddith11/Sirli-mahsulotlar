@@ -42,6 +42,7 @@ export function SpinShowcase({ items }: { items: ShowcaseItem[] }) {
   const ring = useRef<HTMLDivElement>(null);
   const visuals = useRef<(HTMLDivElement | null)[]>([]);
   const turns = useRef<number[]>([]);
+  const details = useRef<number[]>([]);
   const count = items.length;
   const moving = count > 1;
   const current = items[active] ?? items[0];
@@ -73,6 +74,7 @@ export function SpinShowcase({ items }: { items: ShowcaseItem[] }) {
       visual.style.zIndex = String(100 - Math.round(d * 10));
       visual.style.visibility = d > 2.6 ? "hidden" : "visible";
       turns.current[i] = -offset * TRAVEL_TURN;
+      details.current[i] = scale;
     });
     if (ring.current) ring.current.style.transform = `rotate(${-position * 40}deg)`;
     const nearest = Math.round(position);
@@ -201,6 +203,7 @@ export function SpinShowcase({ items }: { items: ShowcaseItem[] }) {
                     active={Math.abs(i - active) <= 2}
                     period={10}
                     turn={() => (turns.current[i] ?? 0) + i * PHASE}
+                    detail={() => details.current[i] ?? 1}
                     className="aspect-square w-full"
                   />
                 </div>

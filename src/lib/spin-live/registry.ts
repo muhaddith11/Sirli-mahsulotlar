@@ -4,11 +4,16 @@
  * Bu fayl three.js'ni yuklamaydi: qaror tez qabul qilinadi, og'ir qism kerak bo'lgandagina keladi.
  */
 
-export type LiveModel = { kind: "teapot" | "layers"; base: string };
+export type LiveModel = { kind: "teapot" | "kulgich" | "pion" | "natyurmort" | "sepkil" | "gornitsa" | "layers"; base: string };
 
 /** Katalog → model turi. Kadrlar shu modeldan chizilgan, shuning uchun burchaklar aynan mos */
 const MODELS: Record<string, LiveModel["kind"]> = {
   "choynak-gilos": "teapot",
+  "choynak-kulgich": "kulgich",
+  "choynak-pion": "pion",
+  "choynak-natyurmort": "natyurmort",
+  "kastryulka-sepkil": "sepkil",
+  "qozon-gornitsa": "gornitsa",
   "pot-strawberry": "layers",
   "pot-cherry": "layers",
   "bowl-spring": "layers",

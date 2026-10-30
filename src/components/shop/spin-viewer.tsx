@@ -24,6 +24,8 @@ type Props = {
   period?: number;
   /** Tashqaridan qo'shiladigan burilish (gradus) — masalan, vitrinada surish bilan birga aylanish */
   turn?: () => number;
+  /** Ekrandagi masshtab (0–1): kichraytirilgan mahsulot jonli modeldan kamroq piksel bilan chiziladi */
+  detail?: () => number;
   className?: string;
 };
 
@@ -54,6 +56,7 @@ export function SpinViewer({
   hint,
   period = 9,
   turn,
+  detail,
   className,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -89,12 +92,14 @@ export function SpinViewer({
     visible: true,
     play: false,
     turn: undefined as (() => number) | undefined,
+    detail: undefined as (() => number) | undefined,
     draw: () => {},
   });
 
-  // Eng so'nggi turn funksiyasi rAF siklida o'qiladi
+  // Eng so'nggi turn va detail funksiyalari rAF siklida o'qiladi
   useEffect(() => {
     state.current.turn = turn;
+    state.current.detail = detail;
   });
 
   // Yangi kadrlar to'plami — holatni tozalash
@@ -201,14 +206,16 @@ export function SpinViewer({
       if (s.live) {
         // Jonli model: aniq burchakda chiziladi — kadr yo'q, sakrash ham yo'q
         const degrees = ((((exact / count) * 360) % 360) + 360) % 360;
-        const liveKey = -1 - Math.round(degrees * 100);
+        // Masshtab bosqichma-bosqich: har qadamda bufer o'lchami o'zgarib turmasin
+        const quality = s.detail ? Math.ceil(s.detail() * 20) / 20 : 1;
+        const liveKey = -1 - Math.round(degrees * 100) - quality * 20 * 1e6;
         if (liveKey === s.drawn) return;
         const { width, height } = canvas;
         const scale = Math.min(width / s.live.width, height / s.live.height);
         const w = Math.round(s.live.width * scale);
         const h = Math.round(s.live.height * scale);
         context.clearRect(0, 0, width, height);
-        s.live.draw(context, degrees, Math.round((width - w) / 2), Math.round((height - h) / 2), w, h);
+        s.live.draw(context, degrees, Math.round((width - w) / 2), Math.round((height - h) / 2), w, h, quality);
         s.drawn = liveKey;
         return;
       }
@@ -237,9 +244,10 @@ export function SpinViewer({
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = Math.max(1, Math.round(rect.width * dpr));
-      canvas.height = Math.max(1, Math.round(rect.height * dpr));
+      // clientWidth, getBoundingClientRect emas: vitrina mahsulotni CSS bilan kichraytiradi,
+      // kanvas esa markazga kelganda ham tiniq bo'lishi kerak
+      canvas.width = Math.max(1, Math.round(canvas.clientWidth * dpr));
+      canvas.height = Math.max(1, Math.round(canvas.clientHeight * dpr));
       s.drawn = NaN;
       s.draw();
     };

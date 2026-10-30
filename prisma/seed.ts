@@ -105,6 +105,9 @@ const spinFrames = (dir: string) => Array.from({ length: 36 }, (_, i) => `/spin/
 /** 3D modeldan: har 10° kadr (NN.webp) va orasidagi 5° kadr (NN.5.webp) — 72 kadr, aylanish silliqroq */
 const modelFrames = (dir: string) => spinFrames(dir).flatMap((frame) => [frame, frame.replace(".webp", ".5.webp")]);
 
+/** Yangi 3D modellar: 72 kadr (00–71.webp) */
+const denseFrames = (dir: string) => Array.from({ length: 72 }, (_, i) => `/spin/${dir}/${String(i).padStart(2, "0")}.webp`);
+
 /** Demo rasmdan yasalgan 360° kadrlar (naqsh idish atrofida aylanadi) — "Eng ommabop" vitrinasida aylanib turadi */
 const cutout = (name: string) => ({ spinFrames: spinFrames(name), spinCutout: true });
 
@@ -127,6 +130,116 @@ const products: SeedProduct[] = [
     spinFrames: modelFrames("choynak-gilos"),
     spinCutout: true,
     description: "Oq emal choynak, gilos, olma va oq gullar naqshi bilan. Qopqog'i va metall dastasi bor.",
+  },
+  {
+    // Egasining 4 ta rasmidan yasalgan 3D model — ikki tomonida kulgich yuz
+    slug: "choynak-kulgich",
+    nameRu: "Эмалированный чайник «Смайлик»",
+    descriptionRu: "Жёлтый эмалированный чайник с улыбающимся лицом с двух сторон. С крышкой и чёрной металлической ручкой.",
+    sku: "CH-KLG",
+    name: 'Emal choynak "Kulgich"',
+    category: "choynaklar",
+    price: 165_000,
+    stock: 10,
+    isFeatured: true,
+    images: [
+      "/products/choynak-kulgich.webp",
+      "/products/choynak-kulgich-foto-1.webp",
+      "/products/choynak-kulgich-foto-2.webp",
+      "/products/choynak-kulgich-foto-3.webp",
+      "/products/choynak-kulgich-foto-4.webp",
+    ],
+    spinFrames: denseFrames("choynak-kulgich"),
+    spinCutout: true,
+    description: "Sariq emal choynak, ikki tomonida kulgich yuz. Qopqog'i va qora metall dastasi bor.",
+  },
+  {
+    // Egasining 4 ta rasmidan yasalgan 3D model — ikki tomonida pion guli
+    slug: "choynak-pion",
+    nameRu: "Эмалированный чайник «Пион»",
+    descriptionRu: "Кремовый эмалированный чайник с розовыми пионами с двух сторон. С крышкой и чёрной металлической ручкой.",
+    sku: "CH-PIO",
+    name: 'Emal choynak "Pion"',
+    category: "choynaklar",
+    price: 165_000,
+    stock: 10,
+    isFeatured: true,
+    images: [
+      "/products/choynak-pion.webp",
+      "/products/choynak-pion-foto-1.webp",
+      "/products/choynak-pion-foto-2.webp",
+      "/products/choynak-pion-foto-3.webp",
+      "/products/choynak-pion-foto-4.webp",
+    ],
+    spinFrames: denseFrames("choynak-pion"),
+    spinCutout: true,
+    description: "Oqish emal choynak, ikki tomonida pushti pion gullari. Qopqog'i va qora metall dastasi bor.",
+  },
+  {
+    // Egasining 4 ta rasmidan yasalgan 3D model — sepkillar rasmdagi sepkillardan olingan
+    slug: "kastryulka-sepkil",
+    nameRu: "Эмалированная кастрюля «Крапинка»",
+    descriptionRu: "Светло-коричневая эмалированная кастрюля в чёрную крапинку. С крышкой и двумя ручками.",
+    sku: "KS-SPK",
+    name: 'Emal kastryulka "Sepkil"',
+    category: "kastryulkalar",
+    price: 165_000,
+    stock: 10,
+    isFeatured: true,
+    images: [
+      "/products/kastryulka-sepkil.webp",
+      "/products/kastryulka-sepkil-foto-1.webp",
+      "/products/kastryulka-sepkil-foto-2.webp",
+      "/products/kastryulka-sepkil-foto-3.webp",
+      "/products/kastryulka-sepkil-foto-4.webp",
+    ],
+    spinFrames: denseFrames("kastryulka-sepkil"),
+    spinCutout: true,
+    description: "Och jigarrang emal kastryulka, qora sepkilli naqsh bilan. Qopqog'i va ikki dastasi bor.",
+  },
+  {
+    // Egasining 4 ta rasmidan yasalgan 3D model — ikki tomonida gul savati manzarasi
+    slug: "choynak-natyurmort",
+    nameRu: "Эмалированный чайник «Натюрморт»",
+    descriptionRu: "Кремовый эмалированный чайник с рисунком: корзина цветов, кувшин и фонарь. С крышкой и чёрной металлической ручкой.",
+    sku: "CH-NTM",
+    name: 'Emal choynak "Natyurmort"',
+    category: "choynaklar",
+    price: 165_000,
+    stock: 10,
+    isFeatured: true,
+    images: [
+      "/products/choynak-natyurmort.webp",
+      "/products/choynak-natyurmort-foto-1.webp",
+      "/products/choynak-natyurmort-foto-2.webp",
+      "/products/choynak-natyurmort-foto-3.webp",
+      "/products/choynak-natyurmort-foto-4.webp",
+    ],
+    spinFrames: denseFrames("choynak-natyurmort"),
+    spinCutout: true,
+    description: "Oqish emal choynak, ikki tomonida gul savati, ko'za va chiroq tasviri. Qopqog'i va qora metall dastasi bor.",
+  },
+  {
+    // Egasining 4 ta rasmidan yasalgan 3D model — shisha qopqoq, ustida "Горница" yozuvi
+    slug: "qozon-gornitsa",
+    nameRu: "Казан «Горница»",
+    descriptionRu: "Чёрный казан с белой крапинкой. Со стеклянной крышкой, стальной ручкой и двумя ручками-ушками.",
+    sku: "QZ-GRN",
+    name: 'Qozon "Gornitsa"',
+    category: "kastryulkalar",
+    price: 165_000,
+    stock: 10,
+    isFeatured: true,
+    images: [
+      "/products/qozon-gornitsa.webp",
+      "/products/qozon-gornitsa-foto-1.webp",
+      "/products/qozon-gornitsa-foto-2.webp",
+      "/products/qozon-gornitsa-foto-3.webp",
+      "/products/qozon-gornitsa-foto-4.webp",
+    ],
+    spinFrames: denseFrames("qozon-gornitsa"),
+    spinCutout: true,
+    description: "Qora qozon, oq sepkilli sirt bilan. Shisha qopqog'i, po'lat tutqichi va ikki quloqli dastasi bor.",
   },
   {
     slug: "kastryulka-qulupnay-16l",
