@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { fromAbove, lathe } from "./lathe";
+import { fromAbove, lathe, sweep } from "./lathe";
 import { addStudio } from "./studio";
 
 /**
@@ -30,43 +30,6 @@ const KNOB = [[-42, 435], [-42, 463], [-30, 486], [0, 494], [30, 486], [42, 463]
 /** Dasta: yon tomondan chiqqan yotiq uzangi; [o'qdan, yon tomonga, balandlik], yarmi */
 const GRIP = [[222, 132, 282], [262, 134, 278], [312, 128, 268], [338, 104, 260], [348, 60, 254], [350, 0, 252]];
 
-/** Egri chiziq bo'ylab yassi oval kesim */
-function sweep(curve: THREE.Curve<THREE.Vector3>, wide: number, thick: number, material: THREE.Material) {
-  const N = 140;
-  const M = 28;
-  const positions: number[] = [];
-  const uvs: number[] = [];
-  const index: number[] = [];
-  const up = new THREE.Vector3(0, 1, 0);
-  const length = curve.getLength();
-  for (let i = 0; i <= N; i++) {
-    const t = i / N;
-    const p = curve.getPointAt(t);
-    const tangent = curve.getTangentAt(t);
-    const side = new THREE.Vector3().crossVectors(tangent, up).normalize();
-    const normal = new THREE.Vector3().crossVectors(side, tangent).normalize();
-    for (let j = 0; j <= M; j++) {
-      const a = (j / M) * Math.PI * 2;
-      const q = p.clone().addScaledVector(side, Math.cos(a) * wide).addScaledVector(normal, Math.sin(a) * thick);
-      positions.push(q.x, q.y, q.z);
-      uvs.push((t * length) / TILE, (a * (wide + thick)) / TILE);
-    }
-  }
-  for (let i = 0; i < N; i++) {
-    for (let j = 0; j < M; j++) {
-      const a = i * (M + 1) + j;
-      const b = a + M + 1;
-      index.push(a, a + 1, b, a + 1, b + 1, b);
-    }
-  }
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-  geometry.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
-  geometry.setIndex(index);
-  geometry.computeVertexNormals();
-  return new THREE.Mesh(geometry, material);
-}
-
 export async function createPot(renderer: THREE.WebGLRenderer, base: string) {
   const scene = new THREE.Scene();
   addStudio(scene, renderer, { fill: false });
@@ -89,14 +52,14 @@ export async function createPot(renderer: THREE.WebGLRenderer, base: string) {
 
   // Qopqoq tutqichi
   const arch = new THREE.CatmullRomCurve3(KNOB.map(([x, h]) => new THREE.Vector3(R(x), R(h), 0)));
-  pot.add(sweep(arch, 0.14, 0.11, enamel));
+  pot.add(sweep(arch, () => [0.14, 0.11], enamel, { tile: TILE, flatSide: new THREE.Vector3(0, 0, 1) }));
 
   // Dastalar: bir-biriga qarama-qarshi
   for (const sign of [-1, 1]) {
     const half = GRIP.map(([x, z, h]) => new THREE.Vector3(sign * R(x), R(h), R(z)));
     const other = half.slice(0, -1).reverse().map((p) => new THREE.Vector3(p.x, p.y, -p.z));
     const curve = new THREE.CatmullRomCurve3([...half, ...other], false, "centripetal");
-    pot.add(sweep(curve, 0.26, 0.17, enamel));
+    pot.add(sweep(curve, () => [0.26, 0.17], enamel, { tile: TILE }));
   }
 
   const camera = new THREE.PerspectiveCamera(15, 1, 1, 200);

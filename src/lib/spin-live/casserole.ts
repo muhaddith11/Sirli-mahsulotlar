@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { lathe } from "./lathe";
+import { lathe, plain } from "./lathe";
 import { addStudio } from "./studio";
 
 /**
@@ -92,7 +92,6 @@ export async function createCasserole(renderer: THREE.WebGLRenderer, base: strin
 
   const lid = new THREE.Group();
   pot.add(lid);
-  const plain = (): [number, number] => [0, 0];
   lid.add(lathe(RING, steel, plain));
   lid.add(lathe(GLASS, tint, plain, 6));
   lid.add(lathe(GLASS, shine, plain, 6));

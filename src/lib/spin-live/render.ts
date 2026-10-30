@@ -1,10 +1,13 @@
 import * as THREE from "three";
 import { createCasserole } from "./casserole";
+import { createElectricKettle } from "./electric";
 import { createKettle } from "./kettle";
 import { createLayers } from "./layers";
 import { createPot } from "./pot";
 import type { LiveModel } from "./registry";
+import { createStack } from "./stack";
 import { createTeapot } from "./teapot";
+import { createDomeKettle, createFlutedKettle } from "./whistle";
 
 /** Real vaqtda chiziladigan aylanish: istalgan burchakda, sakrashsiz */
 export type LiveSpin = {
@@ -25,8 +28,13 @@ export const BUILDERS: Record<LiveModel["kind"], (renderer: THREE.WebGLRenderer,
   kulgich: (renderer, base) => createKettle(renderer, base, { color: "#f0bc00", print: "mask" }),
   pion: (renderer, base) => createKettle(renderer, base, { color: CREAM, print: "photo" }),
   natyurmort: (renderer, base) => createKettle(renderer, base, { color: CREAM, print: "photo", knob: 90 }),
+  hoxloma: (renderer, base) => createKettle(renderer, base, { color: "#0c0c0e", print: "photo", lid: "#303034", height: 0.925, roughness: 0.14 }),
   sepkil: createPot,
   gornitsa: createCasserole,
+  fluted: createFlutedKettle,
+  dome: createDomeKettle,
+  electric: createElectricKettle,
+  stack: createStack,
   layers: (_renderer, base) => createLayers(base),
 };
 

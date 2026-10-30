@@ -14,6 +14,12 @@ export type KettleStyle = {
   print: "mask" | "photo";
   /** Qopqoq tutqichining burilishi, gradus */
   knob?: number;
+  /** Qopqoq gumbazining rangi, agar emaldan farq qilsa */
+  lid?: string;
+  /** Tana balandligi ulushi: rimdan pastga, kichikroq qolip uchun */
+  height?: number;
+  /** Emal g'adir-budurligi: qora emalda kichik bo'lsin, aks xiralashmasin */
+  roughness?: number;
 };
 
 /** Rasm ~12° yuqoridan olingan: balandliklar shuncha qisqarib ko'ringan */
@@ -33,6 +39,8 @@ const ENV = 1.3;
 const BODY = [[0, 1054], [96, 1054], [110, 1061], [124, 1074], [160, 1078], [190, 1062], [212, 1032], [226, 1000], [237, 965], [245, 930], [250, 895], [252, 860], [253, 825], [253, 790], [252, 755], [250, 725], [246, 695], [240, 668], [230, 643], [216, 620], [208, 600], [205, 588]];
 /** Rim: tashqariga buklangan lab, ichkariga botiq, keyin qopqoq va uning do'ngi */
 const TOP = [[205, 588], [207, 576], [214, 562], [222, 550], [225, 541], [222, 534], [214, 533], [204, 538], [196, 546], [184, 553], [165, 557], [140, 558], [122, 556], [112, 548], [100, 538], [85, 531], [60, 529], [0, 529]];
+/** TOP ichida qopqoq gumbazi boshlanadigan nuqta */
+const LID_FROM = 11;
 /** Lab ostidagi ingichka qora chiziq */
 const EDGE = [[223.5, 551], [225.5, 546], [226.3, 541]];
 /** Dasta o'qi (o'ng yarmi, tepadan pastga): [o'qdan masofa, qator] */
@@ -64,7 +72,7 @@ export async function createKettle(renderer: THREE.WebGLRenderer, base: string, 
   map.anisotropy = 8;
 
   const enamel = (options: THREE.MeshPhysicalMaterialParameters) =>
-    new THREE.MeshPhysicalMaterial({ roughness: 0.4, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: ENV, ...options });
+    new THREE.MeshPhysicalMaterial({ roughness: style.roughness ?? 0.4, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: ENV, ...options });
   const shell = enamel({ color: style.color });
   const black = enamel({ color: 0x0c0c0e, roughness: 0.35 });
   const handleMat = enamel({ color: 0x070708, roughness: 0.34, clearcoat: 0.6, envMapIntensity: 0.4, side: THREE.DoubleSide });
@@ -78,7 +86,17 @@ export async function createKettle(renderer: THREE.WebGLRenderer, base: string, 
   const skin = style.print === "mask" ? { color: style.color, map, clearcoatMap: map } : { color: "#ffffff", map };
   const body = lathe(kettle, BODY, enamel(skin), Y(1080), Y(585));
   body.rotation.y = -Math.PI / 2;
-  lathe(kettle, TOP, shell);
+  // Past qolip: rim joyida qoladi, tag ko'tariladi; butun choynak pastga tushib, boshqalar bilan bir tekis turadi
+  const height = style.height ?? 1;
+  body.scale.y = height;
+  body.position.y = Y(585) * (1 - height);
+  kettle.position.y = -(1 - height) * (Y(585) - Y(FOOT));
+  if (style.lid) {
+    lathe(kettle, TOP.slice(0, LID_FROM + 1), shell);
+    lathe(kettle, TOP.slice(LID_FROM), enamel({ color: style.lid }));
+  } else {
+    lathe(kettle, TOP, shell);
+  }
   lathe(kettle, EDGE, black);
 
   // Qopqoq tutqichi: halqa

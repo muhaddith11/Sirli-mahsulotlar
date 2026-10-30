@@ -4,7 +4,7 @@
  * Bu fayl three.js'ni yuklamaydi: qaror tez qabul qilinadi, og'ir qism kerak bo'lgandagina keladi.
  */
 
-export type LiveModel = { kind: "teapot" | "kulgich" | "pion" | "natyurmort" | "sepkil" | "gornitsa" | "layers"; base: string };
+export type LiveModel = { kind: "teapot" | "kulgich" | "pion" | "natyurmort" | "hoxloma" | "sepkil" | "gornitsa" | "fluted" | "dome" | "electric" | "stack" | "layers"; base: string };
 
 /** Katalog → model turi. Kadrlar shu modeldan chizilgan, shuning uchun burchaklar aynan mos */
 const MODELS: Record<string, LiveModel["kind"]> = {
@@ -12,8 +12,13 @@ const MODELS: Record<string, LiveModel["kind"]> = {
   "choynak-kulgich": "kulgich",
   "choynak-pion": "pion",
   "choynak-natyurmort": "natyurmort",
+  "choynak-hoxloma": "hoxloma",
   "kastryulka-sepkil": "sepkil",
   "qozon-gornitsa": "gornitsa",
+  "choynak-gornitsa": "fluted",
+  "choynak-zepter": "dome",
+  "choynak-emerald": "electric",
+  "toplam-qoziqorin": "stack",
   "pot-strawberry": "layers",
   "pot-cherry": "layers",
   "bowl-spring": "layers",
